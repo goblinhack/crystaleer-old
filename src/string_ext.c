@@ -6,7 +6,6 @@
 
 
 #include <SDL.h>
-#include <SDL_surface.h>
 #include "main.h"
 #include "sdl.h"
 #include "string_ext.h"
