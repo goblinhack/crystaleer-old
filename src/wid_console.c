@@ -11,6 +11,7 @@
 #include "command.h"
 #include "ttf.h"
 #include "string_ext.h"
+#include "config.h"
 
 static int32_t wid_console_inited;
 static int32_t wid_console_exiting;
@@ -188,11 +189,11 @@ uint8_t wid_console_receive_input (widp w, const SDL_KEYSYM *key)
  */
 static void wid_console_wid_create (void)
 {
-    fontp font = med_font;
+    fontp font = fixed_font;
 
     {
         fpoint tl = {0.0f, 0.0f};
-        fpoint br = {1.0f, 0.15f};
+        fpoint br = {1.0f, 1.00f};
         color c;
 
         wid_console_window = wid_new_square_window("wid_console");
@@ -257,8 +258,8 @@ static void wid_console_wid_create (void)
             };
 
             if (row != 0) {
-                tl.y -= wid_console_max_line_height * 0.2;
-                br.y -= wid_console_max_line_height * 0.2;
+                tl.y -= wid_console_max_line_height * 0.1;
+                br.y -= wid_console_max_line_height * 0.1;
             } else {
                 tl.y -= wid_console_max_line_height;
             }
@@ -268,8 +269,8 @@ static void wid_console_wid_create (void)
             wid_set_pos_pct(child, tl, br);
             wid_set_text_lhs(child, true);
             wid_set_text_bot(child, true);
-            wid_set_text_fixed_width(child, false);
-            wid_set_text_outline(child, true);
+            wid_set_text_fixed_width(child, true);
+            wid_set_text_outline(child, false);
             wid_set_font(child, font);
 
             wid_set_prev(child, prev);
@@ -290,8 +291,8 @@ static void wid_console_wid_create (void)
                 wid_set_pos_pct(prefix, tl, br);
                 wid_set_text_lhs(prefix, true);
                 wid_set_text_bot(prefix, true);
-                wid_set_text_fixed_width(prefix, false);
-                wid_set_text_outline(prefix, true);
+                wid_set_text_fixed_width(prefix, true);
+                wid_set_text_outline(prefix, false);
                 wid_set_font(prefix, font);
 #ifdef CONSOLE_MAGIC_KEY
                 wid_set_text(prefix, ">");

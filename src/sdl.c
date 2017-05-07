@@ -16,6 +16,7 @@
 #include "string_util.h"
 #include "player.h"
 #include "python.h"
+#include "config.h"
 
 #if defined WIN32 || defined __CYGWIN__
 #endif

@@ -12,6 +12,7 @@
 #include "music.h"
 #include "math_util.h"
 #include "time_util.h"
+#include "config.h"
 
 typedef struct sound_ {
     tree_key_string tree;

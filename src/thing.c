@@ -8,6 +8,7 @@
 #include "tile.h"
 #include "thing_tile.h"
 #include "python.h"
+#include "config.h"
 
 tree_root *things;
 
@@ -327,4 +328,3 @@ void thing_dead (thingp t,
 {
     ERR("thing dead TBD");
 }
-

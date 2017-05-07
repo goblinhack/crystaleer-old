@@ -8,6 +8,7 @@
 #include "main.h"
 #include "thing_tile.h"
 #include "tile.h"
+#include "config.h"
 
 /*
  * Using static memory as these things never change once made.
@@ -19,6 +20,21 @@ tree_root *thing_templates_create_order;
 
 static uint8_t tp_init_done;
 static void tp_destroy_internal(tpp t);
+
+tpp id_to_tp (int id)
+{
+    if (!id) {
+        return (0);
+    }
+
+    extern thing_template thing_templates_chunk[TP_MAX];
+
+    if (id >= TP_MAX) {
+        DIE("overflow, bad template id %08X", id);
+    }
+
+    return (&thing_templates_chunk[id]);
+}
 
 uint8_t tp_init (void)
 {

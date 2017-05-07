@@ -52,17 +52,6 @@
 #define ENABLE_GL_BULK_DRAW_ARRAYS
 
 /*
- * Max long string size
- */
-#define MAXSTR                                  4096
-
-/*
- * Light sources
- */
-#define MAX_LIGHT_RAYS                          180
-#define MAX_LIGHTS                              8000
-
-/*
  * Screen sizes.
  */
 #define DEFAULT_VIDEO_WIDTH                     1008
@@ -75,15 +64,13 @@
 #define MAP_HEIGHT                              10
 #define MAP_DEPTH                               10
 
-#define TILES_ANIM_MAX                          10000
-
 /*
  * Console
  */
 #define CONSOLE_CURSOR_COLOR        PURPLE
 #define CONSOLE_CURSOR_OTHER_COLOR  PLUM
-#define CONSOLE_TEXT_COLOR          GREEN
-#define CONSOLE_HEIGHT              20
+#define CONSOLE_TEXT_COLOR          WHITE
+#define CONSOLE_HEIGHT              100
 #undef CONSOLE_MAGIC_KEY
 
 /*
@@ -99,7 +86,7 @@
 #define VLARGE_FONT                 "data/ttf/monaco.ttf"
 #define VVLARGE_FONT                "data/ttf/monaco.ttf"
 
-#define FIXED_FONT_SIZE             16
+#define FIXED_FONT_SIZE             18
 #define VSMALL_FONT_SIZE            16
 #define SMALL_FONT_SIZE             20
 #define MED_FONT_SIZE               22

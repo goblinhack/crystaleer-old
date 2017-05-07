@@ -11,6 +11,7 @@
 #include "py_game.h"
 #include "string_util.h"
 #include "frameobject.h"
+#include "config.h"
 
 static PyObject *mm_mod;
 PyMODINIT_FUNC python_m_y_module_create(void);

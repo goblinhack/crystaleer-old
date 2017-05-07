@@ -10,6 +10,7 @@
 #include "music.h"
 #include "ramdisk.h"
 #include "sound.h"
+#include "config.h"
 
 typedef struct music_ {
     tree_key_string tree;

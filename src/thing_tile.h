@@ -77,5 +77,7 @@ thing_tilep thing_tile_first(tree_rootp root);
 thing_tilep thing_tile_next(tree_rootp root, thing_tilep in);
 thing_tilep thing_tile_random(tree_rootp root);
 
-extern thing_tile thing_tile_arr[TILES_ANIM_MAX];
+#define TILES_ANIM_MAX                          10000
+
 extern int thing_tile_count;
+extern thing_tile thing_tile_arr[TILES_ANIM_MAX];

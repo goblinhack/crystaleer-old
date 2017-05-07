@@ -9,12 +9,7 @@
 #include "thing_template.h"
 #include "thing.h"
 
-#define DMAP_MAP_MAX 8
-
 void set_game_video_pix_width(int width);
-typedef struct {
-    int8_t walls[MAP_WIDTH][MAP_HEIGHT];
-} level_walls;
 
 typedef struct level_map_tile_ {
     tpp tp;

@@ -28,7 +28,6 @@ typedef T type;
 #endif
 
 #include <assert.h>
-#include "config.h"
 
 /*
  * Enhanced random number generator.
@@ -44,6 +43,11 @@ strlcpy_(char * dst, const char * src, size_t size);
 
 extern size_t
 strlcat_(char * dst, const char * src, size_t size);
+
+/*
+ * Max long string size
+ */
+#define MAXSTR                                  4096
 
 #ifdef _WIN32
 #include <windows.h>

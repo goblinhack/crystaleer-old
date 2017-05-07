@@ -8,6 +8,7 @@
 #include "main.h"
 #include "tile.h"
 #include "py_tp.h"
+#include "config.h"
 #include "thing_tile.h"
 
 PyObject *tp_load_ (PyObject *obj, PyObject *args, PyObject *keywds)
@@ -558,6 +559,8 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
     if (!tp->tiles) {
         tp->tiles = tree_alloc(TREE_KEY_INTEGER, "TREE ROOT: thing tiles");
     }
+
+    static int thing_tile_count;
 
     if (thing_tile_count >= TILES_ANIM_MAX) {
         DIE("out of anim tile space");

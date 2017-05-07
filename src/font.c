@@ -7,6 +7,7 @@
 #include "main.h"
 #include "ttf.h"
 #include "font.h"
+#include "config.h"
 #ifdef ENABLE_GENERATE_TTF
 #include "string_util.h"
 #endif

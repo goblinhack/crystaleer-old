@@ -7,6 +7,7 @@
 
 #include "main.h"
 #include "python.h"
+#include "config.h"
 
 struct game_ game;
 

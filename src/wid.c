@@ -7209,7 +7209,7 @@ static void wid_display (widp w,
         /*
          * Outline text in black
          */
-        if (1 /* wid_get_text_outline(w) */) {
+        if (wid_get_text_outline(w)) {
             glcolor(col_text_outline);
 
 #ifdef ENABLE_LARGE_TEXT_OUTLINE

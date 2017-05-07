@@ -147,20 +147,7 @@ static inline int tp_to_id (tpp t)
     return (t->tp_id);
 }
 
-static inline tpp id_to_tp (int id)
-{
-    if (!id) {
-        return (0);
-    }
-
-    extern thing_template thing_templates_chunk[TP_MAX];
-
-    if (id >= TP_MAX) {
-        DIE("overflow, bad template id %08X", id);
-    }
-
-    return (&thing_templates_chunk[id]);
-}
+extern inline tpp id_to_tp(int id);
 
 static inline uint8_t tp_is_floor (tpp t)
 {

@@ -14,6 +14,7 @@
 #include "string_ext.h"
 #include "thing_tile.h"
 #include "font.h"
+#include "config.h"
 
 #ifdef ENABLE_GENERATE_TTF
 #include "bits.h"

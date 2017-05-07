@@ -4,9 +4,11 @@
  * See the LICENSE file for license.
  */
 
-
 #include "main.h"
+#include "tile.h"
 #include "thing_tile.h"
+#include "python.h"
+#include "config.h"
 
 int thing_tile_count = 1;
 thing_tile thing_tile_arr[TILES_ANIM_MAX];
