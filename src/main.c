@@ -60,47 +60,47 @@ void quit (void)
 
     python_fini();
 
-    LOG("sdl_exit()");
+    LOG("Finishing: sdl_exit");
     sdl_exit();
 
-    LOG("player_fini()");
+    LOG("Finishing: player_fini");
     player_fini();
-    LOG("tp_fini()");
+    LOG("Finishing: tp_fini");
     tp_fini();
-    LOG("thing_fini()");
+    LOG("Finishing: thing_fini");
     thing_fini();
 
-    LOG("wid_console_fini()");
+    LOG("Finishing: wid_console_fini");
     wid_console_fini();
 
-    LOG("command_fini()");
+    LOG("Finishing: command_fini");
     command_fini();
 
-    LOG("wid_fini()");
+    LOG("Finishing: wid_fini");
     wid_fini();
-    LOG("ttf_fini()");
+    LOG("Finishing: ttf_fini");
     ttf_fini();
-    LOG("font_fini()");
+    LOG("Finishing: font_fini");
     font_fini();
-    LOG("tex_fini()");
+    LOG("Finishing: tex_fini");
     tex_fini();
-    LOG("wid_tiles_fini()");
+    LOG("Finishing: wid_tiles_fini");
     wid_tiles_fini();
-    LOG("music_fini()");
+    LOG("Finishing: music_fini");
     music_fini();
-    LOG("sound_fini()");
+    LOG("Finishing: sound_fini");
     sound_fini();
-    LOG("tile_fini()");
+    LOG("Finishing: tile_fini");
     tile_fini();
-    LOG("sdl_fini()");
+    LOG("Finishing: sdl_fini");
     sdl_fini();
-    LOG("config_fini()");
+    LOG("Finishing: config_fini");
     config_fini();
-    LOG("enum_fmt_destroy()");
+    LOG("Finishing: enum_fmt_destroy");
     enum_fmt_destroy();
-    LOG("enum_font_destroy()");
+    LOG("Finishing: enum_font_destroy");
     enum_font_destroy();
-    LOG("blit_fini()");
+    LOG("Finishing: blit_fini");
     blit_fini();
 #if 0
     miniz_fini();
@@ -580,7 +580,7 @@ int32_t main (int32_t argc, char *argv[])
 
     quit();
 
-    LOG("Bye, ok exit");
+    LOG("Goodbye cruel world");
     fprintf(MY_STDOUT, "Exited\n");
 
     return (0);

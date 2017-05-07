@@ -66,7 +66,7 @@ unsigned char *file_read (const char *filename, int32_t *out_len)
         *out_len = len;
     }
 
-    LOG("Disk read %s, %d bytes", filename, len);
+    LOG("Loading %s, %d bytes", filename, len);
 
     fclose(file);
 

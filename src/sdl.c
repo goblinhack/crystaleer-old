@@ -151,7 +151,7 @@ static inline uint8_t sdl_find_video_size (int32_t w, int32_t h)
         }
 
         if ((modes[i]->w == w) && (modes[i]->h == h)) {
-            LOG("SDL video   : %dx%d available (full screen)", w, h);
+            LOG(" - SDL video   : %dx%d available (full screen)", w, h);
             return (true);
         }
     }
@@ -167,7 +167,7 @@ static inline uint8_t sdl_find_video_size (int32_t w, int32_t h)
         }
 
         if ((mode.w == w) && (mode.h == h)) {
-            LOG("SDL video   : %dx%d available (full screen)", w, h);
+            LOG(" - SDL video   : %dx%d available (full screen)", w, h);
             return (true);
         }
     }
@@ -194,7 +194,7 @@ static inline uint8_t sdl_find_video_size (int32_t w, int32_t h)
         }
 
         if ((modes[i]->w == w) && (modes[i]->h == h)) {
-            LOG("SDL video   : %dx%d available (any mode)", w, h);
+            LOG(" - SDL video   : %dx%d available (any mode)", w, h);
             return (true);
         }
     }
@@ -210,7 +210,7 @@ static inline uint8_t sdl_find_video_size (int32_t w, int32_t h)
         }
 
         if ((mode.w == w) && (mode.h == h)) {
-            LOG("SDL video   : %dx%d available (any mode)", w, h);
+            LOG(" - SDL video   : %dx%d available (any mode)", w, h);
             return (true);
         }
     }
@@ -245,7 +245,7 @@ static inline void sdl_list_video_size (void)
     }
 
     for (i=0; modes[i]; ++i) {
-        LOG("SDL video   : %dx%d available",
+        LOG(" - SDL video   : %dx%d available",
             modes[i]->w, modes[i]->h);
     }
 #else /* } { */
@@ -255,7 +255,7 @@ static inline void sdl_list_video_size (void)
 
         SDL_GetDisplayMode(0, i, &mode);
 
-        LOG("SDL video   : %dx%d available", mode.w, mode.h);
+        LOG(" - SDL video   : %dx%d available", mode.w, mode.h);
     }
 #endif /* } */
 }
@@ -277,26 +277,26 @@ static void sdl_init_rumble (void)
     if (!haptic) {
         haptic = SDL_HapticOpenFromJoystick(joy);
         if (!haptic) {
-            LOG("Couldn't initialize SDL rumble: %s", SDL_GetError());
+            LOG(" - Couldn't initialize SDL rumble: %s", SDL_GetError());
             SDL_ClearError();
             return;
         }
     }
 
     if (!SDL_HapticRumbleSupported(haptic)) {
-        LOG("No SDL rumble support: %s", SDL_GetError());
+        LOG(" - No SDL rumble support: %s", SDL_GetError());
         SDL_ClearError();
         return;
     }
 
     if (SDL_HapticRumbleInit(haptic) != 0) {
-        LOG("SDL rumble nit failed: %s", SDL_GetError());
+        LOG(" - SDL rumble nit failed: %s", SDL_GetError());
         SDL_ClearError();
         return;
     }
 #endif /* } */
 
-    LOG("Opened Haptic for joy index %d", joy_index);
+    LOG(" - Opened Haptic for joy index %d", joy_index);
 }
 
 static void sdl_init_joystick (void)
@@ -319,7 +319,7 @@ static void sdl_init_joystick (void)
         if (SDL_IsGameController(joy_index)) {
             controller = SDL_GameControllerOpen(joy_index);
             if (controller) {
-                LOG("Found gamecontroller");
+                LOG(" - Found gamecontroller");
                 break;
             } else {
                 WARN("Could not open gamecontroller %i: %s",
@@ -330,20 +330,20 @@ static void sdl_init_joystick (void)
     }
 
     if (!controller) {
-        LOG("No found gamecontroller");
+        LOG(" - No found gamecontroller");
         return;
     }
 #endif /* } */
 
     joy = SDL_JoystickOpen(joy_index);
     if (joy) {
-        LOG("Opened Joystick %d", joy_index);
+        LOG(" - Opened Joystick %d", joy_index);
 #if (SDL_MAJOR_VERSION == 2) /* { */
-        LOG("Name: %s", SDL_JoystickNameForIndex(0));
+        LOG(" - Name: %s", SDL_JoystickNameForIndex(0));
 #endif /* } */
-        LOG("Number of Axes: %d", SDL_JoystickNumAxes(joy));
-        LOG("Number of Buttons: %d", SDL_JoystickNumButtons(joy));
-        LOG("Number of Balls: %d", SDL_JoystickNumBalls(joy));
+        LOG(" - Number of Axes: %d", SDL_JoystickNumAxes(joy));
+        LOG(" - Number of Buttons: %d", SDL_JoystickNumButtons(joy));
+        LOG(" - Number of Balls: %d", SDL_JoystickNumBalls(joy));
 
         joy_naxes = SDL_JoystickNumAxes(joy);
         joy_buttons = SDL_JoystickNumButtons(joy);
@@ -379,7 +379,7 @@ get_screensize (int *w, int *h)
         *w = top_rect.right - top_rect.left;
         *h = top_rect.bottom - top_rect.top;
 
-        LOG("Win32 window size " + tostring(*w) + "x" + tostring(*h));
+        LOG(" - Win32 window size " + tostring(*w) + "x" + tostring(*h));
 
         return (true);
 #else
@@ -396,12 +396,12 @@ get_screensize (int *w, int *h)
                 *h = 600;
             }
 
-            LOG("Unix window size " + tostring(*w) + "x" + tostring(*h));
+            LOG(" - Unix window size " + tostring(*w) + "x" + tostring(*h));
             return (true);
         } else {
             *w = 1024;
             *h = 800;
-            LOG("Default screensize for unix");
+            LOG(" - Default screensize for unix");
             return (true);
         }
 #endif // unix
@@ -411,7 +411,7 @@ get_screensize (int *w, int *h)
         //
         *w = 1024;
         *h = 800;
-        LOG("Default screensize as SDL_GetWMInfo failed");
+        LOG(" - Default screensize as SDL_GetWMInfo failed");
         return (false);
     }
 }
@@ -437,12 +437,12 @@ uint8_t sdl_init (void)
     }
 #endif /* } */
 
+    LOG("SDL version : %u.%u", SDL_MAJOR_VERSION, SDL_MINOR_VERSION);
+
     sdl_init_joystick();
     sdl_init_rumble();
 
     sdl_init_video = 1;
-
-    LOG("SDL version : %u.%u", SDL_MAJOR_VERSION, SDL_MINOR_VERSION);
 
     sdl_list_video_size();
 
@@ -497,13 +497,13 @@ uint8_t sdl_init (void)
      */
     gl_ortho_set(VIDEO_WIDTH, VIDEO_HEIGHT);
 
-    LOG("SDL video   : %dx%d",
+    LOG(" - SDL video   : %dx%d",
         game.video_pix_width, game.video_pix_height);
 
-    LOG("Ortho video : %dx%d",
+    LOG(" - Ortho video : %dx%d",
         game.video_gl_width, game.video_gl_height);
 
-    LOG("X/Y scale   : %f, %f",
+    LOG(" - X/Y scale   : %f, %f",
         game.xscale, game.yscale);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -517,7 +517,7 @@ uint8_t sdl_init (void)
     uint32_t video_flags;
 
 #ifndef ENABLE_SDL_WINDOW /* { */
-        LOG("SDL mode    : video");
+        LOG(" - SDL mode    : video");
 
         video_flags = SDL_OPENGL | SDL_NOFRAME;
 
@@ -540,7 +540,7 @@ uint8_t sdl_init (void)
         }
 
 #   else /* } { */
-        LOG("SDL mode    : window");
+        LOG(" - SDL mode    : window");
 
         video_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_BORDERLESS ;
 
@@ -589,10 +589,10 @@ uint8_t sdl_init (void)
     SDL_SetWindowTitle(window, "crystaleer");
 #endif /* } */
 
-    LOG("GL Vendor   : %s", glGetString(GL_VENDOR));
-    LOG("GL Renderer : %s", glGetString(GL_RENDERER));
-    LOG("GL Version  : %s", glGetString(GL_VERSION));
-    LOG("GL Exts     : %s", glGetString(GL_EXTENSIONS));
+    LOG(" - GL Vendor   : %s", glGetString(GL_VENDOR));
+    LOG(" - GL Renderer : %s", glGetString(GL_RENDERER));
+    LOG(" - GL Version  : %s", glGetString(GL_VERSION));
+    LOG(" - GL Exts     : %s", glGetString(GL_EXTENSIONS));
 
     SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &value);
     DBG("Red         : %d", value);
@@ -1206,7 +1206,7 @@ void sdl_exit (void)
         return;
     }
 
-    LOG("Main loop is exiting...");
+    LOG("SDL main loop is exiting...");
 
     SDL_ShowCursor(1);
 

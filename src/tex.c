@@ -408,14 +408,18 @@ texp tex_from_surface (SDL_Surface *surface,
      * Check that the sdl_surface's width is a power of 2
      */
     if ((surface->w & (surface->w - 1)) != 0) {
+        /*
         LOG("%s has a width %u that is not a power of 2", file, surface->w);
+         */
     }
 
     /*
      * Also check if the height is a power of 2
      */
     if ((surface->h & (surface->h - 1)) != 0) {
+        /*
         LOG("%s has a height %u that is not a power of 2", file, surface->h);
+        */
     }
 
     DBG("Texture: %s, %dx%d", file, surface->w, surface->h);

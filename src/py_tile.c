@@ -53,7 +53,9 @@ PyObject *tile_load_arr_ (PyObject *obj, PyObject *args, PyObject *keywds)
 
     memset(arr, 0, sizeof(arr));
 
+    /*
     LOG("tile_load_arr(tex_name=%s, tex_name_black_and_white=%s, width=%d, height=%d, ...)", tex_name, tex_name_black_and_white, width, height);
+     */
 
     for (i=0; i<numLines; i++){
         PyObject * strObj;

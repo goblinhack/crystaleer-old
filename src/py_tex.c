@@ -30,7 +30,10 @@ PyObject *tex_load_ (PyObject *obj, PyObject *args, PyObject *keywds)
         Py_RETURN_NONE;
     }
 
+    /*
     LOG("tex_load(file=%s, name=%s)", a, b);
+     */
+
     tex_load(a, b);
 
     Py_RETURN_NONE;
@@ -116,7 +119,10 @@ PyObject *tex_load_tiled_ (PyObject *obj, PyObject *args, PyObject *keywds)
     }
 
 
+    /*
     LOG("tex_load(file=%s, name=%s, width=%d, height=%d)", a, b, c, d);
+     */
+
     tex_load_tiled(a, b, c, d);
 
     Py_RETURN_NONE;

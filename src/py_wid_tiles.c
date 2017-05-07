@@ -24,7 +24,10 @@ PyObject *wid_tiles_load_ (PyObject *obj, PyObject *args, PyObject *keywds)
         Py_RETURN_NONE;
     }
 
+    /*
     LOG("wid_tiles_load(name=%s, scale=%g)", a, scale);
+     */
+
     wid_tiles_load(a, scale);
 
     Py_RETURN_NONE;

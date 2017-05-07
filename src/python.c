@@ -2421,9 +2421,11 @@ static void py_add_to_path (const char *path)
     wchar_t *wc_new_path;
     char *item;
 
-    LOG(" ");
-    LOG("Will add %s to python path", path);
+    LOG("Add to PYTHON_PATH: %s", path);
+
+    /*
     LOG("Current system python path:");
+     */
 
     new_path = dupstr(path, __FUNCTION__);
     py_cur_path = PySys_GetObject("path");
@@ -2448,7 +2450,9 @@ static void py_add_to_path (const char *path)
             continue;
         }
 
+        /*
         LOG("  %s", item);
+         */
 
         tmp = strappend(new_path, item);
         myfree(new_path);
@@ -2465,7 +2469,9 @@ static void py_add_to_path (const char *path)
         DIE("path alloc fail");
     }
 
+    /*
     LOG("Set python path: %s", new_path);
+     */
 
     mbstowcs(wc_new_path, new_path, wc_len);
     PySys_SetPath(wc_new_path);
