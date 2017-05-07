@@ -5,6 +5,7 @@
  */
 
 #include "main.h"
+#include "tile.h"
 #include "thing_tile.h"
 #include "python.h"
 
@@ -92,13 +93,6 @@ void thing_destroyed_ (thingp t, const char *reason)
     myfree(t);
 }
 
-void thing_set_tilename_ (thingp t, const char *tile)
-{
-    verify(t);
-
-    wid_set_tilename(t->wid, tile);
-}
-
 void thing_set_tp_ (thingp t, const char *tp_name)
 {
     verify(t);
@@ -109,18 +103,11 @@ void thing_set_tp_ (thingp t, const char *tp_name)
     }
 }
 
-void thing_set_depth_ (thingp t, double value)
-{
-    verify(t);
-
-    t->depth = value;
-}
-
 void thing_move_ (thingp t, double x, double y)
 {
     verify(t);
 
-    thing_wid_update(t, x, y, true /* smooth */);
+LOG("TBD thing_move_");
 }
 
 PyObject *thing_push_ (thingp t, double x, double y)
@@ -135,11 +122,12 @@ PyObject *thing_push_ (thingp t, double x, double y)
         }
     }
 
+LOG("TBD thing_push_");
     /* 
      * TBD
      */
 
-    return (Py_BuildValue("K", (uintptr_t) t->wid));
+    Py_RETURN_NONE;
 }
 
 void thing_pop_ (thingp t)
@@ -149,6 +137,22 @@ void thing_pop_ (thingp t)
     /*
      * TBD
      */
+LOG("TBD thing_pop_");
+}
+
+void thing_set_tilename_ (thingp t, const char *name)
+{
+    fast_verify(w);
+
+    tilep tile = tile_find(name);
+    if (!tile) {
+        ERR("failed to find wid tile %s", name);
+    }
+
+    t->tile = tile;
+    if (!t->first_tile) {
+        t->first_tile = tile;
+    }
 }
 
 /*
@@ -200,13 +204,6 @@ tree_rootp thing_tile_tiles (thingp t)
     return (tp_get_tiles(thing_tp(t)));
 }
 
-widp thing_wid (thingp t)
-{
-    verify(t);
-
-    return (t->wid);
-}
-
 void thing_set_is_dead (thingp t, uint8_t val)
 {
     verify(t);
@@ -250,9 +247,9 @@ void thing_move_to (thingp t, double x, double y)
     if (tp_is_animated_lr_flip(thing_tp(t))) {
         if (fabs(t->x - t->last_x) <= 1) {
             if (t->x > t->last_x) {
-                wid_flip_horiz(t->wid, true);
+                LOG("TBD flip");
             } else if (t->x < t->last_x) {
-                wid_flip_horiz(t->wid, false);
+                LOG("TBD flip");
             }
         }
     }

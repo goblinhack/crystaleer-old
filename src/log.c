@@ -444,42 +444,6 @@ static void msg_ (uint32_t level,
         }
         break;
 
-    case OVER_THING: {
-        /*
-         * Center a widget over the thing.
-         */
-        if (!t) {
-            break;
-        }
-
-        widp wid_thing = thing_wid(t);
-        if (!wid_thing) {
-            break;
-        }
-
-        vsnprintf(buf, sizeof(buf), fmt, args);
-
-        fpoint tl, br;
-
-        wid_get_tl_br(wid_thing, &tl, &br);
-        widp w = wid_new_container(game.wid_map, "wid_tooltip");
-
-        wid_set_pos_no_relative_offset(w, tl, br);
-        wid_set_text(w, buf);
-        wid_set_text_outline(w, true);
-        wid_set_font(w, med_font);
-        wid_move_delta_pct_in(w, 0.0, -0.05, 0);
-        wid_move_end(w);
-        wid_move_delta_pct_in(w, 0.0, -0.1, 1500);
-
-        wid_fade_out(w, 1500);
-        wid_destroy_in(w, 1500);
-
-        wid_set_no_shape(w);
-        wid_raise(w);
-        break;
-    }
-
     case SOUND:
         vsnprintf(buf, sizeof(buf), fmt, args);
         sound_play_at(buf, x, y);

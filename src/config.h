@@ -69,56 +69,13 @@
 #define DEFAULT_VIDEO_HEIGHT                    672
 
 /*
- * Map. How many chunks per "screen" across and down.
- */
-#define CHUNK_ACROSS                            (6)
-#define CHUNK_DOWN                              (6)
-
-/*
- * How many tiles per chunk
- */
-#define CHUNK_WIDTH                             (8)
-#define CHUNK_HEIGHT                            (8)
-
-/*
  * Dungeon size
  */
-#define MAP_WIDTH                               (CHUNK_WIDTH*CHUNK_ACROSS)
-#define MAP_HEIGHT                              (CHUNK_HEIGHT*CHUNK_DOWN)
+#define MAP_WIDTH                               10
+#define MAP_HEIGHT                              10
+#define MAP_DEPTH                               10
 
-/*
- * How many chunks across and down in the world. Image width / chunk width
- */
-#define WORLD_WIDTH                             (2048 / CHUNK_WIDTH)
-#define WORLD_HEIGHT                            (2048 / CHUNK_HEIGHT)
-#define WORLD_DEPTH                             16
-
-/*
- * The number of tiles per screen.
- */
-#define TILES_SCREEN_WIDTH                      20
-#define TILES_SCREEN_HEIGHT                     13
 #define TILES_ANIM_MAX                          10000
-
-/*
- * Any more than this and you can peek over walls.
- */
-#define MAP_LIGHT_CANDLELIGHT_FLICKER_RADIUS    20
-
-/*
- * Tile pixel width.
- */
-#define TILE_WIDTH                              64
-#define TILE_HEIGHT                             64
-
-/*
- * The width of wall blocks and floor tiles not counting shadow pixels
- */
-#define TILE_PIX_WIDTH                          24
-#define TILE_PIX_HEIGHT                         24
-
-#define TILES_SCREEN_LIGHT_WIDTH_PAD            8
-#define TILES_SCREEN_LIGHT_HEIGHT_PAD           8
 
 /*
  * Console

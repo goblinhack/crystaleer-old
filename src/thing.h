@@ -16,35 +16,30 @@
 uint8_t thing_init(void);
 void thing_fini(void);
 thingp thing_new(const char *name, long int thing_id, const char *tp_name);
+
+/*
+ * Python funcs
+ */
 void thing_destroyed_(thingp t, const char *reason);
 void thing_set_tilename_(thingp t, const char *tilename);
 void thing_set_tp_(thingp t, const char *tp);
-void thing_set_depth_(thingp t, double);
-
-thingp thing_find(const char *name);
 void thing_move_(thingp t, double x, double y);
 PyObject *thing_push_(thingp t, double x, double y);
 void thing_pop_(thingp t);
-void thing_sanity(thingp);
-int thing_tick_all(levelp level);
+
+/*
+ * thing animate
+ */
 void thing_animate_all(levelp level);
-void thing_wake(thingp t);
-#ifdef _MSC_VER
-void thing_dead(thingp, thingp killer, const char *fmt, ...);
-#else
+void thing_animate(thingp);
+tree_rootp thing_tile_tiles(thingp);
+
+thingp thing_find(const char *name);
 void thing_dead(thingp, thingp killer,
                 const char *fmt, ...) __attribute__ ((format (printf, 3, 4)));
-#endif
-void thing_set_wid(thingp, widp);
-widp thing_wid(thingp);
 const char *thing_logname(thingp);
-tree_rootp thing_tile_tiles(thingp);
-void thing_animate(thingp);
-typedef uint8_t (*thing_is_fn)(thingp t);
 
-uint8_t thing_is_light_source(thingp t);
-uint8_t thing_is_candle_light(thingp t);
-uint8_t thing_is_explosion(thingp t);
+typedef uint8_t (*thing_is_fn)(thingp t);
 
 void thing_set_dir_none(thingp t);
 uint8_t thing_is_dir_none(thingp t);
@@ -104,11 +99,6 @@ typedef struct thing_ {
     tpp tp;
 
     /*
-     * Widget for displaying thing.
-     */
-    widp wid;
-
-    /*
      * Grid coordinates.
      */
     double x;
@@ -129,6 +119,13 @@ typedef struct thing_ {
      * For animation.
      */
     uint16_t current_tile;
+
+    tilep tile;
+
+    /*
+     * First tile found in an animation.
+     */
+    tilep first_tile;
 
     /*
      * Previous hop where we were. We use this to interpolate the real
@@ -152,11 +149,6 @@ typedef struct thing_ {
     int gold;
     int hp;
 
-    /*
-     * How many rays of light are hitting this thing?
-     */
-    uint16_t lit;
-
     uint32_t timestamp_change_to_next_frame;
 
     /*
@@ -171,16 +163,6 @@ typedef struct thing_ {
     uint32_t is_sleeping:1;
     uint32_t is_moving:1;
     uint32_t is_open:1;
-
-    /*
-     * Used on the map for selecting items.
-     */
-    uint32_t is_focus:1;
-
-    /*
-     * Temporary level decorations that can be ignored.
-     */
-    uint32_t is_deco:1;
 } thing;
 
 #include "thing_template.h"
@@ -263,18 +245,6 @@ int thing_move_dir(thingp t,
 void thing_move_to(thingp t, double x, double y);
 
 /*
- * thing_move.c
- */
-void thing_wid_move(thingp t,
-                    double x,
-                    double y,
-                    uint8_t smooth);
-
-void thing_wid_update(thingp t,
-                      double x, double y,
-                      uint8_t smooth);
-
-/*
  * thing_dir.c
  */
 void thing_dir(thingp t, double *dx, double *dy);
@@ -286,8 +256,6 @@ int thing_angle_to_dir(double dx, double dy);
         verify(t);
 
 #define FOR_ALL_THINGS_END } }
-
-extern int things_deco_total;
 
 extern tree_root *things;
 

@@ -4,12 +4,11 @@
  * See the LICENSE file for license.
  */
 
-#include "slre.h"
-
 #include "main.h"
-#include "thing_tile.h"
 #include "tile.h"
 #include "time_util.h"
+#include "thing_tile.h"
+#include "thing.h"
 
 void thing_animate (thingp t)
 {
@@ -227,7 +226,7 @@ void thing_animate (thingp t)
     }
 #endif
 
-    wid_set_tile(t->wid, tile->tile);
+    thing_set_tilename_(t, thing_tile_name(tile));
 
     /*
      * When does this tile expire ?

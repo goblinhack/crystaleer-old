@@ -1,7 +1,6 @@
 import util
 import mm
 import level
-import wid_map
 import thing
 import pickle
 import os.path
@@ -26,7 +25,6 @@ class Game:
         #
         # Max thing ID in use in any level. This grows forever.
         #
-        self.wid_map = None
         self.wid_player_location = None
         self.save_file = "save_file"
         self.player = None
@@ -55,19 +53,12 @@ class Game:
 
     def load_level(self, seed):
 
-        self.map_wid_create()
+        self.game_map_create()
         self.level = level.Level(xyz=self.where, seed=seed)
-        mm.game_map_add_selection_buttons()
 
     def load_level_finalize(self):
 
-        l = self.level
         mm.game_set_sdl_delay(self.sdl_delay)
-
-        mm.biome_set_is_land(value=l.chunk[0][0].is_biome_land)
-        mm.biome_set_is_dungeon(value=l.chunk[0][0].is_biome_dungeon)
-
-        mm.game_map_fixup()
 
     def save(self):
         l = self.level
@@ -134,17 +125,11 @@ class Game:
     def time_waste(self):
         mm.game_map_time_step()
 
-    #
-    # The scrollable map for the level
-    #
-    def map_wid_create(self):
-        self.map_wid_destroy()
-        self.wid_map = wid_map.WidMap(mm.MAP_WIDTH, mm.MAP_HEIGHT)
+    def game_map_create(self):
+        mm.game_map_create()
 
     def map_wid_destroy(self):
-        if self.wid_map is not None:
-            self.wid_map.destroy()
-            self.wid_map = None
+        mm.game_map_destroy()
 
     #
     # Get rid of the path indicators where the player will move
@@ -468,86 +453,6 @@ class Game:
             mm.tip2(tip)
         else:
             mm.tip2("Press h for help. Click to move.")
-
-    def player_get_next_move(self):
-
-        player = self.player
-        if len(player.nexthops) == 0:
-            return True
-
-        player.nexthops.pop()
-        if len(player.nexthops) < 1:
-            return True
-
-        #
-        # Move the player. [-1] is the player. [-2] is the adjacent cell.
-        #
-        x, y = player.nexthops[-1]
-        player.move(x, y)
-
-        #
-        # Place a light ember so the player can see where they've been
-        #
-        l = self.level
-
-        #
-        # If in a dungeon place a trail of breadcrumbs
-        #
-        if l.chunk[0][0].is_biome_dungeon:
-            t = l.thing_find(x, y, "ember1")
-            if t is None:
-                t = thing.Thing(level=l, tp_name="ember1", x=x, y=y)
-                t.push()
-
-        level_dx = 0
-        level_dy = 0
-        level_change = False
-        border = 8
-        if x <= border:
-            level_dx = -1
-            level_change = True
-
-        elif x >= mm.CHUNK_WIDTH * (mm.CHUNK_ACROSS - 1) - border:
-            level_dx = 1
-            level_change = True
-
-        if y <= border:
-            level_dy = -1
-            level_change = True
-
-        elif y >= mm.CHUNK_HEIGHT * (mm.CHUNK_DOWN - 1) - border:
-            level_dy = 1
-            level_change = True
-
-        if l.tp_is(x, y, "is_dungeon"):
-            xyz = l.where
-            xyz.z -= 1
-
-            new_level_seed = l.seed
-            new_level_seed *= xyz.y * mm.WORLD_WIDTH
-            new_level_seed *= xyz.x
-            new_level_seed *= self.player.x
-            new_level_seed += self.player.y
-
-            l.jump(xyz, seed=new_level_seed, backtracking=False)
-
-        if l.tp_is(x, y, "is_dungeon_way_down"):
-            xyz = l.where
-            xyz.z -= 1
-
-            l.jump(xyz, seed=l.seed, backtracking=False)
-
-        if l.tp_is(x, y, "is_dungeon_way_up"):
-            xyz = l.where
-            xyz.z += 1
-
-            if xyz.z == 0:
-                l.jump(xyz, seed=game.g.seed, backtracking=True)
-            else:
-                l.jump(xyz, seed=l.seed, backtracking=True)
-
-        if level_change:
-            l.scroll(level_dx, level_dy)
 
 
 def map_mouse_over(w, relx, rely, wheelx, wheely, button):

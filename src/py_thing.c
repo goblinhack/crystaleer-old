@@ -492,7 +492,7 @@ PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) 
 	                                                                        \
     tp = thing_find(thing_name);	                                        \
     if (!tp) {	                                                                \
-        ERR("%s, cannot find thing %s", __FUNCTION__, thing_name);	                \
+        ERR("%s, cannot find thing %s", __FUNCTION__, thing_name);	        \
         goto done;	                                                        \
     }	                                                                        \
 	                                                                        \
@@ -509,7 +509,6 @@ done:	                                                                        \
 THING_BODY_STRING_FN(destroyed, thing_destroyed_)
 THING_BODY_STRING_FN(set_tilename, thing_set_tilename_)
 THING_BODY_STRING_FN(set_tp, thing_set_tp_)
-THING_BODY_DOUBLE_FN(set_depth, thing_set_depth_)
 THING_BODY_DOUBLE_DOUBLE_VOID_FN(move, thing_move_)
 THING_BODY_DOUBLE_DOUBLE_FN(push, thing_push_)
 THING_BODY_VOID_FN(pop, thing_pop_)

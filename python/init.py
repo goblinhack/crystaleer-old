@@ -45,17 +45,9 @@ def load_one_plugin(filename):
         global hooks
         hooks = py_mod
 
-    if basename(filename) == "world.py":
-        global world
-        world = py_mod
-
     if basename(filename) == "game.py":
         global game
         game = py_mod
-
-    if basename(filename) == "wid_map.py":
-        global wid_map
-        wid_map = py_mod
 
     if basename(filename) == "wid.py":
         global wid
@@ -88,10 +80,6 @@ def load_one_plugin(filename):
     if basename(filename) == "wid_info.py":
         global wid_info
         wid_info = py_mod
-
-    if basename(filename) == "wid_mini_map.py":
-        global wid_mini_map
-        wid_mini_map = py_mod
 
     if basename(filename) == "wid_tp_list.py":
         global wid_tp_list
@@ -208,8 +196,6 @@ def init2():
 #                                  detail_x=0.35,
 #                                  detail_y=0.50)
 #
-#        wid_mini_map.create()
-#
 #    if True:
 #        w = wid_tp_editor.WidTpEditor(name="tp window",
 #                                      tiles="wid2",
@@ -223,7 +209,7 @@ def init2():
 #                                      detail_x=0.60,
 #                                      detail_y=0.00)
 #
-#    game.game_new()
+    game.game_new()
 #
 
 init1()

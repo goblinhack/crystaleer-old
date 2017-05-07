@@ -6,6 +6,8 @@
 
 #include "python.h"
 #include "main.h"
+#include "py_game.h"
+#include "game.h"
 
 PyObject *game_set_sound_volume_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
@@ -1277,3 +1279,6 @@ PyObject *game_set_sdl_delay_ (PyObject *obj, PyObject *args, PyObject *keywds)
 
     Py_RETURN_NONE;
 }
+
+PY_BODY_VOID_FN(game_map_create)
+PY_BODY_VOID_FN(game_map_destroy)
