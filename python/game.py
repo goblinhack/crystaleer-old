@@ -9,7 +9,6 @@ import wid_help
 import wid_help_editor
 import wid_tp_editor
 import wid_quit
-import time
 
 global g
 
@@ -34,21 +33,15 @@ class Game:
         self.editor_mode_yank = False
         self.editor_mode_tp = None
 
-        self.nexthops = None
-        self.saved_nexthops = []
-        self.level_stack = []
         self.last_level_seed = None
-        self.last_scroll_px = 0.5
-        self.last_scroll_py = 0.5
         self.last_selected_tile_x = 0
         self.last_selected_tile_y = 0
-        self.last_player_move = time.time()
 
     def new_game(self):
 
         self.sdl_delay = 1
         self.seed = 10
-        self.where = util.Xyz(100, 100, 0)
+        self.where = util.Xyz(0, 0, 0)
         self.load_level(self.seed)
 
     def load_level(self, seed):
@@ -57,7 +50,6 @@ class Game:
         self.level = level.Level(xyz=self.where, seed=seed)
 
     def load_level_finalize(self):
-
         mm.game_set_sdl_delay(self.sdl_delay)
 
     def save(self):
@@ -69,13 +61,12 @@ class Game:
             pickle.dump(self.seed, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump(self.sdl_delay, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump(self.where, f, pickle.HIGHEST_PROTOCOL)
-            pickle.dump(self.level_stack, f, pickle.HIGHEST_PROTOCOL)
 
             self.last_level_seed = l.seed
             pickle.dump(self.last_level_seed, f, pickle.HIGHEST_PROTOCOL)
 
             l.save(f)
-            mm.con("Game saved @ chunk {0} to {1}".format(str(l), s))
+            mm.con("Game saved @ level {0} to {1}".format(str(l), s))
 
     def upgrade(self):
 
@@ -97,11 +88,10 @@ class Game:
             self.seed = pickle.load(f)
             self.sdl_delay = pickle.load(f)
             self.where = pickle.load(f)
-            self.level_stack = pickle.load(f)
             self.last_level_seed = pickle.load(f)
 
             self.load_level(self.last_level_seed)
-            mm.log("Game loaded @ chunk {0} to {1}".format(str(self.level), s))
+            mm.log("Game loaded @ level {0} to {1}".format(str(self.level), s))
             mm.con("Loaded previously saved game")
 
         if self.version != self.__class__.class_version:
@@ -110,20 +100,6 @@ class Game:
     def destroy(self):
         l = self.level
         l.destroy()
-
-    #
-    # Player has moved.
-    #
-    def tick(self):
-        l = self.level
-        l.tick()
-        self.player_get_next_move()
-
-    #
-    # Player is pressing '.'
-    #
-    def time_waste(self):
-        mm.game_map_time_step()
 
     def game_map_create(self):
         mm.game_map_create()
@@ -151,15 +127,6 @@ class Game:
         #
         if wheelx != 0 or wheely != 0:
 
-            #
-            # Don't scroll too fast.
-            #
-            now = time.time()
-            if now - self.last_player_move < 0.05:
-                return True
-
-            self.last_player_move = now
-
             if self.editor_mode:
                 if wheelx > 0:
                     player.move(player.x - 1, player.y)
@@ -181,8 +148,6 @@ class Game:
                     self.map_mouse_down(w, player.x, player.y + 1, 1)
                 return True
 
-        l = self.level
-
         self.map_clear_focus()
         self.map_selected_tile(x, y)
 
@@ -191,19 +156,6 @@ class Game:
                 return self.map_mouse_down(w, x, y, button)
             return True
 
-        nexthops = l.dmap_solve(self.player.x, self.player.y, x, y)
-        self.saved_nexthops = nexthops
-        self.saved_nexthops.append((x, y))
-
-        if (player.x, player.y) in nexthops:
-            text = l.describe_position(x, y)
-            mm.tip(text)
-
-            for o in nexthops:
-                (x, y) = o
-
-                self.map_selected_tile(x, y)
-
     #
     # Mouse is over a map tile; show the route back to the player
     #
@@ -211,8 +163,6 @@ class Game:
 
         self.last_selected_tile_x = x
         self.last_selected_tile_y = y
-
-        mm.game_map_set_selection_buttons(x, y, "focus2")
 
     #
     # Move the player to the chosen tile
@@ -247,26 +197,7 @@ class Game:
                                 x=x, y=y)
                 t.push()
 
-            mm.game_map_fixup()
-            l.dmap_reset()
             return True
-
-        #
-        # Set up the player move chain
-        #
-        player = self.player
-        nexthops = l.dmap_solve(self.player.x, self.player.y, x, y)
-
-        if len(nexthops) < 2:
-            nexthops.append((x, y))
-
-        #
-        # Only if the destination is in a valid nexthops
-        #
-        if (player.x, player.y) in nexthops:
-            player.nexthops = nexthops
-
-            self.player_get_next_move()
 
         return True
 
@@ -322,15 +253,11 @@ class Game:
             if mod == mm.KMOD_LCTRL or mod == mm.KMOD_RCTRL:
                 if sym == mm.SDLK_z:
                     l.things_remove_all_except_player()
-                    mm.game_map_fixup()
-                    l.dmap_reset()
                     return True
 
             if mod == mm.KMOD_LCTRL or mod == mm.KMOD_RCTRL:
                 if sym == mm.SDLK_f:
                     l.things_flood_fill(x, y, self.editor_mode_tp)
-                    mm.game_map_fixup()
-                    l.dmap_reset()
                     return True
 
             if mod == mm.KMOD_LSHIFT or mod == mm.KMOD_RSHIFT:
@@ -381,11 +308,6 @@ class Game:
 
             return True
         else:
-            if sym == mm.SDLK_PERIOD:
-                self.tick()
-                self.time_waste()
-                return True
-
             if sym == mm.SDLK_s:
                 self.save()
                 return True
@@ -485,4 +407,3 @@ def game_new():
         g.new_game()
 
     g.load_level_finalize()
-    g.level.tick()

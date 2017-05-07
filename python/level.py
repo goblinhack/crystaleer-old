@@ -2,6 +2,9 @@ import traceback
 import mm
 import thing
 import sys
+import os
+import pickle
+import tp
 
 
 class Level:
@@ -16,6 +19,9 @@ class Level:
         # All things in the level
         #
         self.all_things = {}
+
+        self.things_at = [[[] for x in range(mm.MAP_WIDTH)]
+                          for y in range(mm.MAP_HEIGHT)]
 
     def log(self, msg):
         mm.log("Level {0}: {1}".format(str(self), msg))
@@ -41,86 +47,139 @@ class Level:
     def destroy(self):
         self.log("Destroying level {")
 
-        for cx in range(0, mm.CHUNK_ACROSS):
-            for cy in range(0, mm.CHUNK_DOWN):
-                self.chunk[cx][cy].destroy()
+        #
+        # to avoid dictionary changed size during iteration, walk the keys
+        #
+        for thing_id, t in self.all_things.items():
 
-        self.log("Destroy cached levels")
-        for chunk_name, c in list(self.chunk_cache.items()):
-            c.destroy()
+            #
+            # Delete from the parent too
+            #
+            if thing_id in self.level.all_things:
+                del self.level.all_things[thing_id]
+
+            t.destroy()
 
         self.log("} Destroyed level")
         del self
 
-    def tick(self):
-        return
-
     def dump(self):
 
-        for cx in range(0, mm.CHUNK_ACROSS):
-            for cy in range(0, mm.CHUNK_DOWN):
-                self.chunk[cx][cy].dump()
+        for i in self.all_things:
+            self.all_things[i].dump()
 
     def save(self, f):
 
         self.log("Save level")
 
-        for cx in range(0, mm.CHUNK_ACROSS):
-            for cy in range(0, mm.CHUNK_DOWN):
-                self.chunk[cx][cy].save()
+        with open(os.path.normcase(
+                  os.path.join(os.environ["APPDATA"], str(self))), 'wb') as f:
+            pickle.dump(self.where, f, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.all_things, f, pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.seed, f, pickle.HIGHEST_PROTOCOL)
 
-        self.log("Save cached levels")
-        for chunk_name, c in self.chunk_cache.items():
-            c.save()
+    def upgrade(self):
+
+        if self.version < 2:
+            self.v2_field = 2
+
+        self.debug("upgraded from ver {0} to {1}".format(
+                   self.version, self.__class__.class_version))
+
+        self.version = self.__class__.class_version
+
+    def load(self, cx, cy):
+        self.log("Load level at {0},{1}".format(cx, cy))
+
+        with open(os.path.normcase(
+                    os.path.join(os.environ["APPDATA"],
+                                 str(self))), 'rb') as f:
+            self.where = pickle.load(f)
+            self.all_things = pickle.load(f)
+            self.seed = pickle.load(f)
+
+        if self.version != self.__class__.class_version:
+            self.upgrade()
+
+        self.biome_set_vectors()
+
+        if self.biome_load:
+            self.biome_load(self)
+
+        #
+        # recreate the widgets for this thing
+        #
+        for thing_id, t in self.all_things.items():
+            t = self.all_things[thing_id]
+            t.loaded(self, self.level)
 
     def thing_find(self, x, y, tp_name):
 
         if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
             return None
 
-        (chunk, x, y) = self.xy_to_chunk_xy(x, y)
-        return chunk.thing_find(x, y, tp_name)
+        for t in self.hunk[x][y]:
+            if t.tp.name == tp_name:
+                return t
+
+        return None
 
     def thing_find_same_type(self, x, y, tp_name):
 
         if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
             return None
 
-        (chunk, x, y) = self.xy_to_chunk_xy(x, y)
-        return chunk.thing_find_same_type(x, y, tp_name)
+        f = tp.all_tps[tp_name]
+        for t in self.things_at[x][y]:
+            if tp.same_type(f, t.tp):
+                return t
+
+        return None
 
     def thing_top(self, x, y):
 
         if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
             return None
 
-        (chunk, x, y) = self.xy_to_chunk_xy(x, y)
-        return chunk.thing_top(x, y)
+        for t in self.things_at[x][y]:
+            return t
+
+        return None
 
     def things_at(self, x, y):
 
         if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
             return []
 
-        (chunk, x, y) = self.xy_to_chunk_xy(x, y)
-        return chunk.things_at(x, y)
+        r = []
+        for t in self.things_at[x][y]:
+            r.append(t)
+
+        return r
 
     def tp_is(self, x, y, value):
 
         if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
             return None
 
-        (chunk, x, y) = self.xy_to_chunk_xy(x, y)
-        return chunk.tp_is(x, y, value)
+        for t in self.things_at[x][y]:
+            v = getattr(t.tp, value)
+            if v is not None:
+                if v:
+                    return (x, y)
+
+        return None
 
     def tp_is_where(self, value):
 
-        for cx in range(0, mm.CHUNK_ACROSS):
-            for cy in range(0, mm.CHUNK_DOWN):
-                found = self.chunk[cx][cy].tp_is_where(value)
-                if found is not None:
-                    (x, y) = found
-                    return (self.chunk_xy_to_xy(cx, cy, x, y))
+        for y in range(mm.MAP_HEIGHT):
+            for x in range(mm.MAP_WIDTH):
+                for t in self.things_at[x][y]:
+                    v = getattr(t.tp, value)
+                    if v is not None:
+                        if v:
+                            return (x, y)
+
         return None
 
     def things_remove_all_except_player(self):
@@ -145,68 +204,11 @@ class Level:
 
         walked[x][y] = 1
 
-        (chunk, ox, oy) = self.xy_to_chunk_xy(x, y)
-
-        for f in chunk.things_on_chunk[ox][oy]:
+        for f in self.things_at[x][y]:
             other_tp = f.tp
 
-            if not tp.is_wall and \
-               not tp.is_landrock and \
-               not tp.is_landrock_snow and \
-               not tp.is_cwall and \
-               not tp.is_hwall:
-                if other_tp.is_wall or \
-                   other_tp.is_landrock or \
-                   other_tp.is_landrock_snow or \
-                   other_tp.is_hwall or \
-                   other_tp.is_cwall:
-                    return
-
-            if tp.is_wall or \
-               tp.is_door or \
-               tp.is_landrock or \
-               tp.is_landrock_snow or \
-               tp.is_cwall or \
-               tp.is_hwall or \
-               tp.is_bridge or \
-               tp.is_water:
-                if other_tp.is_wall or \
-                   other_tp.is_door or \
-                   other_tp.is_landrock or \
-                   other_tp.is_landrock_snow or \
-                   other_tp.is_cwall or \
-                   other_tp.is_hwall or \
-                   other_tp.is_bridge or \
-                   other_tp.is_water:
-                    return
-
-            if tp.is_door:
-                if other_tp.is_wall or \
-                   other_tp.is_cwall or \
-                   other_tp.is_hwall or \
-                   other_tp.is_water:
-                    return
-
-            if tp.is_dirt or \
-               tp.is_grass or \
-               tp.is_lawn or \
-               tp.is_snow or \
-               tp.is_ice or \
-               tp.is_gravel or \
-               tp.is_gravel_snow or \
-               tp.is_snow or \
-               tp.is_sand or \
-               tp.is_water:
-                if other_tp.is_dirt or \
-                   other_tp.is_grass or \
-                   other_tp.is_lawn or \
-                   other_tp.is_snow or \
-                   other_tp.is_ice or \
-                   other_tp.is_gravel or \
-                   other_tp.is_gravel_snow or \
-                   other_tp.is_snow or \
-                   other_tp.is_sand or \
-                   other_tp.is_water:
+            if not tp.is_wall:
+                if other_tp.is_wall:
                     return
 
         t = self.thing_find_same_type(x, y, tp.name)
@@ -235,12 +237,53 @@ class Level:
 
     def is_movement_blocking_at(self, x, y):
 
-        (chunk, ox, oy) = self.xy_to_chunk_xy(x, y)
-        if chunk.is_movement_blocking_at(ox, oy):
-            return True
+        if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
+            return False
+
+        for t in self.things_at[x][y]:
+            if t.tp.is_movement_blocking:
+                return True
+
         return False
 
     def describe_position(self, x, y):
 
-        (chunk, ox, oy) = self.xy_to_chunk_xy(x, y)
-        return chunk.describe_position(ox, oy)
+        if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
+            return ""
+
+        #
+        # If water then hide things like treasure.
+        #
+        hide_treasure = True
+        for t in self.things_at[x][y]:
+            if t.tp.is_floor:
+                hide_treasure = False
+
+        for t in self.things_at[x][y]:
+            if t.tp.is_treasure:
+                if hide_treasure:
+                    continue
+
+            if t.tp.long_name is not None:
+                return t.tp.long_name.title()
+
+        return ""
+
+    def thing_push(self, x, y, t):
+
+        #
+        # When loading the game again, things think they are on
+        # the level already.
+        #
+        l = self.things_at[x][y]
+        if t in l:
+            return
+
+        l.append(t)
+
+        self.all_things[t.thing_id] = t
+
+    def thing_pop(self, x, y, t):
+
+        self.things_at[x][y].remove(t)
+        del self.all_things[t.thing_id]
