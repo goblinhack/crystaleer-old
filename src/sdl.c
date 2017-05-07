@@ -14,7 +14,6 @@
 #include "command.h"
 #include "term.h"
 #include "string_util.h"
-#include "wid_game_map.h"
 #include "player.h"
 #include "python.h"
 
@@ -1368,10 +1367,6 @@ void sdl_loop (void)
          */
         sdl_tick();
 
-//        gl_enter_2_5d_mode();
-
-//        gl_leave_2_5d_mode();
-
         /*
          * Do processing of some things, like reading the keyboard or doing
          * stuff with widgets only occasionally if we do not need to.
@@ -1449,20 +1444,11 @@ void sdl_loop (void)
             }
         }
 
-        if (game.need_tick) {
-            game.need_tick = false;
+#if 0
+        {
             py_call_void_module_void("hooks", "hook_game_tick");
         }
-
-        levelp level = &game.level;
-
-        level = &game.level;
-        if (level) {
-            /*
-             * Move the window so it scrolls as the player widget moves.
-             */
-            wid_game_map_scroll_adjust(level, 1);
-        }
+#endif
 
         /*
          * Display windows.

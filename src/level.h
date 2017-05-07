@@ -8,7 +8,6 @@
 
 #include "thing_template.h"
 #include "thing.h"
-#include "map.h"
 
 #define DMAP_MAP_MAX 8
 

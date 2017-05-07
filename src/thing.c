@@ -6,14 +6,11 @@
 
 #include "main.h"
 #include "thing_tile.h"
-#include "wid_game_map.h"
 #include "python.h"
 
 tree_root *things;
 
 thingp thing_scratch[THING_SCRATCH_SIZE];
-
-int things_deco_total;
 
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
@@ -77,14 +74,6 @@ thingp thing_new (const char *name,
 
 static void thing_destroy_internal (thingp t)
 {
-    if (t->wid) {
-        wid_set_thing(t->wid, 0);
-        wid_destroy_nodelay(&t->wid);
-
-        if (t->is_deco) {
-            things_deco_total--;
-        }
-    }
 }
 
 void thing_destroyed_ (thingp t, const char *reason)
@@ -146,7 +135,9 @@ PyObject *thing_push_ (thingp t, double x, double y)
         }
     }
 
-    t->wid = wid_game_map_replace_tile(x, y, t);
+    /* 
+     * TBD
+     */
 
     return (Py_BuildValue("K", (uintptr_t) t->wid));
 }
@@ -155,8 +146,9 @@ void thing_pop_ (thingp t)
 {
     verify(t);
 
-    wid_set_thing(t->wid, 0);
-    wid_destroy_nodelay(&t->wid);
+    /*
+     * TBD
+     */
 }
 
 /*
@@ -201,20 +193,6 @@ const char *thing_logname (thingp t)
     return (tmp[loop++]);
 }
 
-uint8_t thing_z_depth (thingp t)
-{
-    verify(t);
-
-    return (tp_get_z_depth(thing_tp(t)));
-}
-
-uint8_t thing_z_order (thingp t)
-{
-    verify(t);
-
-    return (tp_get_z_order(thing_tp(t)));
-}
-
 tree_rootp thing_tile_tiles (thingp t)
 {
     verify(t);
@@ -227,55 +205,6 @@ widp thing_wid (thingp t)
     verify(t);
 
     return (t->wid);
-}
-
-void thing_set_wid (thingp t, widp w)
-{
-    verify(t);
-
-    if (w) {
-        verify(w);
-    } else {
-        /*
-         * If setting the wid to 0, we're destroying it.
-         */
-        if (t->wid) {
-            verify(t->wid);
-            wid_set_thing(t->wid, 0);
-            wid_fade_out(t->wid, 100);
-            wid_destroy_in(t->wid, 100);
-        }
-    }
-
-    t->wid = w;
-}
-
-uint8_t thing_is_light_source (thingp t)
-{
-    verify(t);
-
-    return (thing_tp(t)->is_light_source);
-}
-
-uint8_t thing_is_candle_light (thingp t)
-{
-    verify(t);
-
-    return (thing_tp(t)->is_candle_light);
-}
-
-uint8_t thing_is_explosion (thingp t)
-{
-    verify(t);
-
-    return (thing_tp(t)->is_explosion);
-}
-
-void thing_set_is_sleeping (thingp t, uint8_t val)
-{
-    verify(t);
-
-    t->is_sleeping = val;
 }
 
 void thing_set_is_dead (thingp t, uint8_t val)

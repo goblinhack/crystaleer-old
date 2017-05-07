@@ -10,7 +10,6 @@ class Wid:
     def __init__(self, name,
                  wid_id=0,
                  parent=0,
-                 is_grid=False,
                  is_scrollbar=False, **kw):
 
         self.parent = parent
@@ -18,8 +17,6 @@ class Wid:
 
         if wid_id != 0:
             self.wid_id = wid_id
-        elif is_grid is True:
-            self.wid_id = mm.wid_new_grid(self, parent=parent, name=name, **kw)
         elif is_scrollbar is True:
             self.wid_id = mm.wid_new_scrollbar(self, parent, name=name, **kw)
         else:
@@ -279,18 +276,6 @@ class Wid:
 
     def move_end(self, **kw):
         mm.wid_move_end(self, **kw)
-
-    def destroy_grid(self, **kw):
-        mm.wid_destroy_grid(self, **kw)
-
-    def detach_from_grid(self, **kw):
-        mm.wid_detach_from_grid(self, **kw)
-
-    def attach_to_grid(self, **kw):
-        mm.wid_attach_to_grid(self, **kw)
-
-    def empty_grid(self, **kw):
-        mm.wid_empty_grid(self, **kw)
 
     def scroll_text(self, **kw):
         mm.wid_scroll_text(self, **kw)

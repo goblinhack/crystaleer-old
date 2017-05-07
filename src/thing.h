@@ -38,8 +38,6 @@ void thing_dead(thingp, thingp killer,
 void thing_set_wid(thingp, widp);
 widp thing_wid(thingp);
 const char *thing_logname(thingp);
-uint8_t thing_z_depth(thingp);
-uint8_t thing_z_order(thingp);
 tree_rootp thing_tile_tiles(thingp);
 void thing_animate(thingp);
 typedef uint8_t (*thing_is_fn)(thingp t);
@@ -76,8 +74,6 @@ void thing_set_is_dead(thingp t, uint8_t val);
 const char *thing_name(thingp);
 const char *thing_short_name(thingp);
 const char *thing_tooltip(thingp);
-uint8_t thing_z_depth(thingp);
-uint8_t thing_z_order(thingp);
 tree_rootp thing_tiles(thingp);
 thing_tilep thing_current_tile(thingp t);
 
@@ -146,11 +142,6 @@ typedef struct thing_ {
      */
     double dx;
     double dy;
-
-    /*
-     * e.g. IS_JOIN_BLOCK
-     */
-    uint8_t join_index;
 
     uint8_t dir;
 
@@ -247,27 +238,6 @@ static inline uint8_t thing_is_player (thingp t)
     verify(t);
 
     return (tp_is_player(thing_tp(t)));
-}
-
-static inline uint8_t thing_is_shadow_caster (thingp t)
-{
-    verify(t);
-
-    return (tp_is_shadow_caster(thing_tp(t)));
-}
-
-static inline uint8_t thing_is_shadow_caster_soft (thingp t)
-{
-    verify(t);
-
-    return (tp_is_shadow_caster_soft(thing_tp(t)));
-}
-
-static inline uint8_t thing_is_joinable (thingp t)
-{
-    verify(t);
-
-    return (tp_is_joinable(thing_tp(t)));
 }
 
 /*

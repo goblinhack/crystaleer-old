@@ -1527,11 +1527,6 @@ static PyMethodDef python_c_METHODS[] =
         METH_VARARGS | METH_KEYWORDS,
         "create scrollbars"},
 
-    {"wid_new_grid",
-        (PyCFunction)wid_new_grid_,
-        METH_VARARGS | METH_KEYWORDS,
-        "create grid"},
-
     {"wid_set_shape",
         (PyCFunction)wid_set_shape_,
         METH_VARARGS | METH_KEYWORDS,
@@ -1732,10 +1727,6 @@ static PyMethodDef python_c_METHODS[] =
     WID_DECL(wid_set_on_display)
     WID_DECL(wid_set_on_display_win)
 
-    WID_DECL(wid_destroy_grid)
-    WID_DECL(wid_detach_from_grid)
-    WID_DECL(wid_attach_to_grid)
-    WID_DECL(wid_empty_grid)
     WID_DECL(wid_update)
     WID_DECL(wid_raise)
     WID_DECL(wid_lower)
@@ -1751,11 +1742,6 @@ static PyMethodDef python_c_METHODS[] =
     WID_DECL(wid_animate)
 
     TP_SET_DECL(tile)
-    TP_SET_DECL(light_radius)
-    TP_SET_DECL(z_depth)
-    TP_SET_DECL(z_order)
-    TP_SET_DECL(scale)
-    TP_SET_DECL(z_depth)
     TP_SET_DECL(speed)
     TP_SET_DECL(blit_top_off)
     TP_SET_DECL(blit_bot_off)
@@ -1763,22 +1749,9 @@ static PyMethodDef python_c_METHODS[] =
     TP_SET_DECL(blit_right_off)
     TP_SET_DECL(short_name)
     TP_SET_DECL(raw_name)
-    TP_SET_DECL(light_tint)
     TP_SET_DECL(is_animated)
     TP_SET_DECL(is_animated_no_dir)
     TP_SET_DECL(is_animation)
-    TP_SET_DECL(is_candle_light)
-    TP_SET_DECL(is_door)
-    TP_SET_DECL(is_water)
-    TP_SET_DECL(is_lava)
-    TP_SET_DECL(is_effect_fade_in_out)
-    TP_SET_DECL(is_effect_pulse)
-    TP_SET_DECL(is_effect_rotate_2way)
-    TP_SET_DECL(is_effect_sway)
-    TP_SET_DECL(is_explosion)
-    TP_SET_DECL(is_food)
-    TP_SET_DECL(is_weapon)
-    TP_SET_DECL(is_hidden)
     TP_SET_DECL(is_monst)
     TP_SET_DECL(is_player)
     TP_SET_DECL(is_rrr1)
@@ -1827,97 +1800,13 @@ static PyMethodDef python_c_METHODS[] =
     TP_SET_DECL(is_rrr44)
     TP_SET_DECL(is_rrr45)
     TP_SET_DECL(is_rrr46)
-    TP_SET_DECL(has_shadow)
-    TP_SET_DECL(is_chair)
-    TP_SET_DECL(is_chest)
-    TP_SET_DECL(is_bookcase)
-    TP_SET_DECL(is_table)
-    TP_SET_DECL(is_lawn)
-    TP_SET_DECL(is_carpet_deco)
-    TP_SET_DECL(is_carpet)
-    TP_SET_DECL(is_house_item)
-    TP_SET_DECL(is_cwall)
-    TP_SET_DECL(is_animated_lr_flip)
-    TP_SET_DECL(is_gravel_snow_deco)
-    TP_SET_DECL(is_landrock_snow)
-    TP_SET_DECL(is_hidden_from_editor)
-    TP_SET_DECL(is_hwall)
-    TP_SET_DECL(is_dungeon_item)
-    TP_SET_DECL(is_difficulty_easy)
-    TP_SET_DECL(is_difficulty_hard)
-    TP_SET_DECL(is_difficulty_nightmare)
-    TP_SET_DECL(is_world_item)
     TP_SET_DECL(is_solid_ground)
-    TP_SET_DECL(is_dungeon_way_up)
-    TP_SET_DECL(is_dirt_deco)
-    TP_SET_DECL(is_dirt_snow_deco)
-    TP_SET_DECL(is_grass_deco)
-    TP_SET_DECL(is_grass_snow_deco)
-    TP_SET_DECL(is_gravel_deco)
-    TP_SET_DECL(is_sand_deco)
-    TP_SET_DECL(is_sand_snow_deco)
-    TP_SET_DECL(is_snow_deco)
-    TP_SET_DECL(is_sand_snow)
-    TP_SET_DECL(is_dirt_snow)
-    TP_SET_DECL(is_grass_snow)
-    TP_SET_DECL(is_road_snow)
-    TP_SET_DECL(is_road)
-    TP_SET_DECL(is_dungeon_snow)
-    TP_SET_DECL(is_dungeon)
-    TP_SET_DECL(is_focus)
-    TP_SET_DECL(is_gravel_snow)
-    TP_SET_DECL(is_tree_conifer)
-    TP_SET_DECL(is_snow_mound)
-    TP_SET_DECL(is_rock)
-    TP_SET_DECL(is_ice)
-    TP_SET_DECL(is_ice)
-    TP_SET_DECL(is_gravel)
-    TP_SET_DECL(is_small_rock)
-    TP_SET_DECL(is_marsh_plant)
-    TP_SET_DECL(is_landrock)
-    TP_SET_DECL(is_snow)
-    TP_SET_DECL(is_hidden)
-    TP_SET_DECL(is_dirt)
-    TP_SET_DECL(is_sand)
-    TP_SET_DECL(is_plant)
-    TP_SET_DECL(is_tree)
-    TP_SET_DECL(is_grass)
-    TP_SET_DECL(is_bridge)
     TP_SET_DECL(is_movement_blocking)
-    TP_SET_DECL(is_treasure)
-    TP_SET_DECL(is_dungeon_way_up)
-    TP_SET_DECL(is_dungeon_way_down)
-    TP_SET_DECL(is_chasm_smoke)
     TP_SET_DECL(is_key)
-    TP_SET_DECL(is_dusty)
-    TP_SET_DECL(is_corridor)
-    TP_SET_DECL(light_pulse_amount)
-    TP_SET_DECL(is_healing)
-    TP_SET_DECL(is_armor)
-    TP_SET_DECL(is_magical)
-    TP_SET_DECL(is_shadow_caster)
-    TP_SET_DECL(is_shadow_caster_soft)
-    TP_SET_DECL(is_sleeping)
     TP_SET_DECL(is_wall)
     TP_SET_DECL(is_floor)
-    TP_SET_DECL(is_door)
     TP_SET_DECL(is_water)
     TP_SET_DECL(is_lava)
-
-    {"dmap_process",
-        (PyCFunction)dmap_process_,
-        METH_VARARGS | METH_KEYWORDS,
-        "process a djkstra map"},
-
-    {"biome_set_is_land",
-        (PyCFunction)biome_set_is_land_,
-        METH_VARARGS | METH_KEYWORDS,
-        "change biome type"},
-
-    {"biome_set_is_dungeon",
-        (PyCFunction)biome_set_is_dungeon_,
-        METH_VARARGS | METH_KEYWORDS,
-        "change biome type"},
 
     {"game_set_sound_volume",
         (PyCFunction)game_set_sound_volume_,
@@ -1936,51 +1825,6 @@ static PyMethodDef python_c_METHODS[] =
 
     {"game_set_full_screen",
         (PyCFunction)game_set_full_screen_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_set_move_count",
-        (PyCFunction)game_set_move_count_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_set_moves_per_day",
-        (PyCFunction)game_set_moves_per_day_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_map_fixup",
-        (PyCFunction)game_map_fixup_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_map_cleanup",
-        (PyCFunction)game_map_cleanup_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_map_add_selection_buttons",
-        (PyCFunction)game_map_add_selection_buttons_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_map_remove_selection_buttons",
-        (PyCFunction)game_map_remove_selection_buttons_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_map_clear_selection_buttons",
-        (PyCFunction)game_map_clear_selection_buttons_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_map_set_selection_buttons",
-        (PyCFunction)game_map_set_selection_buttons_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_map_time_step",
-        (PyCFunction)game_map_time_step_,
         METH_VARARGS | METH_KEYWORDS,
         ""},
 
@@ -2454,41 +2298,6 @@ static PyMethodDef python_c_METHODS[] =
         METH_VARARGS | METH_KEYWORDS,
         ""},
 
-    {"game_set_daylight_color_a",
-        (PyCFunction)game_set_daylight_color_a_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_set_daylight_color_b",
-        (PyCFunction)game_set_daylight_color_b_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_set_daylight_color_g",
-        (PyCFunction)game_set_daylight_color_g_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_set_daylight_color_r",
-        (PyCFunction)game_set_daylight_color_r_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_set_rain_amount",
-        (PyCFunction)game_set_rain_amount_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_set_snow_amount",
-        (PyCFunction)game_set_snow_amount_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
-    {"game_scroll_chunk",
-        (PyCFunction)game_scroll_chunk_,
-        METH_VARARGS | METH_KEYWORDS,
-        ""},
-
     {0, 0, 0, 0}   /* sentinel */
 };
 
@@ -2831,26 +2640,6 @@ static void python_add_consts (void)
     PyModule_AddIntConstant(mm_mod, "SDLK_MENU", SDLK_MENU);
     PyModule_AddIntConstant(mm_mod, "SDLK_POWER", SDLK_POWER);
     PyModule_AddIntConstant(mm_mod, "SDLK_UNDO", SDLK_UNDO);
-
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_BURIED", Z_DEPTH_BURIED);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_LAVA", Z_DEPTH_LAVA);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_ROCK", Z_DEPTH_ROCK);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_ROAD", Z_DEPTH_ROAD);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_LAWN", Z_DEPTH_LAWN);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_SAND", Z_DEPTH_SAND);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_DIRT", Z_DEPTH_DIRT);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_GRAVEL", Z_DEPTH_GRAVEL);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_GRASS", Z_DEPTH_GRASS);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_SNOW", Z_DEPTH_SNOW);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_ICE", Z_DEPTH_ICE);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_BRIDGE", Z_DEPTH_BRIDGE);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_FLOOR", Z_DEPTH_FLOOR);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_FLOOR2", Z_DEPTH_FLOOR2);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_WALL", Z_DEPTH_WALL);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_TREASURE", Z_DEPTH_TREASURE);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_PLAYER", Z_DEPTH_PLAYER);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_EXPLOSION", Z_DEPTH_EXPLOSION);
-    PyModule_AddIntConstant(mm_mod, "Z_DEPTH_ACTIONS", Z_DEPTH_ACTIONS);
 }
 
 void python_init (char *argv[])

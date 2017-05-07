@@ -63,8 +63,6 @@ void wid_animate (widp w)
     uint32_t size = tree_root_size(tiles);
     uint32_t tries = 0;
 
-    thingp t = wid_get_thing(w);
-
     while (tries < size) {
         tries++;
 
@@ -75,52 +73,7 @@ void wid_animate (widp w)
             tile = thing_tile_first(tiles);
         }
 
-        if (t && thing_is_dir_tl(t)) {
-            if (!thing_tile_is_dir_tl(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else if (t && thing_is_dir_bl(t)) {
-            if (!thing_tile_is_dir_bl(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else if (t && thing_is_dir_br(t)) {
-            if (!thing_tile_is_dir_br(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else if (t && thing_is_dir_tr(t)) {
-            if (!thing_tile_is_dir_tr(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else if (t && thing_is_dir_up(t)) {
-            if (!thing_tile_is_dir_up(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else if (t && thing_is_dir_down(t)) {
-            if (!thing_tile_is_dir_down(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else if (t && thing_is_dir_left(t)) {
-            if (!thing_tile_is_dir_left(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else if (t && thing_is_dir_right(t)) {
-            if (!thing_tile_is_dir_right(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else if (t && thing_is_open(t)) {
-            if (!thing_tile_is_open(tile)) {
-                tile = thing_tile_next(tiles, tile);
-                continue;
-            }
-        } else {
+        {
             if (thing_tile_is_dead(tile)) {
                 tile = thing_tile_next(tiles, tile);
                 continue;

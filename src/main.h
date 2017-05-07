@@ -420,11 +420,6 @@ struct game_ {
 
     uint32_t tick;
 
-    /*
-     * Need python to tick the game
-     */
-    int need_tick;
-
     widp wid_map;
     widp wid_grid;
     widp wid_game_horiz_scroll;

@@ -586,55 +586,6 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
 
     t->delay_ms = delay_ms;
     t->is_moving = is_moving;
-    t->is_join_block = is_join_block;
-    t->is_join_horiz = is_join_horiz;
-    t->is_join_vert = is_join_vert;
-    t->is_join_node = is_join_node;
-    t->is_join_left = is_join_left;
-    t->is_join_right = is_join_right;
-    t->is_join_top = is_join_top;
-    t->is_join_bot = is_join_bot;
-    t->is_join_tl = is_join_tl;
-    t->is_join_tr = is_join_tr;
-    t->is_join_bl = is_join_bl;
-    t->is_join_br = is_join_br;
-    t->is_join_t = is_join_t;
-    t->is_join_t90 = is_join_t90;
-    t->is_join_t180 = is_join_t180;
-    t->is_join_t270 = is_join_t270;
-    t->is_join_x = is_join_x;
-    t->is_join_tl2 = is_join_tl2;
-    t->is_join_tr2 = is_join_tr2;
-    t->is_join_bl2 = is_join_bl2;
-    t->is_join_br2 = is_join_br2;
-    t->is_join_t_1 = is_join_t_1;
-    t->is_join_t_2 = is_join_t_2;
-    t->is_join_t_3 = is_join_t_3;
-    t->is_join_t90_1 = is_join_t90_1;
-    t->is_join_t90_2 = is_join_t90_2;
-    t->is_join_t90_3 = is_join_t90_3;
-    t->is_join_t180_1 = is_join_t180_1;
-    t->is_join_t180_2 = is_join_t180_2;
-    t->is_join_t180_3 = is_join_t180_3;
-    t->is_join_t270_1 = is_join_t270_1;
-    t->is_join_t270_2 = is_join_t270_2;
-    t->is_join_t270_3 = is_join_t270_3;
-    t->is_join_x1 = is_join_x1;
-    t->is_join_x1_270 = is_join_x1_270;
-    t->is_join_x1_180 = is_join_x1_180;
-    t->is_join_x1_90 = is_join_x1_90;
-    t->is_join_x2 = is_join_x2;
-    t->is_join_x2_270 = is_join_x2_270;
-    t->is_join_x2_180 = is_join_x2_180;
-    t->is_join_x2_90 = is_join_x2_90;
-    t->is_join_x3 = is_join_x3;
-    t->is_join_x3_180 = is_join_x3_180;
-    t->is_join_x4 = is_join_x4;
-    t->is_join_x4_270 = is_join_x4_270;
-    t->is_join_x4_180 = is_join_x4_180;
-    t->is_join_x4_90 = is_join_x4_90;
-    t->is_join_horiz2 = is_join_horiz2;
-    t->is_join_vert2 = is_join_vert2;
     t->is_yyy5 = is_yyy5;
     t->is_yyy6 = is_yyy6;
     t->is_yyy7 = is_yyy7;
@@ -646,7 +597,6 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
     t->is_yyy13 = is_yyy13;
     t->is_yyy14 = is_yyy14;
     t->is_yyy15 = is_yyy15;
-    t->is_submerged = is_submerged;
     t->is_sleeping = is_sleeping;
     t->is_open = is_open;
     t->is_dead = is_dead;
@@ -694,44 +644,21 @@ done:
     Py_RETURN_NONE;	
 }	
 
-TP_BODY_SET_DOUBLE(light_radius)
-TP_BODY_SET_DOUBLE(scale)
-TP_BODY_SET_INT(z_depth)
-TP_BODY_SET_INT(z_order)
 TP_BODY_SET_INT(speed)
 TP_BODY_SET_INT(blit_top_off)
 TP_BODY_SET_INT(blit_bot_off)
 TP_BODY_SET_INT(blit_left_off)
 TP_BODY_SET_INT(blit_right_off)
+TP_BODY_SET_INT(is_movement_blocking)
+TP_BODY_SET_INT(is_solid_ground)
 TP_BODY_SET_STRING(short_name)
 TP_BODY_SET_STRING(raw_name)
-static void light_tint_fixup (tpp t)
-{
-    if (t->light_tint) {
-        t->light_color = color_find(t->light_tint);
-    } else {
-        t->light_color = WHITE;
-    }
-}
-TP_BODY_SET_STRING_FN(light_tint, light_tint_fixup)
 TP_BODY_SET_INT(is_animated)
 TP_BODY_SET_INT(is_animated_no_dir)
 TP_BODY_SET_INT(is_animation)
-TP_BODY_SET_INT(is_candle_light)
-TP_BODY_SET_INT(is_cats_eyes)
-TP_BODY_SET_INT(is_shadow_caster)
-TP_BODY_SET_INT(is_shadow_caster_soft)
 TP_BODY_SET_INT(is_door)
 TP_BODY_SET_INT(is_lava)
 TP_BODY_SET_INT(is_water)
-TP_BODY_SET_INT(is_effect_fade_in_out)
-TP_BODY_SET_INT(is_effect_pulse)
-TP_BODY_SET_INT(is_effect_rotate_2way)
-TP_BODY_SET_INT(is_effect_sway)
-TP_BODY_SET_INT(is_explosion)
-TP_BODY_SET_INT(is_food)
-TP_BODY_SET_INT(is_weapon)
-TP_BODY_SET_INT(is_hidden)
 TP_BODY_SET_INT(is_monst)
 TP_BODY_SET_INT(is_player)
 TP_BODY_SET_INT(is_rrr1)
@@ -780,71 +707,7 @@ TP_BODY_SET_INT(is_rrr43)
 TP_BODY_SET_INT(is_rrr44)
 TP_BODY_SET_INT(is_rrr45)
 TP_BODY_SET_INT(is_rrr46)
-TP_BODY_SET_INT(has_shadow)
-TP_BODY_SET_INT(is_chair)
-TP_BODY_SET_INT(is_chest)
-TP_BODY_SET_INT(is_bookcase)
-TP_BODY_SET_INT(is_table)
-TP_BODY_SET_INT(is_lawn)
-TP_BODY_SET_INT(is_carpet_deco)
-TP_BODY_SET_INT(is_carpet)
-TP_BODY_SET_INT(is_house_item)
-TP_BODY_SET_INT(is_cwall)
 TP_BODY_SET_INT(is_animated_lr_flip)
-TP_BODY_SET_INT(is_gravel_snow_deco)
-TP_BODY_SET_INT(is_landrock_snow)
-TP_BODY_SET_INT(is_hidden_from_editor)
-TP_BODY_SET_INT(is_hwall)
-TP_BODY_SET_INT(is_dungeon_item)
-TP_BODY_SET_INT(is_difficulty_easy)
-TP_BODY_SET_INT(is_difficulty_hard)
-TP_BODY_SET_INT(is_difficulty_nightmare)
-TP_BODY_SET_INT(is_world_item)
-TP_BODY_SET_INT(is_solid_ground)
-TP_BODY_SET_INT(is_dirt_deco)
-TP_BODY_SET_INT(is_dirt_snow_deco)
-TP_BODY_SET_INT(is_grass_deco)
-TP_BODY_SET_INT(is_grass_snow_deco)
-TP_BODY_SET_INT(is_gravel_deco)
-TP_BODY_SET_INT(is_sand_deco)
-TP_BODY_SET_INT(is_sand_snow_deco)
-TP_BODY_SET_INT(is_snow_deco)
-TP_BODY_SET_INT(is_sand_snow)
-TP_BODY_SET_INT(is_dirt_snow)
-TP_BODY_SET_INT(is_grass_snow)
-TP_BODY_SET_INT(is_road_snow)
-TP_BODY_SET_INT(is_road)
-TP_BODY_SET_INT(is_dungeon_snow)
-TP_BODY_SET_INT(is_dungeon)
-TP_BODY_SET_INT(is_focus)
-TP_BODY_SET_INT(is_gravel_snow)
-TP_BODY_SET_INT(is_tree_conifer)
-TP_BODY_SET_INT(is_snow_mound)
-TP_BODY_SET_INT(is_rock)
-TP_BODY_SET_INT(is_ice)
-TP_BODY_SET_INT(is_gravel)
-TP_BODY_SET_INT(is_small_rock)
-TP_BODY_SET_INT(is_marsh_plant)
-TP_BODY_SET_INT(is_landrock)
-TP_BODY_SET_INT(is_snow)
-TP_BODY_SET_INT(is_dirt)
-TP_BODY_SET_INT(is_sand)
-TP_BODY_SET_INT(is_plant)
-TP_BODY_SET_INT(is_tree)
-TP_BODY_SET_INT(is_grass)
-TP_BODY_SET_INT(is_bridge)
-TP_BODY_SET_INT(is_movement_blocking)
-TP_BODY_SET_INT(is_treasure)
-TP_BODY_SET_INT(is_dungeon_way_up)
-TP_BODY_SET_INT(is_dungeon_way_down)
-TP_BODY_SET_INT(is_chasm_smoke)
 TP_BODY_SET_INT(is_key)
-TP_BODY_SET_INT(is_dusty)
-TP_BODY_SET_INT(is_corridor)
-TP_BODY_SET_DOUBLE(light_pulse_amount)
-TP_BODY_SET_INT(is_healing)
-TP_BODY_SET_INT(is_armor)
-TP_BODY_SET_INT(is_magical)
-TP_BODY_SET_INT(is_sleeping)
 TP_BODY_SET_INT(is_wall)
 TP_BODY_SET_INT(is_floor)

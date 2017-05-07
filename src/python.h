@@ -85,23 +85,10 @@ PyObject *tile_get_size_pct_(PyObject *obj, PyObject *args, PyObject *keywds);
 
 PyObject *wid_tiles_load_(PyObject *obj, PyObject *args, PyObject *keywds);
 
-PyObject *dmap_process_(PyObject *obj, PyObject *args, PyObject *keywds);
-
-PyObject *biome_set_is_land_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *biome_set_is_dungeon_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_sound_volume_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_music_volume_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_display_sync_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_full_screen_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_move_count_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_moves_per_day_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_map_fixup_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_map_cleanup_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_map_add_selection_buttons_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_map_remove_selection_buttons_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_map_clear_selection_buttons_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_map_set_selection_buttons_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_map_time_step_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_zzz1_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_zzz2_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_zzz3_(PyObject *obj, PyObject *args, PyObject *keywds);
@@ -196,13 +183,6 @@ PyObject *game_set_zzz91_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_zzz92_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_zzz93_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_sdl_delay_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_daylight_color_a_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_daylight_color_b_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_daylight_color_g_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_daylight_color_r_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_rain_amount_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_snow_amount_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_scroll_chunk_(PyObject *obj, PyObject *args, PyObject *keywds);
 
 #define PY_PROTO(__fn__)                                                    \
 PyObject *__fn__ ## _ (PyObject *obj, PyObject *args, PyObject *keywds);

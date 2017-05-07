@@ -3,11 +3,9 @@ import mm
 import level
 import wid_map
 import thing
-import time_of_day
 import pickle
 import os.path
 import game
-import wid_mini_map
 import wid_help
 import wid_help_editor
 import wid_tp_editor
@@ -51,8 +49,6 @@ class Game:
     def new_game(self):
 
         self.sdl_delay = 1
-        self.move_count = 0
-        self.moves_per_day = 4000
         self.seed = 10
         self.where = util.Xyz(100, 100, 0)
         self.load_level(self.seed)
@@ -66,13 +62,7 @@ class Game:
     def load_level_finalize(self):
 
         l = self.level
-        mm.game_set_move_count(self.move_count)
-        mm.game_set_moves_per_day(self.moves_per_day)
         mm.game_set_sdl_delay(self.sdl_delay)
-
-        time_of_day.set_lighting(self,
-                                 move=self.move_count,
-                                 moves_per_day=self.moves_per_day)
 
         mm.biome_set_is_land(value=l.chunk[0][0].is_biome_land)
         mm.biome_set_is_dungeon(value=l.chunk[0][0].is_biome_dungeon)
@@ -88,8 +78,6 @@ class Game:
             pickle.dump(self.seed, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump(self.sdl_delay, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump(self.where, f, pickle.HIGHEST_PROTOCOL)
-            pickle.dump(self.move_count, f, pickle.HIGHEST_PROTOCOL)
-            pickle.dump(self.moves_per_day, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump(self.level_stack, f, pickle.HIGHEST_PROTOCOL)
 
             self.last_level_seed = l.seed
@@ -118,8 +106,6 @@ class Game:
             self.seed = pickle.load(f)
             self.sdl_delay = pickle.load(f)
             self.where = pickle.load(f)
-            self.move_count = pickle.load(f)
-            self.moves_per_day = pickle.load(f)
             self.level_stack = pickle.load(f)
             self.last_level_seed = pickle.load(f)
 
@@ -139,14 +125,7 @@ class Game:
     #
     def tick(self):
         l = self.level
-        self.move_count += 1
-        mm.game_set_move_count(self.move_count)
-        time_of_day.set_lighting(self,
-                                 move=self.move_count,
-                                 moves_per_day=self.moves_per_day)
-
         l.tick()
-        self.player_location_update()
         self.player_get_next_move()
 
     #
@@ -154,9 +133,6 @@ class Game:
     #
     def time_waste(self):
         mm.game_map_time_step()
-
-    def player_location_update(self):
-        wid_mini_map.update(game=self)
 
     #
     # The scrollable map for the level
@@ -605,4 +581,3 @@ def game_new():
 
     g.load_level_finalize()
     g.level.tick()
-    g.player_location_update()

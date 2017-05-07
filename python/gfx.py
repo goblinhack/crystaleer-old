@@ -400,7 +400,7 @@ def init_tiles_iso():
         "",
         "",
         #
-        "",
+        "player1",
         "",
         "",
         "",
@@ -425,7 +425,7 @@ def init_tiles_iso():
         "",
         "",
         "",
-        "rock1",
+        "wall1",
         "",
         "",
         "",

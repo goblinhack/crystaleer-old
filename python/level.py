@@ -1,6 +1,5 @@
 import traceback
 import mm
-import dmap
 import math
 import game
 import chunk
@@ -51,11 +50,6 @@ class Level:
                 self.chunk[cx][cy] = chunk.Chunk(self, where,
                                                  self.seed,
                                                  cx, cy)
-
-        #
-        # The dmap spans all chunks so we can have things move between chunks
-        #
-        self.dmap_reset()
 
         if game.g.player is None:
             raise NameError("No player found on any chunk")
@@ -170,8 +164,6 @@ class Level:
         game.g.load_level_finalize()
         game.g.player_location_update()
 
-        self.dmap_reset()
-
     def jump(self, to, seed, backtracking=False):
 
         self.log("Jump to {0}".format(to))
@@ -259,8 +251,6 @@ class Level:
 
         game.g.load_level_finalize()
         game.g.player_location_update()
-
-        self.dmap_reset()
 
     #
     # Convert from co-ordinates that are the width of all chunks to chunk
@@ -525,253 +515,3 @@ class Level:
 
         (chunk, ox, oy) = self.xy_to_chunk_xy(x, y)
         return chunk.describe_position(ox, oy)
-
-    def dmap_create(self, px, py):
-
-        d = dmap.Dmap(width=mm.MAP_WIDTH, height=mm.MAP_HEIGHT)
-
-        self.dmaps[px][py] = d
-
-        for y in range(mm.MAP_HEIGHT):
-            for x in range(mm.MAP_WIDTH):
-                d.cells[x][y] = dmap.WALL
-
-        for y in range(mm.MAP_HEIGHT):
-            for x in range(mm.MAP_WIDTH):
-                (chunk, ox, oy) = self.xy_to_chunk_xy(x, y)
-
-                skip = False
-                for t in chunk.things_on_chunk[ox][oy]:
-                    if t.tp.is_wall or \
-                       t.tp.is_rock or \
-                       t.tp.is_door or \
-                       t.tp.is_landrock or \
-                       t.tp.is_landrock_snow or \
-                       t.tp.is_hwall or \
-                       t.tp.is_cwall:
-                        skip = True
-                        break
-
-                if skip:
-                    continue
-
-                for t in chunk.things_on_chunk[ox][oy]:
-                    if t.tp.is_floor or \
-                       t.tp.is_grass or \
-                       t.tp.is_carpet or \
-                       t.tp.is_lawn or \
-                       t.tp.is_dirt or \
-                       t.tp.is_snow or \
-                       t.tp.is_ice or \
-                       t.tp.is_gravel or \
-                       t.tp.is_gravel_snow or \
-                       t.tp.is_snow or \
-                       t.tp.is_sand or \
-                       t.tp.is_corridor or \
-                       t.tp.is_bridge or \
-                       t.tp.is_dusty or \
-                       t.tp.is_water:
-                        d.cells[x][y] = dmap.FLOOR
-                        break
-
-#        mm.con("dmap")
-#
-#        for y in range(mm.MAP_HEIGHT):
-#            for x in range(mm.MAP_WIDTH):
-#                if x == game.g.player.x and y == game.g.player.y:
-#                    mm.puts("@")
-#                else:
-#                    if d.cells[x][y] == dmap.FLOOR:
-#                        mm.puts(".")
-#                    else:
-#                        mm.puts("#")
-#            mm.puts("\n")
-#        mm.puts("\n")
-
-        d.cells[px][py] = 0
-        d.process()
-
-    def dmap_solve(self, ex, ey, sx, sy):
-
-        if self.dmaps[ex][ey] is None:
-            self.dmap_create(ex, ey)
-
-        walked = [[0 for i in range(mm.MAP_HEIGHT)]
-                  for j in range(mm.MAP_WIDTH)]
-
-        out_path = []
-        x = sx
-        y = sy
-        d = self.dmaps[ex][ey]
-        cells = d.cells
-        out_path.append((x, y))
-
-        while True:
-            ALL_DELTAS = [
-                          (0, -1, 1.0),
-                          (-1, 0, 1.0),
-                          (1, 0, 1.0),
-                          (0, 1, 1.0),
-                          ]
-
-            if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or \
-               x < 0 or y < 0:
-                return out_path
-
-            lowest = cells[x][y]
-            got = False
-            bx = -1
-            by = -1
-
-            if cells[x][y] == dmap.WALL:
-                return out_path
-
-            for dx, dy, cost in ALL_DELTAS:
-                tx = x + dx
-                ty = y + dy
-
-                if tx >= mm.MAP_WIDTH or ty >= mm.MAP_HEIGHT or \
-                   tx < 0 or ty < 0:
-                    continue
-
-                if walked[tx][ty]:
-                    continue
-
-                if cells[tx][ty] == dmap.WALL:
-                    continue
-
-                c = cells[tx][ty] * cost
-                if c <= lowest:
-                    got = True
-                    bx = tx
-                    by = ty
-                    lowest = c
-
-            if not got:
-                return self.dmap_path_optimize(out_path)
-
-            out_path.append((bx, by))
-            x = bx
-            y = by
-            walked[bx][by] = 1
-
-    def dmap_path_debug(self, d, path):
-
-        d.debug = [[0 for i in range(mm.MAP_HEIGHT)]
-                   for j in range(mm.MAP_WIDTH)]
-
-        for p in path:
-            x, y = p
-            d.debug[x][y] = 1
-
-        d.dump()
-
-    #
-    # Make L shaped moves into diagonal ones
-    #
-    def dmap_path_optimize(self, path):
-
-        #        mm.con("path before optimize")
-        #        debug = [[' ' for x in range(mm.MAP_WIDTH)]
-        #                 for y in range(mm.MAP_HEIGHT)]
-        #
-        #        for (x, y) in path:
-        #            debug[x][y] = "."
-        #
-        #        for y in range(mm.MAP_HEIGHT):
-        #            for x in range(mm.MAP_WIDTH):
-        #                mm.puts(debug[x][y])
-        #            mm.puts("\n")
-        #        mm.puts("\n")
-
-        while True:
-            modified = False
-            i = 0
-            while True:
-                if i + 2 >= len(path):
-                    break
-
-                px, py = path[i]
-                nx, ny = n = path[i + 1]
-                mx, my = path[i + 2]
-
-                i = i + 1
-
-                if px - 1 == mx and py + 1 == my and \
-                   px == nx and py + 1 == ny and \
-                   not self.is_movement_blocking_at(px - 1, py):
-                    path.remove(n)
-                    modified = True
-                    break
-
-                if px - 1 == mx and py + 1 == my and \
-                   px - 1 == nx and py == ny and \
-                   not self.is_movement_blocking_at(px, py + 1):
-                    path.remove(n)
-                    modified = True
-                    break
-
-                if px + 1 == mx and py + 1 == my and \
-                   px == nx and py + 1 == ny and \
-                   not self.is_movement_blocking_at(px + 1, py):
-                    path.remove(n)
-                    modified = True
-                    break
-
-                if px + 1 == mx and py + 1 == my and \
-                   px + 1 == nx and py == ny and \
-                   not self.is_movement_blocking_at(px, py + 1):
-                    path.remove(n)
-                    modified = True
-                    break
-
-                if px - 1 == mx and py - 1 == my and \
-                   px == nx and py - 1 == ny and \
-                   not self.is_movement_blocking_at(px - 1, py):
-                    path.remove(n)
-                    modified = True
-                    break
-
-                if px - 1 == mx and py - 1 == my and \
-                   px - 1 == nx and py == ny and \
-                   not self.is_movement_blocking_at(px, py - 1):
-                    path.remove(n)
-                    modified = True
-                    break
-
-                if px + 1 == mx and py - 1 == my and \
-                   px == nx and py - 1 == ny and \
-                   not self.is_movement_blocking_at(px + 1, py):
-                    path.remove(n)
-                    modified = True
-                    break
-
-                if px + 1 == mx and py - 1 == my and \
-                   px + 1 == nx and py == ny and \
-                   not self.is_movement_blocking_at(px, py - 1):
-                    path.remove(n)
-                    modified = True
-                    break
-
-            if not modified:
-                break
-
-#        mm.con("path after optimize")
-#        debug = [[' ' for x in range(mm.MAP_WIDTH)]
-#                 for y in range(mm.MAP_HEIGHT)]
-#
-#        for (x, y) in path:
-#            debug[x][y] = "."
-#
-#        for y in range(mm.MAP_HEIGHT):
-#            for x in range(mm.MAP_WIDTH):
-#                mm.puts(debug[x][y])
-#            mm.puts("\n")
-#        mm.puts("\n")
-
-        return (path)
-
-    def dmap_reset(self):
-
-        self.dmaps = [[None for x in range(mm.MAP_WIDTH)]
-                      for y in range(mm.MAP_HEIGHT)]

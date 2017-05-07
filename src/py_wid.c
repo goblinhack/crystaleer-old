@@ -107,66 +107,6 @@ PyObject *wid_new_scrollbar_ (PyObject *obj, PyObject *args, PyObject *keywds)
     return (Py_BuildValue("K", (uintptr_t) w));
 }
 
-PyObject *wid_new_grid_ (PyObject *obj, PyObject *args, PyObject *keywds)
-{
-    PyObject *py_class = 0;
-    uintptr_t i_parent = 0;
-    widp parent;
-    char *name = 0;
-    double across = false;
-    double down = false;
-    double tile_width = false;
-    double tile_height = false;
-
-    static char *kwlist[] = {
-        (char*) "wid",
-        (char*) "parent",
-        (char*) "name",
-        (char*) "across",
-        (char*) "down",
-        (char*) "tile_width",
-        (char*) "tile_height",
-        0};
-
-    if (!PyArg_ParseTupleAndKeywords(args, keywds,
-                                     "OKsdddd", kwlist,
-                                     &py_class,
-                                     &i_parent,
-                                     &name,
-                                     &across,
-                                     &down,
-                                     &tile_width,
-                                     &tile_height)) {
-        return (0);
-    }
-
-    parent = (widp) i_parent;
-    verify(parent);
-
-    widp w = 0;
-
-    w = wid_new_container(parent, name);
-
-    fpoint tl = {0.00f, 0.00f};
-    fpoint br = {1.00f, 1.00f};
-
-    wid_set_no_shape(w);
-
-    wid_set_color(w, WID_COLOR_TL, BLACK);
-    wid_set_color(w, WID_COLOR_BG, BLACK);
-    wid_set_color(w, WID_COLOR_BR, BLACK);
-
-    wid_set_pos_pct(w, tl, br);
-
-    wid_new_grid(w,
-                 across,
-                 down,
-                 tile_width,
-                 tile_height);
-
-    return (Py_BuildValue("K", (uintptr_t) w));
-}
-
 PyObject *wid_destroy_ (PyObject *obj, PyObject *args, PyObject *keywds)
 {
     PyObject *py_class = 0;
@@ -1533,10 +1473,6 @@ WID_BODY_VOID_FN(wid_move_to_left)
 WID_BODY_VOID_FN(wid_move_to_right)
 WID_BODY_VOID_FN(wid_move_to_top)
 WID_BODY_VOID_FN(wid_move_end)
-WID_BODY_VOID_FN(wid_destroy_grid)
-WID_BODY_VOID_FN(wid_detach_from_grid)
-WID_BODY_VOID_FN(wid_attach_to_grid)
-WID_BODY_VOID_FN(wid_empty_grid)
 WID_BODY_VOID_FN(wid_update)
 WID_BODY_VOID_FN(wid_raise)
 WID_BODY_VOID_FN(wid_lower)

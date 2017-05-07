@@ -9,7 +9,7 @@
 #include <SDL.h>
 
 #include "sdl.h"
-#include "map.h"
+#include "enum.h"
 
 typedef enum {
     WID_COLOR_BG,
@@ -53,16 +53,9 @@ widp wid_new_vert_scroll_bar(widp parent,
 widp wid_new_horiz_scroll_bar(widp parent,
                               const char *name,
                               widp scrollbar_owner);
-uint8_t wid_has_grid(widp);
-void wid_new_grid(widp, uint32_t width, uint32_t height,
-                  uint32_t pixwidth, uint32_t pixheight);
 widp wid_new_tooltip(const char *tooltip);
 void wid_tooltip_set(const char *text);
 void wid_tooltip2_set(const char *text);
-void wid_destroy_grid(widp);
-void wid_detach_from_grid(widp);
-void wid_attach_to_grid(widp);
-void wid_empty_grid(widp);
 void wid_destroy(widp *);
 void wid_destroy_nodelay(widp *);
 void wid_destroy_in(widp w, uint32_t ms);
@@ -175,8 +168,6 @@ typedef void(*on_tick_t)(widp);
 typedef void(*on_display_win_t)(widp);
 typedef void(*on_display_t)(widp, fpoint tl, fpoint br);
 
-typedef widp (*level_replace_thing_t)(double x, double y, thingp, tpp);
-
 /*
  * Client.
  */
@@ -238,9 +229,7 @@ int32_t wid_get_sides(widp);
 texp wid_get_tex(widp, fsize *size);
 tilep wid_get_tile(widp);
 tilep wid_get_tile2(widp);
-thingp wid_get_thing(widp);
 tpp wid_get_thing_template(widp);
-thingp wid_get_thing(widp);
 uint32_t wid_get_cursor(widp);
 uint32_t wid_get_gllist(widp);
 uint32_t wid_get_mode_gllist(widp);
@@ -386,9 +375,6 @@ void wid_set_text_top(widp, uint8_t val);
 void wid_set_tilename(widp, const char *name);
 void wid_set_tile2name(widp, const char *name);
 void wid_set_tile2(widp, tilep);
-void wid_set_z_depth(widp, uint8_t);
-uint8_t wid_get_z_depth(widp);
-void wid_set_thing(widp, thingp);
 void wid_set_thing_template(widp, tpp);
 void wid_set_pos(widp, fpoint tl, fpoint br);
 void wid_set_pos_pct(widp, fpoint tl, fpoint br);
@@ -402,26 +388,12 @@ widp wid_get_prev(widp);
 widp wid_get_current_focus(void);
 void wid_effect_pulses(widp);
 void wid_effect_sways(widp);
-widp wid_find_matching(widp, fpoint tl, fpoint br, uint8_t z_depth);
-widp wid_grid_find(widp, fpoint tl, fpoint br, uint8_t z_depth);
-widp wid_grid_find_top(widp, fpoint tl, fpoint br);
-widp wid_grid_find_thing_template(widp parent,
-                                  uint32_t x,
-                                  uint32_t y,
-                                  tp_is_callback func);
-widp wid_grid_find_tp_is(widp parent,
-                                  uint32_t x,
-                                  uint32_t y,
-                                  tpp);
+widp wid_find_matching(widp, fpoint tl, fpoint br);
 uint8_t wid_is_hidden(widp w);
 uint8_t wid_this_hidden(widp w);
 uint8_t wid_is_scaling(widp w);
 uint8_t wid_is_fading(widp w);
 uint8_t wid_is_always_hidden(widp w);
-void wid_get_grid_coord(widp w, int32_t *x, int32_t *y,
-                        uint8_t *aligned_x,
-                        uint8_t *aligned_y);
-void wid_get_grid_dim(widp w, uint32_t *x, uint32_t *y);
 uint8_t wids_overlap(widp A, widp B);
 void wid_animate(widp);
 void wid_get_tl_x_tl_y_br_x_br_y(widp w,
@@ -461,17 +433,7 @@ typedef struct {
 typedef struct tree_wid_key_ {
     tree_node node;
 
-    /*
-     * Higher number == most raised/frontmost wid
-     *
-     * Higher numbers are first in the event tree.
-     * Higher numbers are drawn last and hence in the foreground.
-     *
-     * Lower numbers are last in the event tree.
-     * Lower numbers are drawn first and hence in the background.
-     */
-    int32_t priority;
-    uint8_t z_depth;
+    uint8_t priority;
 
     /*
      * The real position on the screen initially.
@@ -484,31 +446,6 @@ typedef struct tree_wid_key_ {
      */
     uint64_t key;
 } tree_wid_key;
-
-typedef struct widgridnode_ {
-    tree_wid_key tree;
-
-    widp wid;
-    uint32_t x;
-    uint32_t y;
-    uint8_t aligned_x:1;
-    uint8_t aligned_y:1;
-} widgridnode;
-
-typedef struct widgrid_ {
-    tree_root **grid_of_trees[Z_DEPTH];
-    uint32_t nelems;
-    uint32_t width;
-    uint32_t height;
-    uint32_t pixwidth;
-    uint32_t pixheight;
-    double tl_x;
-    double tl_y;
-    double br_x;
-    double br_y;
-    uint8_t bounds_valid:1;
-    uint8_t bounds_locked:1;
-} widgrid;
 
 typedef struct wid_move_ {
     fpoint moving_end;
@@ -542,21 +479,6 @@ typedef struct wid_ {
     tree_key_int tree5_ticking_wids;
 
     /*
-     * Fast lookup for grid widgets. The parent has a grid pointer.
-     */
-    widgrid *grid;
-
-    /*
-     * The children have node pointers.
-     */
-    widgridnode *gridnode;
-
-    /*
-     * And a pointer back to the tree they are on.
-     */
-    tree_rootp gridtree;
-
-    /*
      * Tiles widget
      */
     wid_tilesp wid_tiles;
@@ -571,16 +493,9 @@ typedef struct wid_ {
      */
     tree_root *tree2_children_unsorted;
 
-    /*
-     * Used a lot, so keep at the head of the struct for speed.
-     */
     uint8_t hidden:1;
     uint8_t scaling_w:1;
     uint8_t scaling_h:1;
-
-    /*
-     * Flags.
-     */
     uint8_t disable_scissors:1;
     uint8_t debug:1;
     uint8_t bevelled:1;
@@ -636,7 +551,6 @@ typedef struct wid_ {
     uint8_t do_not_lower:1;
     uint8_t can_be_atteched_now:1;
     uint8_t animate:1;
-    uint8_t grid_centered_on_player:1;
 
     /*
      * Optionally set to the previous wid in a list
@@ -652,12 +566,6 @@ typedef struct wid_ {
     tree_rootp in_tree4_wids_being_destroyed;
     tree_rootp in_tree5_ticking_wids;
 
-    /*
-     * Thing related.
-     */
-    thingp thing;
-
-    tilep tile_eyes;
     tpp tp;
 
     /*
@@ -684,6 +592,7 @@ typedef struct wid_ {
     thing_tilep current_tile;
 
     fsize texuv;
+
     /*
      * The wid shape
      */
@@ -928,42 +837,6 @@ tree_wid_compare_func (const tree_node *a, const tree_node *b)
         return (1);
     }
 
-    if (A->tree.z_depth > B->tree.z_depth) {
-        return (-1);
-    }
-
-    if (A->tree.z_depth < B->tree.z_depth) {
-        return (1);
-    }
-
-    if (A->tree.br.y > B->tree.br.y) {
-        return (-1);
-    }
-
-    if (A->tree.br.y < B->tree.br.y) {
-        return (1);
-    }
-
-    if (A->tree.key < B->tree.key) {
-        return (-1);
-    }
-
-    if (A->tree.key > B->tree.key) {
-        return (1);
-    }
-
-    return (0);
-}
-
-/*
- * Used for tree grid widgets
- */
-static inline int8_t
-tree_wid_compare_func_fast (const tree_node *a, const tree_node *b)
-{
-    widp A = (TYPEOF(A))a;
-    widp B = (TYPEOF(B))b;
-
     if (A->tree.br.y > B->tree.br.y) {
         return (-1);
     }
@@ -984,7 +857,6 @@ tree_wid_compare_func_fast (const tree_node *a, const tree_node *b)
 }
 
 TREE_PREV_INLINE(tree_wid_compare_func)
-TREE_PREV_INLINE(tree_wid_compare_func_fast)
 
 extern widp wid_mouse_template;
 
@@ -998,118 +870,6 @@ extern const int32_t wid_scaling_forever_delay;
 extern char *wid_tooltip_string;
 extern char *wid_tooltip2_string;
 
-/*
- * Find the first widget in the grid at this tile co-ordinate.
- */
-static inline
-widp wid_grid_find_first (widp parent, uint32_t x, uint32_t y,
-                          uint8_t depth)
-{
-    widgridnode *node;
-    widgrid *grid;
-    widp w;
-
-    grid = parent->grid;
-    if (unlikely(!grid)) {
-        return (0);
-    }
-
-    if (unlikely(x >= grid->width)) {
-        return (0);
-    }
-
-    if (unlikely(y >= grid->height)) {
-        return (0);
-    }
-
-    /*
-     * Now find the node in the (hopefully small) tree.
-     */
-    tree_root **gridtree = grid->grid_of_trees[depth] + (y * grid->width) + x;
-
-    /*
-     * Trees should be already allocated.
-     */
-    if (!*gridtree) {
-        ERR("no gridtree");
-    }
-
-    node = (TYPEOF(node)) tree_first((*gridtree)->node);
-    if (!node) {
-        return (0);
-    }
-
-    fast_verify(node);
-
-    w = node->wid;
-    if (!w) {
-        return (0);
-    }
-
-    fast_verify(w);
-    return (w);
-}
-
-/*
- * Find the next widget in the grid at this tile co-ordinate.
- */
-static inline
-widp wid_grid_find_next (widp parent, widp w, uint32_t x, uint32_t y,
-                         uint8_t depth)
-{
-    widgridnode *node;
-    widgrid *grid;
-
-    grid = parent->grid;
-    if (unlikely(!grid)) {
-        return (0);
-    }
-
-    if (unlikely(x >= grid->width)) {
-        return (0);
-    }
-
-    if (unlikely(y >= grid->height)) {
-        return (0);
-    }
-
-    for (;;) {
-        /*
-         * Now find the node in the (hopefully small) tree.
-         */
-        tree_root **gridtree =
-                        grid->grid_of_trees[depth] + (y * grid->width) + x;
-
-        /*
-         * Trees should be already allocated.
-         */
-        if (!*gridtree) {
-            ERR("no gridtree");
-        }
-
-        node = (TYPEOF(node)) tree_get_next(*gridtree, (*gridtree)->node,
-                                            &w->gridnode->tree.node);
-        if (!node) {
-            return (0);
-        }
-
-        fast_verify(node);
-
-        w = node->wid;
-        if (!w) {
-            return (0);
-        }
-
-        if (!w->being_destroyed) {
-            break;
-        }
-    }
-
-    fast_verify(w);
-
-    return (w);
-}
-
 static inline
 void wid_set_tile (widp w, tilep tile)
 {
@@ -1119,33 +879,6 @@ void wid_set_tile (widp w, tilep tile)
     if (!w->first_tile) {
         w->first_tile = tile;
     }
-
-#if 0
-    thingp t = wid_get_thing(w);
-
-    if (t && tp_is_cats_eyes(thing_tp(t))) {
-        char tmp[SMALL_STRING_LEN_MAX];
-        const char *name = tile_name(tile);
-
-        snprintf(tmp, sizeof(tmp), "%s-eyes", name);
-
-        tilep tile = tile_find(tmp);
-        if (!tile) {
-            snprintf(tmp + strlen(name) - 1, sizeof(tmp), "-eyes");
-            tile = tile_find(tmp);
-            if (!tile) {
-                /*
-                 * Not all tiles, like if the player is dying, need to have
-                 * cats eyes.
-                 *
-                ERR("failed to set wid tile %s for eyes", tmp);
-                 */
-            }
-        }
-
-        w->tile_eyes = tile;
-    }
-#endif
 }
 
 /*

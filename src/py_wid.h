@@ -11,7 +11,6 @@
 PyObject *wid_new_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *wid_destroy_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *wid_new_scrollbar_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *wid_new_grid_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *wid_set_shape_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *wid_set_tooltip_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *wid_set_tooltip2_(PyObject *obj, PyObject *args, PyObject *keywds);
@@ -92,10 +91,6 @@ WID_PROTO(wid_hide)
 WID_PROTO(wid_toggle_hidden)
 WID_PROTO(wid_mouse_hide)
 
-WID_PROTO(wid_destroy_grid)
-WID_PROTO(wid_detach_from_grid)
-WID_PROTO(wid_attach_to_grid)
-WID_PROTO(wid_empty_grid)
 WID_PROTO(wid_update)
 WID_PROTO(wid_raise)
 WID_PROTO(wid_lower)
