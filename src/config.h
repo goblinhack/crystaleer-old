@@ -67,11 +67,11 @@
 /*
  * Console
  */
-#define CONSOLE_CURSOR_COLOR        PURPLE
-#define CONSOLE_CURSOR_OTHER_COLOR  PLUM
+#define CONSOLE_CURSOR_COLOR        GREEN
+#define CONSOLE_CURSOR_OTHER_COLOR  GREEN
 #define CONSOLE_TEXT_COLOR          WHITE
-#define CONSOLE_HEIGHT              100
-#undef CONSOLE_MAGIC_KEY
+#define CURSOR_FLASH
+#define CONSOLE_LINES               200
 
 /*
  * Fonts

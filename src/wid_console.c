@@ -13,6 +13,8 @@
 #include "string_ext.h"
 #include "config.h"
 
+#define CONSOLE_MAGIC_KEY
+
 static int32_t wid_console_inited;
 static int32_t wid_console_exiting;
 static void wid_console_wid_create(void);
@@ -25,8 +27,6 @@ widp wid_console_horiz_scroll;
 
 widp wid_console_input_line;
 
-static float wid_console_line_height = 0.155f;
-static float wid_console_max_line_height = 0.155f;
 static tree_root *tree_wid_console;
 
 widp wid_console_window;
@@ -191,9 +191,26 @@ static void wid_console_wid_create (void)
 {
     fontp font = fixed_font;
 
+    float lines;
+
+    double w;
+    double h;
+
+    ttf_text_size(&font,
+                  "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+                  &w, &h, 0, 0, 1.0f, 1.0f,
+                  true /* fixed width */);
+
+    float H = 1.00;
+    lines = floor(((float) (game.video_gl_height * H)) / h);
+
+    float line_pct_height = (float)H / (float)lines;
+
+    float console_height = lines * line_pct_height * (1.0 / H);
+
     {
         fpoint tl = {0.0f, 0.0f};
-        fpoint br = {1.0f, 1.00f};
+        fpoint br = {1.0f, console_height};
         color c;
 
         wid_console_window = wid_new_square_window("wid_console");
@@ -226,42 +243,29 @@ static void wid_console_wid_create (void)
     }
 
     {
-        double w;
-        double h;
-
-        ttf_text_size(&font,
-                      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-                      &w, &h, 0, 0, 1.0f, 1.0f,
-                      false /* fixed width */);
-
-        wid_console_max_line_height =
-                        (float)h / (float)wid_get_height(wid_console_container);
-    }
-
-    {
         int32_t row;
         float row_bottom = 1.0f;
 
         widp child = 0;
         widp prev = 0;
 
-        for (row = 0; row < CONSOLE_HEIGHT; row++) {
+        for (row = 0; row < CONSOLE_LINES; row++) {
 
             fpoint tl = {
                 0.0f,
-                row_bottom - (wid_console_line_height * (float)(row+1))
+                row_bottom - (line_pct_height * (float)(row+1))
             };
 
             fpoint br = {
                 2.0f,
-                row_bottom - (wid_console_line_height * ((float)row))
+                row_bottom - (line_pct_height * ((float)row))
             };
 
             if (row != 0) {
-                tl.y -= wid_console_max_line_height * 0.1;
-                br.y -= wid_console_max_line_height * 0.1;
+                tl.y -= line_pct_height * 0.1;
+                br.y -= line_pct_height * 0.1;
             } else {
-                tl.y -= wid_console_max_line_height;
+                tl.y -= line_pct_height;
             }
 
             child = wid_new_container(wid_console_container, "");
@@ -334,4 +338,6 @@ static void wid_console_wid_create (void)
     wid_set_color(wid_console_window, WID_COLOR_BR, c);
     wid_set_square(wid_console_window);
     wid_console_window->ignore_for_mouse_down = true;
+
+    wid_move_delta_pct(wid_console_window, 0, -0.075);
 }

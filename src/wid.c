@@ -21,6 +21,9 @@
 #include "math_util.h"
 #include "thing.h"
 #include "wid_tiles.h"
+#include "config.h"
+
+#define CONSOLE_MAGIC_KEY
 
 #ifdef ENABLE_WID_PTRCHECK
 #undef fast_verify
@@ -4664,8 +4667,8 @@ static uint8_t wid_receive_unhandled_input (const SDL_KEYSYM *key)
 #ifdef CONSOLE_MAGIC_KEY
             case '`':
             case '~':
-                wid_toggle_hidden(w, 0);
-                wid_raise(w);
+                wid_toggle_hidden(wid_console_window, 0);
+                wid_raise(wid_console_window);
 
                 /*
                  * Need this so the console gets focus over the menu.

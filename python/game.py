@@ -9,6 +9,7 @@ import wid_help
 import wid_help_editor
 import wid_tp_editor
 import wid_quit
+import console
 
 global g
 
@@ -407,3 +408,5 @@ def game_new():
         g.new_game()
 
     g.load_level_finalize()
+
+    console.hello()

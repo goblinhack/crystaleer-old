@@ -593,7 +593,7 @@ uint8_t sdl_init (void)
     LOG(" - GL Vendor   : %s", glGetString(GL_VENDOR));
     LOG(" - GL Renderer : %s", glGetString(GL_RENDERER));
     LOG(" - GL Version  : %s", glGetString(GL_VERSION));
-    LOG(" - GL Exts     : %s", glGetString(GL_EXTENSIONS));
+    DBG(" - GL Exts     : %s", glGetString(GL_EXTENSIONS));
 
     SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &value);
     DBG("Red         : %d", value);

@@ -123,8 +123,10 @@ void ttf_text_size (font **fpp, const char *text_in,
     *h *= 1.1;
 
     while ((c = *text++) != '\0') {
-        if (c == '\\') {
-            c = ' ';
+        if (!fixed_width) {
+            if (c == '\\') {
+                c = ' ';
+            }
         }
 
 	if (!found_format_string) {
@@ -247,10 +249,21 @@ void ttf_putc (font *f, int32_t c, double x, double y, double scaling)
 
         c = TTF_FIXED_WIDTH_CHAR;
 
+        double texMinX = f->glyphs[c].texMinX;
+        double texMaxX = f->glyphs[c].texMaxX;
+        double texMinY = f->glyphs[c].texMinY;
+        double texMaxY = f->glyphs[c].texMaxY;
+
+        double h = texMaxY - texMinY;
+        double w = texMaxX - texMinX;
+
+        h *= (double) tex_get_height(f->tex[c].texp);
+        w *= (double) tex_get_width(f->tex[c].texp);
+
         GLfloat left = (GLfloat)(x);
-        GLfloat right = (GLfloat)(x + f->glyphs[c].width * scaling);
+        GLfloat right = (GLfloat)(x + w * scaling);
         GLfloat top = (GLfloat)(y);
-        GLfloat bottom = (GLfloat)(y + f->glyphs[c].height * (scaling));
+        GLfloat bottom = (GLfloat)(y + h * scaling);
 
 #ifdef CURSOR_FLASH
         static uint32_t last;
@@ -273,12 +286,10 @@ void ttf_putc (font *f, int32_t c, double x, double y, double scaling)
         } else {
             glcolor(CONSOLE_CURSOR_OTHER_COLOR);
 
-            gl_blitsquare(left, top, right, bottom);
-
-            left += 1;
-            right -= 1;
-            top += 1;
-            bottom -= 1;
+            left += (w / 20.0);
+            right -= (w / 20.0);
+            top += (w / 10.0);
+            bottom -= (w / 10.0);
 
             gl_blitquad(left, top, right, bottom);
 
@@ -317,10 +328,15 @@ void ttf_putc (font *f, int32_t c, double x, double y, double scaling)
 #endif
     }
 
+    double h = texMaxY - texMinY;
+    double w = texMaxX - texMinX;
+    h *= (double) tex_get_height(f->tex[c].texp);
+    w *= (double) tex_get_width(f->tex[c].texp);
+
     GLfloat left = (GLfloat)(x);
-    GLfloat right = (GLfloat)(x + f->glyphs[c].width * scaling);
+    GLfloat right = (GLfloat)(x + w * scaling);
     GLfloat top = (GLfloat)(y);
-    GLfloat bottom = (GLfloat)(y + f->glyphs[c].height * (scaling));
+    GLfloat bottom = (GLfloat)(y + h * scaling);
 
     blit(f->tex[c].tex,
          texMinX, texMinY, texMaxX, texMaxY, left, top, right, bottom);
@@ -347,8 +363,10 @@ static void ttf_puts_internal (font *f, const char *text,
     double x_start = x;
 
     while ((c = *text++) != '\0') {
-        if (c == '\\') {
-            c = ' ';
+        if (!fixed_width) {
+            if (c == '\\') {
+                c = ' ';
+            }
         }
 
 	if (!found_format_string) {
@@ -747,6 +765,7 @@ ttf_read_tga (fontp f, const char *name, int32_t pointsize)
     }
 
     for (c = TTF_GLYPH_MIN; c < TTF_GLYPH_MAX; c++) {
+        f->tex[c].texp = tex;
         f->tex[c].tex = tex_get_gl_binding(tex);
         f->tex[c].image = tex_get_surface(tex);
     }

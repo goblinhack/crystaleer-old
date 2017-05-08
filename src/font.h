@@ -32,6 +32,7 @@ typedef struct {
 typedef struct {
     SDL_Surface *image;
     uint32_t tex;
+    texp texp;
 } glyphtex;
 
 typedef struct font {
