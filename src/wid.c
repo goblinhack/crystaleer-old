@@ -97,8 +97,6 @@ const int32_t wid_swipe_delay = 200;
 const int32_t wid_pulse_delay = 300;
 const int32_t wid_scaling_forever_delay = 500;
 
-widp wid_scratch[WID_SCRATCH_SIZE];
-
 /*
  * Prototypes.
  */

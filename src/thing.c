@@ -12,8 +12,6 @@
 
 tree_root *things;
 
-thingp thing_scratch[THING_SCRATCH_SIZE];
-
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
 
@@ -230,26 +228,25 @@ thing_tilep thing_current_tile (thingp t)
     return (&thing_tile_arr[t->current_tile]);
 }
 
-void thing_move_to (thingp t, double x, double y)
+void thing_move_to (thingp t, fpoint3d to)
 {
     verify(t);
 
-    if ((t->last_x == -1.0) && (t->last_y == -1.0)) {
-        t->last_x = x;
-        t->last_y = y;
+    if ((t->last_at.x == -1.0) && 
+        (t->last_at.y == -1.0) &&
+        (t->last_at.z == -1.0)) {
+        t->last_at = to;
     } else {
-        t->last_x = t->x;
-        t->last_y = t->y;
+        t->last_at = t->at;
     }
 
-    t->x = x;
-    t->y = y;
+    t->at = to;
 
     if (tp_is_animated_lr_flip(thing_tp(t))) {
-        if (fabs(t->x - t->last_x) <= 1) {
-            if (t->x > t->last_x) {
+        if (fabs(t->at.x - t->last_at.x) <= 1) {
+            if (t->at.x > t->last_at.x) {
                 LOG("TBD flip");
-            } else if (t->x < t->last_x) {
+            } else if (t->at.x < t->last_at.x) {
                 LOG("TBD flip");
             }
         }
@@ -264,8 +261,8 @@ void thing_move_set_dir (thingp t,
                          uint8_t left,
                          uint8_t right)
 {
-    double ox = t->x;
-    double oy = t->y;
+    double ox = t->at.x;
+    double oy = t->at.y;
 
     if (*x < 0) {
         *x = 0;

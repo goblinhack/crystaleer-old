@@ -61,14 +61,9 @@ uint8_t thing_is_dir_tr(thingp t);
 void thing_set_dir_br(thingp t);
 uint8_t thing_is_dir_br(thingp t);
 
-void thing_set_opened_exit(thingp t, uint8_t val);
-uint8_t thing_opened_exit(thingp t);
-void thing_set_is_sleeping(thingp t, uint8_t val);
-void thing_set_is_open(thingp t, uint8_t val);
 void thing_set_is_dead(thingp t, uint8_t val);
 const char *thing_name(thingp);
 const char *thing_short_name(thingp);
-const char *thing_tooltip(thingp);
 tree_rootp thing_tiles(thingp);
 thing_tilep thing_current_tile(thingp t);
 
@@ -101,24 +96,23 @@ typedef struct thing_ {
     /*
      * Grid coordinates.
      */
-    double x;
-    double y;
-
-    /*
-     * Water depth
-     */
-    double depth;
+    fpoint3d at;
 
     /*
      * Last anim frame position. To be able to detect moving things.
      */
-    double anim_x;
-    double anim_y;
+    fpoint3d last_anim_at;
 
     /*
-     * For animation.
+     * Previous hop where we were. We use this to interpolate the real
+     * position when moving.
      */
-    uint16_t current_tile;
+    fpoint3d last_at;
+
+    /*
+     * For moving
+     */
+    fpoint3d move_delta;
 
     tilep tile;
 
@@ -127,18 +121,12 @@ typedef struct thing_ {
      */
     tilep first_tile;
 
-    /*
-     * Previous hop where we were. We use this to interpolate the real
-     * position when moving.
-     */
-    double last_x;
-    double last_y;
+    uint32_t timestamp_change_to_next_frame;
 
     /*
-     * For moving
+     * For animation.
      */
-    double dx;
-    double dy;
+    uint16_t current_tile;
 
     uint8_t dir;
 
@@ -148,8 +136,6 @@ typedef struct thing_ {
     int score;
     int gold;
     int hp;
-
-    uint32_t timestamp_change_to_next_frame;
 
     /*
      * Debugging this thing?
@@ -233,16 +219,7 @@ void thing_move_set_dir(thingp t,
                         uint8_t left,
                         uint8_t right);
 
-int thing_move_dir(thingp t,
-                   double x,
-                   double y,
-                   const uint8_t up,
-                   const uint8_t down,
-                   const uint8_t left,
-                   const uint8_t right,
-                   const uint8_t fire);
-
-void thing_move_to(thingp t, double x, double y);
+void thing_move_to(thingp t, fpoint3d);
 
 /*
  * thing_dir.c
@@ -258,10 +235,3 @@ int thing_angle_to_dir(double dx, double dy);
 #define FOR_ALL_THINGS_END } }
 
 extern tree_root *things;
-
-/*
- * For temporary walks.
- */
-#define THING_SCRATCH_SIZE (512 * 1024)
-extern thingp thing_scratch[THING_SCRATCH_SIZE];
-

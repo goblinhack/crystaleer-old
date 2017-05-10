@@ -219,22 +219,6 @@ void sound_play_global_at (const char *name_alias, double x, double y)
     double volume = (float) game.sound_volume * sound->volume *
               ((float) MIX_MAX_VOLUME / (float) SOUND_MAX);
 
-    if (player) {
-        double distance = DISTANCE(player->x, player->y, x, y) / 8.0;
-
-        if (distance > 1.0) {
-            volume /= distance;
-        }
-
-        int visible = true;
-
-        if (volume < 1.0) {
-            volume = 1.0;
-        }
-
-        LOG("Play: global %s vol %f dist %f can_see %d",name_alias, volume, distance, visible);
-    }
-
     if (Mix_PlayChannel(-1, sound->sound, 0) == -1) {
         /*
          * Try harder for global sounds as they are important.
