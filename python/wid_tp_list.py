@@ -227,7 +227,7 @@ class WidTpList(wid_popup.WidPopup):
 
             if count < 26:
                 key = chr(ord('a') + count)
-                key_str = "%%fg=green${0}%%fg=white$)~".format(key)
+                key_str = "%%fg=green${}%%fg=white$)~".format(key)
 #                on_key_sym = mm.SDLK_a + count
 #                on_key_down = wid_tp_list_on_key_down
             else:

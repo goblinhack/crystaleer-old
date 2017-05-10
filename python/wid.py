@@ -22,7 +22,7 @@ class Wid:
         else:
             self.wid_id = mm.wid_new(self, parent, name, **kw)
 
-#        self.name = "{0:x}:{1}".format(self.wid_id, self.name)
+#        self.name = "{0:x}:{}".format(self.wid_id, self.name)
 #        self.log("Created wid")
 
         all_wids[self.wid_id] = self
@@ -46,7 +46,7 @@ class Wid:
         self.is_visible = True
 
     def __str__(self):
-        return "{0}".format(self.name)
+        return "{}".format(self.name)
 
     def destroy(self):
         mm.wid_destroy(self)
@@ -186,21 +186,21 @@ class Wid:
         mm.wid_set_movable_vert(self, **kw)
 
     def con(self, msg):
-        mm.con("p_wid {0}: {1}".format(str(self), msg))
+        mm.con("p_wid {}: {}".format(str(self), msg))
 
     def log(self, msg):
-        mm.log("p_wid {0}: {1}".format(str(self), msg))
+        mm.log("p_wid {}: {}".format(str(self), msg))
 
     def err(self, msg):
         mm.con("".join(traceback.format_stack()))
-        mm.err("p_wid {0}: ERROR: {1}".format(self.name, msg))
+        mm.err("p_wid {}: ERROR: {}".format(self.name, msg))
 
     def die(self, msg):
         mm.con("".join(traceback.format_stack()))
-        mm.die("p_wid {0}: ERROR: {1}".format(self.name, msg))
+        mm.die("p_wid {}: ERROR: {}".format(self.name, msg))
 
     def dump(self):
-        self.log("@ {0},{1}".format(self.x, self.y))
+        self.log("@ {},{}".format(self.x, self.y))
 
     def move_to_horiz_vert_pct_in(self, **kw):
         mm.wid_move_to_horiz_vert_pct_in(self, **kw)

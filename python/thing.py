@@ -2,13 +2,15 @@ import traceback
 import mm
 import tp
 import game
+import point
+import point.Point as Point
 
 
 class Thing:
 
     class_version = 2
 
-    def __init__(self, tp_name, level=None, x=None, y=None):
+    def __init__(self, tp_name, level=None, p=None):
 
         self.version = self.__class__.class_version
         self.v1_field = 1
@@ -20,18 +22,14 @@ class Thing:
         self.thing_id = level.max_thing_id
 
         if tp_name not in tp.all_tps:
-            self.err("Thing template {0} does not exist".format(tp_name))
+            self.err("Thing template {} does not exist".format(tp_name))
 
         self.tp = tp.all_tps[tp_name]
 
-        if x is None:
-            self.x = -1
-            self.y = -1
+        if p is None:
+            self.at = Point(-1, -1, -1)
         else:
-            self.x = x
-            self.y = y
-
-        self.depth = 0
+            self.at = p
 
         self.on_level = False
         self.tilename = None
@@ -44,7 +42,7 @@ class Thing:
         # until it is pushed.
         #
         if self.thing_id in self.level.all_things:
-            self.die("thing ID {0} is already in the level list".format(
+            self.die("thing ID {} is already in the level list".format(
                      self.thing_id))
             return
 
@@ -71,34 +69,34 @@ class Thing:
         del result['level']
 
         if self.tp.is_player:
-            self.log("Save player on level {0}".format(self.level))
+            self.log("Save player on level {}".format(self.level))
         return result
 
     def __setstate__(self, dict):
         self.__dict__ = dict
 
     def __str__(self):
-        return "{0}:{1}".format(self.thing_id, self.tp_name)
+        return "{}:{} at {}".format(self.thing_id, self.tp_name, str(self.at))
 
     def log(self, msg):
-        mm.log("Thing {0}: {1}".format(str(self), msg))
+        mm.log("Thing {}: {}".format(str(self), msg))
 
     def con(self, msg):
-        mm.con("Thing {0}: {1}".format(str(self), msg))
+        mm.con("Thing {}: {}".format(str(self), msg))
 
     def debug(self, msg):
-        mm.log("Thing {0}: {1}".format(str(self), msg))
+        mm.log("Thing {}: {}".format(str(self), msg))
 
     def err(self, msg):
         mm.con("".join(traceback.format_stack()))
-        mm.err("Thing {0}: ERROR: {1}".format(self, msg))
+        mm.err("Thing {}: ERROR: {}".format(self, msg))
 
     def die(self, msg):
         mm.con("".join(traceback.format_stack()))
-        mm.die("Thing {0}: FATAL ERROR: {1}".format(self, msg))
+        mm.die("Thing {}: FATAL ERROR: {}".format(self, msg))
 
     def dump(self):
-        self.log("@ {0},{1} on level {2}".format(self.x, self.y, self.level))
+        self.log("@ {},{} on level {}".format(str(self.at), self.level))
 
     def destroy(self, reason="no reason"):
 
@@ -109,14 +107,14 @@ class Thing:
         if self.on_level:
             self.pop()
 
-        # self.debug("Destroying thing, {0}".format(reason) + " {")
+        # self.debug("Destroying thing, {}".format(reason) + " {")
 
         if self.thing_id in self.level.all_things:
             del self.level.all_things[self.thing_id]
 
         mm.thing_destroyed(self, reason)
 
-        # self.debug("} " + "Destroyed thing, {0}".format(reason))
+        # self.debug("} " + "Destroyed thing, {}".format(reason))
         del self
 
     def upgrade(self):
@@ -124,7 +122,7 @@ class Thing:
         if self.version < 2:
             self.v2_field = 2
 
-#        self.debug("upgraded from ver {0} to {1}".format(
+#        self.debug("upgraded from ver {} to {}".format(
 #                   self.version, self.__class__.class_version))
 
         self.version = self.__class__.class_version
@@ -154,49 +152,47 @@ class Thing:
         if self.tp.is_player:
             game.g.player = self
 
-#        self.log("Loaded thing on level {0}".format(self.level))
-#        self.con("loaded thing at {0} {1}".format(self.x, self.y))
+#        self.log("Loaded thing on level {}".format(self.level))
+#        self.con("loaded thing at {} {}".format(self.x, self.y))
         if self.depth:
             self.set_depth(self.depth)
 
     #
     # Move a thing and see it move smoothly on the map
     #
-    def move(self, x, y):
-        if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
+    def move(self, p):
+
+        if point.oob(p):
             return
 
-        self.update_pos(x, y)
+        self.update_pos(p)
 
-        mm.thing_move(self, x, y)
+        mm.thing_move(self, p.x, p.y, p.z)
 
-    def update_pos(self, x, y):
+    def update_pos(self, p):
 
-        self.x = x
-        self.y = y
+        self.p = p
 
     #
     # Associate the thing with a given level
     #
-    def push(self, x=None, y=None):
+    def push(self, p=None):
 
-        if x is None:
-            x = self.x
-            y = self.y
+        if p is None:
+            p = self.p
 
-        if x >= mm.MAP_WIDTH or y >= mm.MAP_HEIGHT or x < 0 or y < 0:
-            self.die("Out of bounds at {0},{1}".format(self.x, self.y))
+        if point.oob(p):
+            self.die("Out of bounds at {}".format(self.p))
             return
 
         self.on_level = True
         # self.debug("pushed")
 
-        self.x = x
-        self.y = y
+        self.p = p
 
-        self.level.thing_push(self.offset_x, self.offset_y, self)
+        self.level.thing_push(self.p, self)
 
-        mm.thing_push(self, x, y)
+        mm.thing_push(self, p.x, p.y, p.z)
 
         if hasattr(self.tp, "thing_pushed"):
             if self.tp.thing_pushed is not None:

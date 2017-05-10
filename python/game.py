@@ -67,14 +67,14 @@ class Game:
             pickle.dump(self.last_level_seed, f, pickle.HIGHEST_PROTOCOL)
 
             l.save(f)
-            mm.con("Game saved @ level {0} to {1}".format(str(l), s))
+            mm.con("Game saved @ level {} to {}".format(str(l), s))
 
     def upgrade(self):
 
         if self.version < 2:
             self.v2_field = 2
 
-#        self.debug("upgraded from ver {0} to {1}".format(
+#        self.debug("upgraded from ver {} to {}".format(
 #                   self.version, self.__class__.class_version))
 
         self.version = self.__class__.class_version
@@ -84,7 +84,7 @@ class Game:
         s = os.path.normcase(os.path.join(os.environ["APPDATA"],
                                           self.save_file))
         with open(s, 'rb') as f:
-            mm.log("Game loading from {0}".format(s))
+            mm.log("Game loading from {}".format(s))
 
             self.seed = pickle.load(f)
             self.sdl_delay = pickle.load(f)
@@ -92,7 +92,7 @@ class Game:
             self.last_level_seed = pickle.load(f)
 
             self.load_level(self.last_level_seed)
-            mm.log("Game loaded @ level {0} to {1}".format(str(self.level), s))
+            mm.log("Game loaded @ level {} to {}".format(str(self.level), s))
             mm.con("Loaded previously saved game")
 
         if self.version != self.__class__.class_version:

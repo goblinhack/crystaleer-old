@@ -16,7 +16,7 @@ def wid_quit_common(w):
 
 def wid_quit_yes(w):
     wid_quit_common(w)
-    mm.die("exit game from {0}".format(sys._getframe().f_code.co_name))
+    mm.die("exit game from {}".format(sys._getframe().f_code.co_name))
     return True
 
 

@@ -172,7 +172,7 @@ class WidText(wid.Wid):
                                         pass
                             else:
                                 mm.err("missing callback "
-                                       "for button {0} text {1}".format(
+                                       "for button {} text {}".format(
                                            button_count, line))
 
                             button_count += 1
