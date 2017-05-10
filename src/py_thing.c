@@ -506,9 +506,100 @@ done:	                                                                        \
     Py_RETURN_NONE;	                                                        \
 }	                                                                        \
 
+#define THING_BODY_FPOINT3D_VOID_FN(__field__, __fn__)                          \
+PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) \
+{	                                                                        \
+    PyObject *py_class = 0;	                                                \
+    char *thing_name = 0;	                                                \
+    fpoint3d p;                                                                 \
+    thingp tp;                                                                  \
+	                                                                        \
+    static char *kwlist[] = {(char*) "class", (char*) "x",                      \
+        (char*) "y", 0, (char*) "z", 0};	                                \
+	                                                                        \
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O|ddd",                     \
+                                     kwlist, &py_class,                         \
+                                     &p.x, &p.y, &p.z)) {	                        \
+        return (0);	                                                        \
+    }	                                                                        \
+	                                                                        \
+    if (!py_class) {	                                                        \
+        ERR("%s, missing class", __FUNCTION__);	                                \
+        return (0);	                                                        \
+    }	                                                                        \
+	                                                                        \
+    thing_name = py_obj_attr_str(py_class, "name");	                        \
+    if (!thing_name) {	                                                        \
+        ERR("%s, missing tp name", __FUNCTION__);	                        \
+        goto done;	                                                        \
+    }	                                                                        \
+	                                                                        \
+    tp = thing_find(thing_name);	                                        \
+    if (!tp) {	                                                                \
+        ERR("%s, cannot find thing %s", __FUNCTION__, thing_name);	        \
+        goto done;	                                                        \
+    }	                                                                        \
+	                                                                        \
+    (__fn__)(tp, p);                                                            \
+	                                                                        \
+done:	                                                                        \
+    if (thing_name) {	                                                        \
+        myfree(thing_name);	                                                \
+    }	                                                                        \
+	                                                                        \
+    Py_RETURN_NONE;	                                                        \
+}	                                                                        \
+
+#define THING_BODY_FPOINT3D_FN(__field__, __fn__)                               \
+PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) \
+{	                                                                        \
+    PyObject *py_class = 0;	                                                \
+    char *thing_name = 0;	                                                \
+    PyObject *o = 0;                                                            \
+    fpoint3d p;                                                                 \
+    thingp tp;                                                                  \
+	                                                                        \
+    static char *kwlist[] = {(char*) "class", (char*) "x",                      \
+        (char*) "y", 0, (char*) "z", 0};	                                \
+	                                                                        \
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O|ddd",                     \
+                                     kwlist, &py_class,                         \
+                                     &p.x, &p.y, &p.z)) {	                        \
+        return (0);	                                                        \
+    }	                                                                        \
+	                                                                        \
+    if (!py_class) {	                                                        \
+        ERR("%s, missing class", __FUNCTION__);	                                \
+        return (0);	                                                        \
+    }	                                                                        \
+	                                                                        \
+    thing_name = py_obj_attr_str(py_class, "name");	                        \
+    if (!thing_name) {	                                                        \
+        ERR("%s, missing tp name", __FUNCTION__);	                        \
+        goto done;	                                                        \
+    }	                                                                        \
+	                                                                        \
+    /* LOG("python-to-c: %s(%s -> %f, %f)", __FUNCTION__, thing_name, d1, d2);	 */ \
+	                                                                        \
+    tp = thing_find(thing_name);	                                        \
+    if (!tp) {	                                                                \
+        ERR("%s, cannot find thing %s", __FUNCTION__, thing_name);	        \
+        goto done;	                                                        \
+    }	                                                                        \
+	                                                                        \
+    o = (__fn__)(tp, p);                                                        \
+	                                                                        \
+done:	                                                                        \
+    if (thing_name) {	                                                        \
+        myfree(thing_name);	                                                \
+    }	                                                                        \
+	                                                                        \
+    return (o);	                                                                \
+}	                                                                        \
+
 THING_BODY_STRING_FN(destroyed, thing_destroyed_)
 THING_BODY_STRING_FN(set_tilename, thing_set_tilename_)
 THING_BODY_STRING_FN(set_tp, thing_set_tp_)
-THING_BODY_DOUBLE_DOUBLE_VOID_FN(move, thing_move_)
-THING_BODY_DOUBLE_DOUBLE_FN(push, thing_push_)
+THING_BODY_FPOINT3D_VOID_FN(move, thing_move_)
+THING_BODY_FPOINT3D_FN(push, thing_push_)
 THING_BODY_VOID_FN(pop, thing_pop_)

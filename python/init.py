@@ -159,6 +159,10 @@ def init2():
 
     load_all_plugins()
 
+    (tile_width, tile_height) = mm.tile_size(name="wall1")
+    mm.game_tile_width = int(tile_width)
+    mm.game_tile_height = int(tile_height)
+
 #    wid_intro_bg.create()
 #    wid_intro_menu.create()
     if True:

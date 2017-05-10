@@ -23,8 +23,8 @@ thingp thing_new(const char *name, long int thing_id, const char *tp_name);
 void thing_destroyed_(thingp t, const char *reason);
 void thing_set_tilename_(thingp t, const char *tilename);
 void thing_set_tp_(thingp t, const char *tp);
-void thing_move_(thingp t, double x, double y);
-PyObject *thing_push_(thingp t, double x, double y);
+void thing_move_(thingp t, fpoint3d);
+PyObject *thing_push_(thingp t, fpoint3d);
 void thing_pop_(thingp t);
 
 /*

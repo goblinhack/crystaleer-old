@@ -102,14 +102,14 @@ void thing_set_tp_ (thingp t, const char *tp_name)
     }
 }
 
-void thing_move_ (thingp t, double x, double y)
+void thing_move_ (thingp t, fpoint3d p)
 {
     verify(t);
 
 LOG("TBD thing_move_");
 }
 
-PyObject *thing_push_ (thingp t, double x, double y)
+PyObject *thing_push_ (thingp t, fpoint3d p)
 {
     verify(t);
 
