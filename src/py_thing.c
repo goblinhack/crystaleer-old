@@ -382,7 +382,7 @@ PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) 
     double d2 = 0;                                                              \
     thingp tp;                                                                  \
 	                                                                        \
-    static char *kwlist[] = {(char*) "class", (char*) "x", (char*) "y", 0};	                        \
+    static char *kwlist[] = {(char*) "class", (char*) "x", (char*) "y", 0};	\
 	                                                                        \
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "O|dd", kwlist, &py_class,   \
                                      &d1, &d2)) {	                        \
@@ -428,7 +428,7 @@ PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) 
     PyObject *o = 0;                                                            \
     thingp tp;                                                                  \
 	                                                                        \
-    static char *kwlist[] = {(char*) "class", (char*) "x", (char*) "y", 0};	                        \
+    static char *kwlist[] = {(char*) "class", (char*) "x", (char*) "y", 0};	\
 	                                                                        \
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "O|dd", kwlist, &py_class,   \
                                      &d1, &d2)) {	                        \
@@ -514,12 +514,10 @@ PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) 
     fpoint3d p;                                                                 \
     thingp tp;                                                                  \
 	                                                                        \
-    static char *kwlist[] = {(char*) "class", (char*) "x",                      \
-        (char*) "y", 0, (char*) "z", 0};	                                \
+    static char *kwlist[] = {(char*) "class", 0};	                        \
 	                                                                        \
-    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O|ddd",                     \
-                                     kwlist, &py_class,                         \
-                                     &p.x, &p.y, &p.z)) {	                        \
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O",                         \
+                                     kwlist, &py_class)) {                      \
         return (0);	                                                        \
     }	                                                                        \
 	                                                                        \
@@ -540,6 +538,16 @@ PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) 
         goto done;	                                                        \
     }	                                                                        \
 	                                                                        \
+    PyObject *P = py_obj_attr(py_class, "at");	                                \
+    p.x = py_obj_attr_double(P, "x");	                                        \
+    p.y = py_obj_attr_double(P, "y");	                                        \
+    p.z = py_obj_attr_double(P, "z");	                                        \
+	                                                                        \
+    /*                                                                          \
+    LOG("python-to-c: %s(%s -> %f, %f, %f)", __FUNCTION__,                      \
+        thing_name, p.x, p.y, p.z);	                                        \
+     */                                                                         \
+	                                                                        \
     (__fn__)(tp, p);                                                            \
 	                                                                        \
 done:	                                                                        \
@@ -559,12 +567,10 @@ PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) 
     fpoint3d p;                                                                 \
     thingp tp;                                                                  \
 	                                                                        \
-    static char *kwlist[] = {(char*) "class", (char*) "x",                      \
-        (char*) "y", 0, (char*) "z", 0};	                                \
+    static char *kwlist[] = {(char*) "class", 0};                               \
 	                                                                        \
-    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O|ddd",                     \
-                                     kwlist, &py_class,                         \
-                                     &p.x, &p.y, &p.z)) {	                        \
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O",                         \
+                                     kwlist, &py_class)) {                      \
         return (0);	                                                        \
     }	                                                                        \
 	                                                                        \
@@ -579,7 +585,15 @@ PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds) 
         goto done;	                                                        \
     }	                                                                        \
 	                                                                        \
-    /* LOG("python-to-c: %s(%s -> %f, %f)", __FUNCTION__, thing_name, d1, d2);	 */ \
+    PyObject *P = py_obj_attr(py_class, "at");	                                \
+    p.x = py_obj_attr_double(P, "x");	                                        \
+    p.y = py_obj_attr_double(P, "y");	                                        \
+    p.z = py_obj_attr_double(P, "z");	                                        \
+	                                                                        \
+    /*                                                                          \
+    LOG("python-to-c: %s(%s -> %f, %f, %f)", __FUNCTION__,                      \
+        thing_name, p.x, p.y, p.z);	                                        \
+     */                                                                         \
 	                                                                        \
     tp = thing_find(thing_name);	                                        \
     if (!tp) {	                                                                \

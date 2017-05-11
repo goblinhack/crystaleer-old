@@ -1090,6 +1090,32 @@ err_out:
     return (val);
 }
 
+double py_obj_to_double (PyObject *py_obj)
+{
+    double val;
+
+    val = 0;
+
+    if (!PyLong_Check((PyObject *)py_obj)) {
+        ERR("Object is a %s, not a uint64 object.",
+            Py_TYPE((PyObject *)py_obj)->tp_name);
+        goto err_out;
+    }
+
+    val = PyLong_AsDouble(py_obj);
+    if (!val) {
+        goto err_out;
+    }
+
+err_out:
+
+    if (PyErr_Occurred()) {
+        ERR("int conversion failed");
+    }
+
+    return (val);
+}
+
 int py_obj_attr_int (const PyObject *py_obj, const char *attr)
 {
     PyObject *py_encstr;
@@ -1154,6 +1180,38 @@ err_out:
     return (i);
 }
 
+double py_obj_attr_double (const PyObject *py_obj, const char *attr)
+{
+    PyObject *py_encstr;
+    double i = 0;
+
+    py_encstr = 0;
+
+    if (!PyObject_HasAttrString((PyObject *)py_obj, attr)) {
+        ERR("Object is a %s, not a string object.",
+            Py_TYPE((PyObject *)py_obj)->tp_name);
+        goto err_out;
+    }
+
+    py_encstr = PyObject_GetAttrString((PyObject *)py_obj, attr);
+    if (!py_encstr) {
+        goto err_out;
+    }
+
+    i = py_obj_to_double(py_encstr);
+
+err_out:
+    if (py_encstr) {
+        Py_XDECREF(py_encstr);
+    }
+
+    if (PyErr_Occurred()) {
+        ERR("int conversion failed");
+    }
+
+    return (i);
+}
+
 char *py_obj_attr_str (const PyObject *py_obj, const char *attr)
 {
     PyObject *py_encstr;
@@ -1188,6 +1246,37 @@ err_out:
     }
 
     return (outstr);
+}
+
+PyObject *py_obj_attr (const PyObject *py_obj, const char *attr)
+{
+    PyObject *py_encstr;
+
+    py_encstr = 0;
+
+    if (!PyObject_HasAttrString((PyObject *)py_obj, attr)) {
+        ERR("Object is a %s, not a string object.",
+            Py_TYPE((PyObject *)py_obj)->tp_name);
+        goto err_out;
+    }
+
+    py_encstr = PyObject_GetAttrString((PyObject *)py_obj, attr);
+    if (!py_encstr) {
+        goto err_out;
+    }
+
+    return (py_encstr);
+
+err_out:
+    if (py_encstr) {
+        Py_XDECREF(py_encstr);
+    }
+
+    if (PyErr_Occurred()) {
+        ERR("obj lookup conversion failed");
+    }
+
+    Py_RETURN_NONE;
 }
 
 static PyObject *con_ (PyObject *obj, PyObject *args, PyObject *keywds)

@@ -5,17 +5,16 @@ import sys
 import os
 import pickle
 import tp
-import point
-import point.Point as Point
+from point import Point
 
 
 class Level:
 
-    def __init__(self, p, seed):
+    def __init__(self, at, seed):
 
-        self.where = p
-
+        self.where = at
         self.seed = seed
+        self.max_thing_id = 0
 
         #
         # All things in the level
@@ -118,7 +117,7 @@ class Level:
 
     def thing_find(self, p, tp_name):
 
-        if point.oob(p):
+        if p.oob():
             return ""
 
         for t in self.things_at[p.x][p.y][p.z]:
@@ -129,7 +128,7 @@ class Level:
 
     def thing_find_same_type(self, p, tp_name):
 
-        if point.oob(p):
+        if p.oob():
             return ""
 
         f = tp.all_tps[tp_name]
@@ -141,7 +140,7 @@ class Level:
 
     def thing_top(self, p):
 
-        if point.oob(p):
+        if p.oob():
             return ""
 
         for t in self.things_at[p.x][p.y][p.z]:
@@ -151,7 +150,7 @@ class Level:
 
     def things_at(self, p):
 
-        if point.oob(p):
+        if p.oob():
             return ""
 
         r = []
@@ -187,7 +186,7 @@ class Level:
 
         sys.setrecursionlimit(mm.MAP_WIDTH * mm.MAP_HEIGHT)
 
-        if point.oob(p):
+        if p.oob():
             return ""
 
         if walked[p.x][p.y] == 1:
@@ -228,7 +227,7 @@ class Level:
 
     def is_movement_blocking_at(self, p):
 
-        if point.oob(p):
+        if p.oob():
             return ""
 
         for t in self.things_at[p.x][p.y][p.z]:
@@ -239,7 +238,7 @@ class Level:
 
     def describe_position(self, p):
 
-        if point.oob(p):
+        if p.oob():
             return ""
 
         #

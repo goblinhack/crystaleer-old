@@ -374,6 +374,8 @@ void ERR (const char *fmt, ...)
     va_start(args, fmt);
     err_(fmt, args);
     va_end(args);
+
+    wid_visible(wid_console_window, 1);
 }
 
 void CROAK (const char *fmt, ...)

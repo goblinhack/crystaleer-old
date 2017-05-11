@@ -2,15 +2,14 @@ import traceback
 import mm
 import tp
 import game
-import point
-import point.Point as Point
+from point import Point
 
 
 class Thing:
 
     class_version = 2
 
-    def __init__(self, tp_name, level=None, p=None):
+    def __init__(self, tp_name, level=None, at=None):
 
         self.version = self.__class__.class_version
         self.v1_field = 1
@@ -26,10 +25,10 @@ class Thing:
 
         self.tp = tp.all_tps[tp_name]
 
-        if p is None:
+        if at is None:
             self.at = Point(-1, -1, -1)
         else:
-            self.at = p
+            self.at = at
 
         self.on_level = False
         self.tilename = None
@@ -105,7 +104,7 @@ class Thing:
                 self.tp.thing_destroyed(self)
 
         if self.on_level:
-            self.pop()
+            self.atop()
 
         # self.debug("Destroying thing, {}".format(reason) + " {")
 
@@ -145,7 +144,7 @@ class Thing:
 
         if self.on_level:
             self.on_level = False
-            self.push()
+            self.atush()
             if self.tilename is not None:
                 self.set_tilename(self.tilename)
 
@@ -160,39 +159,39 @@ class Thing:
     #
     # Move a thing and see it move smoothly on the map
     #
-    def move(self, p):
+    def move(self, at):
 
-        if point.oob(p):
+        if at.oob():
             return
 
-        self.update_pos(p)
+        self.update_pos(at)
 
-        mm.thing_move(self, p.x, p.y, p.z)
+        mm.thing_move(self, at)
 
-    def update_pos(self, p):
+    def update_pos(self, at):
 
-        self.p = p
+        self.at = at
 
     #
     # Associate the thing with a given level
     #
-    def push(self, p=None):
+    def push(self, at=None):
 
-        if p is None:
-            p = self.p
+        if at is None:
+            at = self.at
 
-        if point.oob(p):
-            self.die("Out of bounds at {}".format(self.p))
+        if at.oob():
+            self.die("Out of bounds at {}".format(self.at))
             return
 
         self.on_level = True
         # self.debug("pushed")
 
-        self.p = p
+        self.at = at
 
-        self.level.thing_push(self.p, self)
+        self.level.thing_push(self.at, self)
 
-        mm.thing_push(self, p.x, p.y, p.z)
+        mm.thing_push(self)
 
         if hasattr(self.tp, "thing_pushed"):
             if self.tp.thing_pushed is not None:
@@ -209,6 +208,7 @@ class Thing:
         # self.debug("pop")
 
         self.level.thing_pop(self.offset_x, self.offset_y, self)
+
         mm.thing_pop(self)
 
     def set_long_name(self, value=""):

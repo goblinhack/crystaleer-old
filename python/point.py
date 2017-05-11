@@ -13,8 +13,8 @@ class Point(object):
         if 0 <= self.x <= mm.MAP_WIDTH and \
            0 <= self.y <= mm.MAP_HEIGHT and \
            0 <= self.y <= mm.MAP_DEPTH:
-            return True
-        return False
+            return False
+        return True
 
     def distFrom(self, p):
         return math.sqrt((self.x - p.x)**2 +

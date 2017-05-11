@@ -1,4 +1,3 @@
-import util
 import mm
 import level
 import thing
@@ -10,6 +9,7 @@ import wid_help_editor
 import wid_tp_editor
 import wid_quit
 import console
+from point import Point
 
 global g
 
@@ -42,13 +42,13 @@ class Game:
 
         self.sdl_delay = 1
         self.seed = 10
-        self.where = util.Xyz(0, 0, 0)
+        self.where = Point(0, 0, 0)
         self.load_level(self.seed)
 
     def load_level(self, seed):
 
         self.game_map_create()
-        self.level = level.Level(xyz=self.where, seed=seed)
+        self.level = level.Level(at=self.where, seed=seed)
 
     def load_level_finalize(self):
         mm.game_set_sdl_delay(self.sdl_delay)
@@ -408,5 +408,10 @@ def game_new():
         g.new_game()
 
     g.load_level_finalize()
+
+    t = thing.Thing(level=g.level,
+                    tp_name="wall1",
+                    at=Point(0, 0, 0))
+    t.push()
 
     console.hello()
