@@ -6,3 +6,4 @@
 
 extern void game_map_create(void);
 extern void game_map_destroy(void);
+extern void game_display(void);

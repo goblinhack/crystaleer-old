@@ -462,6 +462,8 @@ texp tex_from_surface (SDL_Surface *surface,
      */
     GLuint gl_surface_binding = 0;
 
+    glEnable(GL_TEXTURE_2D); /* Apparently needed for ATI drivers */
+
     glGenTextures(1, &gl_surface_binding);
 
     /*
@@ -475,7 +477,7 @@ texp tex_from_surface (SDL_Surface *surface,
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
-        GL_RGBA,
+        GL_RGBA8,
         surface->w,
         surface->h,
         0,
@@ -488,8 +490,16 @@ texp tex_from_surface (SDL_Surface *surface,
      * linear filtering. Nearest is meant to be quicker but I didn't see
      * that in reality.
      */
+#if 0
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+#else
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+#endif
+
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

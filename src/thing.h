@@ -84,6 +84,22 @@ typedef struct thing_ {
     tree_key_string tree;
 
     /*
+     * Display order sorted.
+     */
+    struct thing_ *next;
+    struct thing_ *prev;
+
+    /*
+     * Display sort distance.
+     */
+    double distance;
+
+    /*
+     * Grid coordinates.
+     */
+    fpoint3d at;
+
+    /*
      * Allocated in python
      */
     long int thing_id;
@@ -92,11 +108,6 @@ typedef struct thing_ {
      * Pointer to common settings for this thing.
      */
     tpp tp;
-
-    /*
-     * Grid coordinates.
-     */
-    fpoint3d at;
 
     /*
      * Last anim frame position. To be able to detect moving things.
@@ -142,9 +153,7 @@ typedef struct thing_ {
      */
     uint32_t debug:1;
 
-    /*
-     * Really just for animation.
-     */
+    uint32_t is_on_map:1;
     uint32_t is_dead:1;
     uint32_t is_sleeping:1;
     uint32_t is_moving:1;
@@ -235,3 +244,6 @@ int thing_angle_to_dir(double dx, double dy);
 #define FOR_ALL_THINGS_END } }
 
 extern tree_root *things;
+extern thingp things_display_sorted;
+extern void thing_incremental_sort(thingp t);
+extern void thing_set_distance(thingp t);

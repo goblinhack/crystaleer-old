@@ -11,6 +11,7 @@
 #include "config.h"
 
 tree_root *things;
+thingp things_display_sorted;
 
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
@@ -62,14 +63,17 @@ thingp thing_new (const char *name,
         THING_ERR(t, "thing [%s] not found", tp_name);
     }
 
-    /*
-     * Too slow with level changes.
-     */
-//    THING_LOG(t, "Created thing");
-
     verify(t);
 
+    THING_LOG(t, "created");
+
     return (t);
+}
+
+void
+thing_set_distance (thingp t)
+{
+    t->distance = t->at.x + t->at.y + t->at.z;
 }
 
 static void thing_destroy_internal (thingp t)
@@ -109,11 +113,149 @@ void thing_move_ (thingp t, fpoint3d p)
 LOG("TBD thing_move_");
 }
 
+static void 
+thing_insert (thingp t)
+{
+    thing_set_distance(t);
+
+    if (!things_display_sorted) {
+        things_display_sorted = t;
+
+        t->next = 0;
+        t->prev = 0;
+    } else {
+        thingp n = things_display_sorted;
+        thingp l = 0;
+
+        while (n) {
+            if (n->distance > t->distance) {
+                t->prev = n->prev;
+                t->next = n;
+
+                if (n->prev) {
+                    n->prev->next = t;
+                }
+                n->prev = t;
+
+                if (n == things_display_sorted) {
+                    things_display_sorted = t;
+                }
+
+                break;
+            }
+
+            l = n;
+            n = n->next;
+        }
+
+        if (!n) {
+            l->next = t;
+            t->prev = l;
+        }
+    }
+}
+
+static void 
+thing_extract (thingp t)
+{
+    thingp p = t->prev;
+    thingp n = t->next;
+
+    if (p) {
+        p->next = n;
+    }
+
+    if (n) {
+        n->prev = p;
+    }
+
+    if (t == things_display_sorted) {
+        things_display_sorted = n;
+    }
+}
+
+static void 
+thing_move_left (thingp t)
+{
+    thingp p = t->prev;
+
+    if (!p) {
+        return;
+    }
+
+    p->next = t->next;
+    t->next = p;
+    t->prev = p->prev;
+    p->prev = t;
+
+    if (p == things_display_sorted) {
+        things_display_sorted = t;
+    }
+}
+
+static void 
+thing_move_right (thingp t)
+{
+    thingp n = t->next;
+
+    if (!n) {
+        return;
+    }
+
+    n->prev = t->prev;
+    t->prev = n;
+    t->next = n->next;
+    n->next = t;
+
+    if (t == things_display_sorted) {
+        things_display_sorted = n;
+    }
+}
+
+void 
+thing_incremental_sort (thingp t)
+{
+    double distance = t->distance;
+    int moved = false;
+
+    for (;;) {
+        thingp n = t->next;
+        if (!n) {
+            break;
+        }
+
+        if (n->distance >= distance) {
+            break;
+        }
+
+        thing_move_right(t);
+
+        moved = true;
+    }
+
+    if (moved) {
+        return;
+    }
+
+    for (;;) {
+        thingp p = t->prev;
+        if (!p) {
+            break;
+        }
+
+        if (p->distance <= distance) {
+            break;
+        }
+
+        thing_move_left(t);
+    }
+}
+
 PyObject *thing_push_ (thingp t, fpoint3d p)
 {
     verify(t);
 
-    if (!game.tile_width) {
+    if (unlikely(!game.tile_width)) {
         game.tile_width = get_game_tile_width();
         game.tile_height = get_game_tile_height();
         if (!game.tile_width) {
@@ -121,10 +263,15 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
         }
     }
 
-LOG("TBD thing_push_");
-    /* 
-     * TBD
-     */
+    if (unlikely(t->is_on_map)) {
+        thing_pop_(t);
+    }
+
+    t->at = p;
+    thing_insert(t);
+    t->is_on_map = true;
+
+    thing_incremental_sort(t);
 
     Py_RETURN_NONE;
 }
@@ -133,10 +280,12 @@ void thing_pop_ (thingp t)
 {
     verify(t);
 
-    /*
-     * TBD
-     */
-LOG("TBD thing_pop_");
+    if (unlikely(!t->is_on_map)) {
+        return;
+    }
+
+    thing_extract(t);
+    t->is_on_map = false;
 }
 
 void thing_set_tilename_ (thingp t, const char *name)

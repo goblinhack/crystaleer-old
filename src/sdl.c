@@ -17,6 +17,7 @@
 #include "player.h"
 #include "python.h"
 #include "config.h"
+#include "game.h"
 
 #if defined WIN32 || defined __CYGWIN__
 #endif
@@ -1284,6 +1285,8 @@ void sdl_loop (void)
 
     uint8_t init_done = false;
 
+    gl_enter_2d_mode();
+
     while (!init_done) {
 
         /*
@@ -1454,7 +1457,8 @@ void sdl_loop (void)
         /*
          * Display windows.
          */
-        gl_enter_2d_mode();
+        game_display();
+
         wid_display_all();
 
         /*
@@ -1484,11 +1488,9 @@ void sdl_loop (void)
             }
         }
 
-        gl_leave_2d_mode();
-
         blit_flush();
 
-//        SDL_Delay(game.sdl_delay);
+        SDL_Delay(game.sdl_delay);
 
         time_get_time_ms();
 
@@ -1503,6 +1505,8 @@ void sdl_loop (void)
 #endif /* } */
         }
     }
+
+    gl_leave_2d_mode();
 
     SDL_ShowCursor(1);
 }
