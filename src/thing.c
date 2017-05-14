@@ -15,6 +15,7 @@ thingp things_display_sorted;
 
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
+static uint32_t thing_time;
 
 uint8_t thing_init (void)
 {
@@ -288,6 +289,71 @@ void thing_pop_ (thingp t)
     t->is_on_map = false;
 }
 
+void thing_move_to (thingp t, fpoint3d to)
+{
+    verify(t);
+
+    if ((t->last_at.x == -1.0) && 
+        (t->last_at.y == -1.0) &&
+        (t->last_at.z == -1.0)) {
+        t->last_at = to;
+    } else {
+        t->last_at = t->at;
+    }
+
+    t->at = to;
+
+    if (tp_is_animated_lr_flip(thing_tp(t))) {
+        if (fabs(t->at.x - t->last_at.x) <= 1) {
+            if (t->at.x > t->last_at.x) {
+                LOG("TBD flip");
+            } else if (t->at.x < t->last_at.x) {
+                LOG("TBD flip");
+            }
+        }
+    }
+}
+
+void thing_move_all (void)
+{
+    if (!game.sdl_delay) {
+        thing_time += 100/1;
+    } else {
+        thing_time += 100/game.sdl_delay;
+    }
+
+    thingp t = things_display_sorted;
+
+    for (t = things_display_sorted; t; t = t->next) {
+        if (!t->is_moving) {
+            continue;
+        }
+
+        if (thing_time >= t->timestamp_moving_end) {
+            t->is_moving = false;
+
+            thing_move_to(t, t->moving_end);
+
+            continue;
+        }
+
+        double time_step =
+            (double)(thing_time - t->timestamp_moving_begin) /
+            (double)(t->timestamp_moving_end - t->timestamp_moving_begin);
+
+        fpoint3d p;
+
+        p.x = (time_step * (double)(t->moving_end.x - t->moving_start.x)) +
+            t->moving_start.x;
+        p.y = (time_step * (double)(t->moving_end.y - t->moving_start.y)) +
+            t->moving_start.y;
+        p.z = (time_step * (double)(t->moving_end.z - t->moving_start.z)) +
+            t->moving_start.z;
+
+        thing_move_to(t, p);
+    }
+}
+
 void thing_set_tilename_ (thingp t, const char *name)
 {
     fast_verify(w);
@@ -375,31 +441,6 @@ thing_tilep thing_current_tile (thingp t)
     }
 
     return (&thing_tile_arr[t->current_tile]);
-}
-
-void thing_move_to (thingp t, fpoint3d to)
-{
-    verify(t);
-
-    if ((t->last_at.x == -1.0) && 
-        (t->last_at.y == -1.0) &&
-        (t->last_at.z == -1.0)) {
-        t->last_at = to;
-    } else {
-        t->last_at = t->at;
-    }
-
-    t->at = to;
-
-    if (tp_is_animated_lr_flip(thing_tp(t))) {
-        if (fabs(t->at.x - t->last_at.x) <= 1) {
-            if (t->at.x > t->last_at.x) {
-                LOG("TBD flip");
-            } else if (t->at.x < t->last_at.x) {
-                LOG("TBD flip");
-            }
-        }
-    }
 }
 
 void thing_move_set_dir (thingp t,

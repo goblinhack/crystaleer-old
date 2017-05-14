@@ -1454,11 +1454,13 @@ void sdl_loop (void)
         }
 #endif
 
-        /*
-         * Display windows.
-         */
+        thing_move_all();
+
         game_display();
 
+        /*
+         * Display UI.
+         */
         wid_display_all();
 
         /*

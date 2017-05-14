@@ -123,7 +123,10 @@ typedef struct thing_ {
     /*
      * For moving
      */
-    fpoint3d move_delta;
+    fpoint3d moving_start;
+    fpoint3d moving_end;
+    uint32_t timestamp_moving_begin;
+    uint32_t timestamp_moving_end;
 
     tilep tile;
 
@@ -152,7 +155,6 @@ typedef struct thing_ {
      * Debugging this thing?
      */
     uint32_t debug:1;
-
     uint32_t is_on_map:1;
     uint32_t is_dead:1;
     uint32_t is_sleeping:1;
@@ -220,15 +222,20 @@ static inline uint8_t thing_is_player (thingp t)
 /*
  * thing.c
  */
-void thing_move_set_dir(thingp t,
-                        double *x,
-                        double *y,
-                        uint8_t up,
-                        uint8_t down,
-                        uint8_t left,
-                        uint8_t right);
+extern void thing_move_set_dir(thingp t,
+                               double *x,
+                               double *y,
+                               uint8_t up,
+                               uint8_t down,
+                               uint8_t left,
+                               uint8_t right);
+extern void thing_incremental_sort(thingp t);
+extern void thing_set_distance(thingp t);
+extern void thing_move_to(thingp t, fpoint3d at);
+extern void thing_move_all(void);
 
-void thing_move_to(thingp t, fpoint3d);
+extern tree_root *things;
+extern thingp things_display_sorted;
 
 /*
  * thing_dir.c
@@ -242,8 +249,3 @@ int thing_angle_to_dir(double dx, double dy);
         verify(t);
 
 #define FOR_ALL_THINGS_END } }
-
-extern tree_root *things;
-extern thingp things_display_sorted;
-extern void thing_incremental_sort(thingp t);
-extern void thing_set_distance(thingp t);
