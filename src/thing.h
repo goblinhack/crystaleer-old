@@ -159,6 +159,7 @@ typedef struct thing_ {
     uint32_t is_dead:1;
     uint32_t is_sleeping:1;
     uint32_t is_moving:1;
+    uint32_t has_ever_moved:1;
     uint32_t is_open:1;
 } thing;
 

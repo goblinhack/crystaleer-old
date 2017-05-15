@@ -54,13 +54,15 @@ void thing_animate (thingp t)
      * Get the next tile.
      */
     if (tile) {
-        if ((t->last_anim_at.x != t->at.x) || 
-            (t->last_anim_at.y != t->at.y) ||
-            (t->last_anim_at.z != t->at.z)) {
-            t->last_anim_at = t->at;
-            t->is_moving = true;
-        } else {
-            t->is_moving = false;
+        if (t->has_ever_moved) {
+            if ((t->last_anim_at.x != t->at.x) || 
+                (t->last_anim_at.y != t->at.y) ||
+                (t->last_anim_at.z != t->at.z)) {
+                t->last_anim_at = t->at;
+                t->is_moving = true;
+            } else {
+                t->is_moving = false;
+            }
         }
 
         /*

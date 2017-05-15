@@ -9,13 +9,14 @@
 #include "thing_tile.h"
 #include "python.h"
 #include "config.h"
+#include "math_util.h"
+#include "time_util.h"
 
 tree_root *things;
 thingp things_display_sorted;
 
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
-static uint32_t thing_time;
 
 uint8_t thing_init (void)
 {
@@ -107,13 +108,6 @@ void thing_set_tp_ (thingp t, const char *tp_name)
     }
 }
 
-void thing_move_ (thingp t, fpoint3d p)
-{
-    verify(t);
-
-LOG("TBD thing_move_");
-}
-
 static void 
 thing_insert (thingp t)
 {
@@ -176,7 +170,7 @@ thing_extract (thingp t)
 }
 
 static void 
-thing_move_left (thingp t)
+thing_sort_left (thingp t)
 {
     thingp p = t->prev;
 
@@ -195,7 +189,7 @@ thing_move_left (thingp t)
 }
 
 static void 
-thing_move_right (thingp t)
+thing_sort_right (thingp t)
 {
     thingp n = t->next;
 
@@ -229,7 +223,7 @@ thing_incremental_sort (thingp t)
             break;
         }
 
-        thing_move_right(t);
+        thing_sort_right(t);
 
         moved = true;
     }
@@ -248,7 +242,7 @@ thing_incremental_sort (thingp t)
             break;
         }
 
-        thing_move_left(t);
+        thing_sort_left(t);
     }
 }
 
@@ -271,6 +265,7 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
     t->at = p;
     thing_insert(t);
     t->is_on_map = true;
+    t->moving_start = p;
 
     thing_incremental_sort(t);
 
@@ -289,18 +284,18 @@ void thing_pop_ (thingp t)
     t->is_on_map = false;
 }
 
-void thing_move_to (thingp t, fpoint3d to)
+static void 
+thing_move_increment (thingp t, fpoint3d to)
 {
     verify(t);
 
-    if ((t->last_at.x == -1.0) && 
-        (t->last_at.y == -1.0) &&
-        (t->last_at.z == -1.0)) {
+    if (!t->has_ever_moved) {
         t->last_at = to;
     } else {
         t->last_at = t->at;
     }
 
+    t->has_ever_moved = true;
     t->at = to;
 
     if (tp_is_animated_lr_flip(thing_tp(t))) {
@@ -314,14 +309,24 @@ void thing_move_to (thingp t, fpoint3d to)
     }
 }
 
+void thing_move_ (thingp t, fpoint3d p)
+{
+    verify(t);
+
+    double ms = tp_get_speed(thing_tp(t));
+
+    ms *= fdist3d(t->at, p);
+
+    uint32_t thing_time = time_get_time_ms();
+    t->moving_end = p;
+    t->timestamp_moving_begin = thing_time;
+    t->timestamp_moving_end = thing_time + ms;
+    t->is_moving = true;
+}
+
 void thing_move_all (void)
 {
-    if (!game.sdl_delay) {
-        thing_time += 100/1;
-    } else {
-        thing_time += 100/game.sdl_delay;
-    }
-
+    uint32_t thing_time = time_get_time_ms();
     thingp t = things_display_sorted;
 
     for (t = things_display_sorted; t; t = t->next) {
@@ -332,7 +337,7 @@ void thing_move_all (void)
         if (thing_time >= t->timestamp_moving_end) {
             t->is_moving = false;
 
-            thing_move_to(t, t->moving_end);
+            thing_move_increment(t, t->moving_end);
 
             continue;
         }
@@ -350,7 +355,7 @@ void thing_move_all (void)
         p.z = (time_step * (double)(t->moving_end.z - t->moving_start.z)) +
             t->moving_start.z;
 
-        thing_move_to(t, p);
+        thing_move_increment(t, p);
     }
 }
 

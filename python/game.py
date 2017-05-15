@@ -414,6 +414,7 @@ def game_new():
                     tp_name="player1",
                     at=Point(0, 0, 2))
     t.push()
+    t.move(Point(10, 0, 0))
 
     t = thing.Thing(level=g.level,
                     tp_name="wall1",
