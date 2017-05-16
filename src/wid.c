@@ -1332,6 +1332,8 @@ void wid_set_text (widp w, const char *name)
     if (w->cursor > len) {
         w->cursor = len;
     }
+
+    wid_set_text_outline(w, true);
 }
 
 void wid_set_tooltip (widp w, const char *name,
@@ -2966,7 +2968,7 @@ widp wid_new_rounded_window (const char *name)
     wid_set_rounded_large(w);
     wid_set_bevelled(w, true);
     wid_set_bevel(w, 8);
-    wid_set_text_outline(w, false);
+    wid_set_text_outline(w, true);
     wid_set_font(w, large_font);
     wid_set_name(w, name);
 
@@ -3051,7 +3053,7 @@ widp wid_new_square_button (widp parent, const char *name)
     wid_set_square(w);
     wid_set_bevelled(w, true);
     wid_set_bevel(w, 2);
-    wid_set_text_outline(w, false);
+    wid_set_text_outline(w, true);
     wid_set_font(w, small_font);
     wid_set_name(w, name);
 
@@ -3147,7 +3149,7 @@ static widp wid_new_scroll_trough (widp parent)
     WID_DBG(w, "%s", __FUNCTION__);
 
     wid_set_rounded_small(w);
-    wid_set_text_outline(w, false);
+    wid_set_text_outline(w, true);
 
     wid_set_mode(w, WID_MODE_NORMAL); {
         color c;
@@ -3199,7 +3201,7 @@ static widp wid_new_scroll_bar (widp parent,
     wid_set_rounded_small(w);
     wid_set_bevelled(w, true);
     wid_set_bevel(w, 2);
-    wid_set_text_outline(w, false);
+    wid_set_text_outline(w, true);
     wid_set_name(w, name);
 
     wid_set_mode(w, WID_MODE_ACTIVE); {

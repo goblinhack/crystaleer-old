@@ -30,7 +30,7 @@
 /*
  * Retro text. Makes alpha blending look odd tho in overlay.
  */
-#undef ENABLE_LARGE_TEXT_OUTLINE
+#define ENABLE_LARGE_TEXT_OUTLINE
 
 /*
  * How much the wheel mouse moves.
@@ -79,12 +79,12 @@
 #undef ENABLE_GENERATE_TTF         // Edit RUNME to add -lSDL_ttf
 
 #define FIXED_FONT                  "data/ttf/monaco.ttf"
-#define VSMALL_FONT                 "data/ttf/monaco.ttf"
-#define SMALL_FONT                  "data/ttf/monaco.ttf"
-#define MED_FONT                    "data/ttf/monaco.ttf"
-#define LARGE_FONT                  "data/ttf/monaco.ttf"
-#define VLARGE_FONT                 "data/ttf/monaco.ttf"
-#define VVLARGE_FONT                "data/ttf/monaco.ttf"
+#define VSMALL_FONT                 "data/ttf/tekton.ttf"
+#define SMALL_FONT                  "data/ttf/tekton.ttf"
+#define MED_FONT                    "data/ttf/tekton.ttf"
+#define LARGE_FONT                  "data/ttf/tekton.ttf"
+#define VLARGE_FONT                 "data/ttf/tekton.ttf"
+#define VVLARGE_FONT                "data/ttf/tekton.ttf"
 
 #define FIXED_FONT_SIZE             18
 #define VSMALL_FONT_SIZE            16
