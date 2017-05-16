@@ -20,7 +20,6 @@ GAME_OBJECTS=				\
     $(OBJDIR)/init_fn.o 		\
     $(OBJDIR)/log.o 			\
     $(OBJDIR)/main.o 			\
-    $(OBJDIR)/map_focus.o 		\
     $(OBJDIR)/math.o 			\
     $(OBJDIR)/music.o 			\
     $(OBJDIR)/pcg_basic.o 		\

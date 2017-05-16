@@ -109,15 +109,9 @@ class Game:
         mm.game_map_destroy()
 
     #
-    # Get rid of the path indicators where the player will move
-    #
-    def map_clear_focus(self):
-        mm.game_map_clear_selection_buttons()
-
-    #
     # Mouse is over a map tile; show the route back to the player
     #
-    def map_mouse_over(self, w, x, y, wheelx, wheely, button):
+    def mouse_over(self, w, x, y, wheelx, wheely, button):
         #
         # Check we can get back from the chosen point to the player.
         #
@@ -140,21 +134,20 @@ class Game:
                 return True
             else:
                 if wheelx > 0:
-                    self.map_mouse_down(w, player.x - 1, player.y, 1)
+                    self.mouse_down(w, player.x - 1, player.y, 1)
                 if wheelx < 0:
-                    self.map_mouse_down(w, player.x + 1, player.y, 1)
+                    self.mouse_down(w, player.x + 1, player.y, 1)
                 if wheely > 0:
-                    self.map_mouse_down(w, player.x, player.y - 1, 1)
+                    self.mouse_down(w, player.x, player.y - 1, 1)
                 if wheely < 0:
-                    self.map_mouse_down(w, player.x, player.y + 1, 1)
+                    self.mouse_down(w, player.x, player.y + 1, 1)
                 return True
 
-        self.map_clear_focus()
         self.map_selected_tile(x, y)
 
         if self.editor_mode:
             if button == 1:
-                return self.map_mouse_down(w, x, y, button)
+                return self.mouse_down(w, x, y, button)
             return True
 
     #
@@ -168,7 +161,7 @@ class Game:
     #
     # Move the player to the chosen tile
     #
-    def map_mouse_down(self, w, x, y, button):
+    def mouse_down(self, w, x, y, button):
 
         l = self.level
 
@@ -205,10 +198,9 @@ class Game:
     #
     # Player input
     #
-    def map_key_down(self, w, sym, mod):
+    def key_down(self, w, sym, mod):
 
         self.map_help()
-        self.map_clear_focus()
 
         x = self.last_selected_tile_x
         y = self.last_selected_tile_y
@@ -275,10 +267,10 @@ class Game:
                 return True
 
             if sym == mm.SDLK_SPACE:
-                return self.map_mouse_down(w, x, y, 1)
+                return self.mouse_down(w, x, y, 1)
 
             if sym == mm.SDLK_DELETE or sym == mm.SDLK_BACKSPACE:
-                return self.map_mouse_down(w, x, y, 3)
+                return self.mouse_down(w, x, y, 3)
 
             if sym == mm.SDLK_s:
                 self.save()
@@ -378,17 +370,16 @@ class Game:
             mm.tip2("Press h for help. Click to move.")
 
 
-def map_mouse_over(w, relx, rely, wheelx, wheely, button):
-    g.map_mouse_over(w, relx, rely, wheelx, wheely, button)
+def game_mouse_over(w, relx, rely, wheelx, wheely, button):
+    g.mouse_over(w, relx, rely, wheelx, wheely, button)
 
 
-def map_mouse_down(w, x, y, button):
-    return g.map_mouse_down(w, x, y, button)
+def game_mouse_down(w, x, y, button):
+    return g.mouse_down(w, x, y, button)
 
 
-def map_key_down(w, sym, mod):
-    return g.map_key_down(w, sym, mod)
-
+def game_key_down(w, sym, mod):
+    return g.key_down(w, sym, mod)
 
 g = None
 

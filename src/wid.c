@@ -22,6 +22,7 @@
 #include "thing.h"
 #include "wid_tiles.h"
 #include "config.h"
+#include "game.h"
 
 #define CONSOLE_MAGIC_KEY
 
@@ -4648,6 +4649,10 @@ uint8_t wid_receive_input (widp w, const SDL_KEYSYM *key)
  */
 static uint8_t wid_receive_unhandled_input (const SDL_KEYSYM *key)
 {
+    if (game_key_down(key)) {
+        return (true);
+    }
+
 #ifdef CONSOLE_MAGIC_KEY
     widp w;
 
