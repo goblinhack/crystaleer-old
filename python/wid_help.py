@@ -41,10 +41,10 @@ def wid_help_create():
     w.add_text(font="vlarge",
                text="%%fg=green$q) %%fg=white$Quit the game")
 
-    w.add_text(font="vlarge", center=True, text="--")
+    w.add_text(font="vlarge", center=True, text="------------------------")
 
     w.add_text(font="vlarge",
-               text="%%fg=green$^e) %%fg=white$Editor mode")
+               text="%%fg=green$Ctrl e) %%fg=white$Editor mode")
 
     w.update()
     w.move_to_pct_centered(x=0.5, y=0.5)

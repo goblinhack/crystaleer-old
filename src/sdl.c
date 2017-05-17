@@ -1293,7 +1293,7 @@ void sdl_loop (void)
          * Clear the screen
          */
 #if 0
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
 #endif
 
         time_update_time_milli();
@@ -1456,6 +1456,9 @@ void sdl_loop (void)
 
         thing_move_all();
 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glcolor(WHITE);
+
         game_display();
 
         /*
@@ -1489,8 +1492,6 @@ void sdl_loop (void)
                 }
             }
         }
-
-        blit_flush();
 
         SDL_Delay(game.sdl_delay);
 

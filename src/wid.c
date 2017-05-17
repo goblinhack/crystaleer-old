@@ -6223,7 +6223,7 @@ static widp wid_key_up_handler (int32_t x, int32_t y)
 }
 
 #ifdef DEBUG_GL_BLEND
-CON("%d %d %s %s", i1, i2, vals_str[i1], vals_str[i2]);
+TIP2("%d %d %s %s", i1, i2, vals_str[i1], vals_str[i2]);
 glBlendFunc(vals[i1], vals[i2]);
 #endif
 
@@ -7261,7 +7261,6 @@ static void wid_display (widp w,
             for (dx = 0.5; dx < outline; dx += 0.5) {
                 glcolor(col_text_outline);
                 col_text_outline.a = (int)a;
-                a *= 0.30;
 
                 ttf_puts_no_fmt(font, text,
                                 x - dx * scaling,
@@ -7281,7 +7280,11 @@ static void wid_display (widp w,
             double dy;
             a = (wid_get_fade_amount(w) * 255.0);
 
-            for (dy = 0.5; dy < outline * 2; dy += 1.0) {
+            for (dy = 0.5; dy < outline * 2; dy += 0.5) {
+                col_text_outline.r = 10;
+                col_text_outline.g = 10;
+                col_text_outline.b = 10;
+                col_text_outline.a = 255;
                 glcolor(col_text_outline);
                 col_text_outline.a = (int)a;
                 a *= 0.70;
@@ -7564,7 +7567,7 @@ void wid_display_all (void)
         glBindFramebuffer_EXT(GL_FRAMEBUFFER, 0);
 
         glClearColor(0,0,0,0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         glcolor(WHITE);
 
         glEnable(GL_SCISSOR_TEST);
@@ -7590,7 +7593,7 @@ void wid_display_all (void)
     {
         glBindFramebuffer_EXT(GL_FRAMEBUFFER, fbo_id_wid);
         glClearColor(0,0,0,0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         glcolor(WHITE);
     }
 
@@ -7691,7 +7694,7 @@ blit:
         double window_w = tw;
         double window_h = th;
 
-        glBlendFunc( GL_BLEND_SRC_ALPHA , GL_ZERO);
+        glBlendFunc(GL_BLEND_SRC_ALPHA, GL_ZERO);
 
         blit_init();
         glcolor(WHITE);

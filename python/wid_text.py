@@ -311,7 +311,7 @@ def wid_text_on_destroy(w):
 def wid_text_on_m_over_b_callback(w, relx, rely, wheelx, wheely):
     wid_focus.set_focus(w, auto_scroll=False)
 
-    w.set_color(tl=True, bg=True, br=True, name="white", alpha=0.2)
+    w.set_color(tl=True, bg=True, br=True, name="white", alpha=0.05)
 
     if w.row_on_m_over_b is not None:
         w.row_on_m_over_b(w, relx, rely, wheelx, wheely)
