@@ -159,14 +159,15 @@ class Thing:
     #
     # Move a thing and see it move smoothly on the map
     #
-    def move(self, at):
+    def move(self, to):
 
-        if at.oob():
+        if to.oob():
+            mm.con("player OOB")
             return
 
-        self.update_pos(at)
+        self.update_pos(to)
 
-        mm.thing_move(self, at)
+        mm.thing_move(self, to)
 
     def update_pos(self, at):
 

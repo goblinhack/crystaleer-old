@@ -316,9 +316,10 @@ void thing_move_ (thingp t, fpoint3d p)
     double ms = tp_get_speed(thing_tp(t));
 
     ms *= fdist3d(t->at, p);
-
+CON("move %f %f %f to %f %f %f in %f", t->at.x, t->at.y, t->at.z, p.x,p.y,p.z, ms); 
     uint32_t thing_time = time_get_time_ms();
     t->moving_end = p;
+    t->moving_start = t->at;
     t->timestamp_moving_begin = thing_time;
     t->timestamp_moving_end = thing_time + ms;
     t->is_moving = true;

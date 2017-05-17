@@ -115,34 +115,6 @@ class Game:
         #
         # Check we can get back from the chosen point to the player.
         #
-        player = self.player
-
-        #
-        # Want to scroll without the focus moving
-        #
-        if wheelx != 0 or wheely != 0:
-
-            if self.editor_mode:
-                if wheelx > 0:
-                    player.move(player.x - 1, player.y)
-                if wheelx < 0:
-                    player.move(player.x + 1, player.y)
-                if wheely > 0:
-                    player.move(player.x, player.y - 1)
-                if wheely < 0:
-                    player.move(player.x, player.y + 1)
-                return True
-            else:
-                if wheelx > 0:
-                    self.mouse_down(w, player.x - 1, player.y, 1)
-                if wheelx < 0:
-                    self.mouse_down(w, player.x + 1, player.y, 1)
-                if wheely > 0:
-                    self.mouse_down(w, player.x, player.y - 1, 1)
-                if wheely < 0:
-                    self.mouse_down(w, player.x, player.y + 1, 1)
-                return True
-
         self.map_selected_tile(x, y)
 
         if self.editor_mode:
@@ -199,6 +171,8 @@ class Game:
     # Player input
     #
     def key_down(self, w, sym, mod):
+
+        player = self.player
 
         self.map_help()
 
@@ -312,6 +286,27 @@ class Game:
                 wid_quit.visible()
                 return True
 
+            to = player.at
+            if sym == mm.SDLK_LEFT:
+                to.x += 1
+                player.move(to)
+                return True
+
+            if sym == mm.SDLK_RIGHT:
+                to.x -= 1
+                player.move(to)
+                return True
+
+            if sym == mm.SDLK_DOWN:
+                to.y += 1
+                player.move(to)
+                return True
+
+            if sym == mm.SDLK_UP:
+                to.y -= 1
+                player.move(to)
+                return True
+
         if mod == mm.KMOD_LCTRL or mod == mm.KMOD_RCTRL:
             if sym == mm.SDLK_e:
                 if not self.editor_mode:
@@ -408,7 +403,7 @@ def game_new():
                     tp_name="player1",
                     at=Point(0, 0, 2))
     t.push()
-    t.move(Point(10, 0, 0))
+    g.player = t
 
     t = thing.Thing(level=g.level,
                     tp_name="wall1",
