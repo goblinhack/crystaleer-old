@@ -206,6 +206,9 @@ class Game:
         y = self.last_selected_tile_y
         l = self.level
 
+        if sym == mm.SDLK_BACKQUOTE:
+            return False
+
         if self.editor_mode:
             if sym == mm.SDLK_TAB:
                 self.editor_mode_draw = True

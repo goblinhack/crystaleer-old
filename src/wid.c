@@ -7220,6 +7220,7 @@ static void wid_display (widp w,
         if (wid_get_text_outline(w)) {
             glcolor(col_text_outline);
 
+#define ENABLE_LARGE_TEXT_OUTLINE
 #ifdef ENABLE_LARGE_TEXT_OUTLINE
             double outline = 0;
 
@@ -7241,8 +7242,9 @@ static void wid_display (widp w,
                 ERR("unhandled text outline case");
             }
 
+#if 0
             double dx;
-            double a = (wid_get_fade_amount(w) * 255.0);
+            double a = 255;
 
             /*
              * Top outline
@@ -7261,6 +7263,7 @@ static void wid_display (widp w,
             for (dx = 0.5; dx < outline; dx += 0.5) {
                 glcolor(col_text_outline);
                 col_text_outline.a = (int)a;
+                a *= 0.7;
 
                 ttf_puts_no_fmt(font, text,
                                 x - dx * scaling,
@@ -7273,21 +7276,20 @@ static void wid_display (widp w,
                                 scaling, advance,
                                 fixed_width);
             }
+#endif
 
             /*
              * Shadow
              */
             double dy;
-            a = (wid_get_fade_amount(w) * 255.0);
 
-            for (dy = 0.5; dy < outline * 2; dy += 0.5) {
-                col_text_outline.r = 10;
-                col_text_outline.g = 10;
-                col_text_outline.b = 10;
+            for (dy = 0.1; dy < outline * 3; dy += 0.5) {
+                col_text_outline.r = 1;
+                col_text_outline.g = 1;
+                col_text_outline.b = 1;
                 col_text_outline.a = 255;
+
                 glcolor(col_text_outline);
-                col_text_outline.a = (int)a;
-                a *= 0.70;
 
                 ttf_puts_no_fmt(font, text,
                                 x,

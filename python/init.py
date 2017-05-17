@@ -167,7 +167,6 @@ def init2():
 #    wid_intro_menu.create()
     if True:
         wid_quit.wid_quit_create()
-    wid_quit.visible()
 
     if True:
         wid_help.wid_help_create()
