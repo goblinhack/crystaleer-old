@@ -90,14 +90,18 @@ typedef struct thing_ {
     struct thing_ *prev;
 
     /*
-     * Display sort distance.
-     */
-    double distance;
-
-    /*
      * Grid coordinates.
      */
     fpoint3d at;
+
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
+    double hmin;
+    double hmax;
 
     /*
      * Allocated in python
@@ -231,7 +235,6 @@ extern void thing_move_set_dir(thingp t,
                                uint8_t left,
                                uint8_t right);
 extern void thing_incremental_sort(thingp t);
-extern void thing_set_distance(thingp t);
 extern void thing_move_to(thingp t, fpoint3d at);
 extern void thing_move_all(void);
 

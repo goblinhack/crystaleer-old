@@ -410,6 +410,16 @@ def game_new():
                     at=Point(0, 0, 1))
     t.push()
 
+    for x in range(mm.MAP_WIDTH):
+        t = thing.Thing(level=g.level,
+                        tp_name="wall1",
+                        at=Point(x, 0, 1))
+        t.push()
+        t = thing.Thing(level=g.level,
+                        tp_name="wall1",
+                        at=Point(0, x, 1))
+        t.push()
+
     t = thing.Thing(level=g.level,
                     tp_name="wall1",
                     at=Point(1, 0, 0))

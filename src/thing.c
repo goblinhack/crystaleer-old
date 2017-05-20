@@ -72,12 +72,6 @@ thingp thing_new (const char *name,
     return (t);
 }
 
-void
-thing_set_distance (thingp t)
-{
-    t->distance = t->at.x + t->at.y + t->at.z;
-}
-
 static void thing_destroy_internal (thingp t)
 {
 }
@@ -108,10 +102,129 @@ void thing_set_tp_ (thingp t, const char *tp_name)
     }
 }
 
+/*
+ * Convert a 3D space position to a 2D isometric position.
+ */
+static void 
+thing_3d_2d (fpoint3d p, double *x, double *y, double *z, double *h)
+{
+    /*
+     * New XY position simply adds Z to X and Y.
+     */
+    *x = p.x + p.z;
+    *y = p.y + p.z;
+    *z = p.y + p.z;
+
+    /*
+     * Compute horizontal distance from origin at 30 degrees
+     *
+     * h = (x - y) * Math.cos(Math.PI/6),
+     *
+     * √3/2 by 7/8 = 1/2 + 1/4 + 1/8 = 0.875:
+     */
+#if 0
+    int H, d;
+
+    H = d = *x - *y;
+    H >>= 1;
+    H += d;
+    H >>= 1;
+    H += d;
+    H >>= 1;
+    *h = H;
+#endif
+    *h = (x - y) * cos(PI/6);
+
+    /*
+     * Compute vertical distance from origin.
+     *
+     * v: (isoX + isoY) / 2;
+     */
+}
+
+static void 
+thing_set_min_max (thingp t)
+{
+    double x = t->at.x;
+    double y = t->at.y;
+    double z = t->at.z;
+
+    double x_top, y_top, z_top, h_top;
+    double x_bot, y_bot, z_bot, h_bot;
+    double x_ltop, y_ltop, z_ltop, h_ltop;
+    double x_rbot, y_rbot, z_rbot, h_rbot;
+
+    {
+	fpoint3d p = { x, y, z + 1 };
+	thing_3d_2d(p, &x_top, &y_top, &z_top, &h_top);
+    }
+
+    {
+	fpoint3d p = { x + 1, y + 1, z };
+	thing_3d_2d(p, &x_bot, &y_bot, &z_bot, &h_bot);
+    }
+
+    {
+	fpoint3d p = { x, y + 1, z + 1 };
+	thing_3d_2d(p, &x_ltop, &y_ltop, &z_ltop, &h_ltop);
+    }
+
+    {
+	fpoint3d p = { x + 1, y, z };
+	thing_3d_2d(p, &x_rbot, &y_rbot, &z_rbot, &h_rbot);
+    }
+
+    t->xmin = min(x_top, min(x_bot, min(x_ltop, x_rbot)));
+    t->xmax = max(x_top, max(x_bot, max(x_ltop, x_rbot)));
+
+    t->ymin = min(y_top, min(y_bot, min(y_ltop, y_rbot)));
+    t->ymax = max(y_top, max(y_bot, max(y_ltop, y_rbot)));
+
+    t->zmin = min(z_top, min(z_bot, min(z_ltop, z_rbot)));
+    t->zmax = max(z_top, max(z_bot, max(z_ltop, z_rbot)));
+
+    t->hmin = min(h_top, min(h_bot, min(h_ltop, h_rbot)));
+    t->hmax = max(h_top, max(h_bot, max(h_ltop, h_rbot)));
+}
+
+#if 0
+static int 
+things_overlap (thingp t, thingp r)
+{
+    return ((t->xmin < r->xmax) && (r->xmin < t->xmax) &&
+	    (t->ymin < r->ymax) && (r->ymin < t->ymax) &&
+	    (t->hmin < r->hmax) && (r->hmin < t->hmax));
+}
+#endif
+
+static int 
+is_thing_in_front (thingp t, thingp r) 
+{
+    /*
+     * lower x value is in front
+     */
+    if (r->xmin >= r->xmax) { 
+	return (false);
+    } else if (r->xmin >= r->xmax) { 
+        return (true);
+    } else if (r->ymin >= r->ymax) {
+        return (false);
+    } else if (r->ymin >= r->ymax) {
+        return (true);
+    } else if (r->hmin >= r->hmax) {
+        return (true);
+    } else if (r->hmin >= r->hmax) {
+        return (false);
+    } else {
+	ERR("things intersect, cannot sort");
+        return (true);
+    }
+}
+
 static void 
 thing_insert (thingp t)
 {
-    thing_set_distance(t);
+    thing_set_min_max(t);
 
     if (!things_display_sorted) {
         things_display_sorted = t;
@@ -123,7 +236,7 @@ thing_insert (thingp t)
         thingp l = 0;
 
         while (n) {
-            if (n->distance > t->distance) {
+            if (is_thing_in_front(n, t)) {
                 t->prev = n->prev;
                 t->next = n;
 
@@ -167,83 +280,9 @@ thing_extract (thingp t)
     if (t == things_display_sorted) {
         things_display_sorted = n;
     }
-}
 
-static void 
-thing_sort_left (thingp t)
-{
-    thingp p = t->prev;
-
-    if (!p) {
-        return;
-    }
-
-    p->next = t->next;
-    t->next = p;
-    t->prev = p->prev;
-    p->prev = t;
-
-    if (p == things_display_sorted) {
-        things_display_sorted = t;
-    }
-}
-
-static void 
-thing_sort_right (thingp t)
-{
-    thingp n = t->next;
-
-    if (!n) {
-        return;
-    }
-
-    n->prev = t->prev;
-    t->prev = n;
-    t->next = n->next;
-    n->next = t;
-
-    if (t == things_display_sorted) {
-        things_display_sorted = n;
-    }
-}
-
-void 
-thing_incremental_sort (thingp t)
-{
-    double distance = t->distance;
-    int moved = false;
-
-    for (;;) {
-        thingp n = t->next;
-        if (!n) {
-            break;
-        }
-
-        if (n->distance >= distance) {
-            break;
-        }
-
-        thing_sort_right(t);
-
-        moved = true;
-    }
-
-    if (moved) {
-        return;
-    }
-
-    for (;;) {
-        thingp p = t->prev;
-        if (!p) {
-            break;
-        }
-
-        if (p->distance <= distance) {
-            break;
-        }
-
-        thing_sort_left(t);
-    }
+    t->prev = 0;
+    t->next = 0;
 }
 
 PyObject *thing_push_ (thingp t, fpoint3d p)
@@ -262,12 +301,14 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
         thing_pop_(t);
     }
 
+
+    thing_extract(t);
+
     t->at = p;
-    thing_insert(t);
     t->is_on_map = true;
     t->moving_start = p;
 
-    thing_incremental_sort(t);
+    thing_insert(t);
 
     Py_RETURN_NONE;
 }
@@ -289,6 +330,8 @@ thing_move_increment (thingp t, fpoint3d to)
 {
     verify(t);
 
+    thing_extract(t);
+
     if (!t->has_ever_moved) {
         t->last_at = to;
     } else {
@@ -307,6 +350,8 @@ thing_move_increment (thingp t, fpoint3d to)
             }
         }
     }
+
+    thing_insert(t);
 }
 
 void thing_move_ (thingp t, fpoint3d p)
