@@ -41,12 +41,14 @@ void game_display (void)
     double th2 = th / 2;
 
     size_t i;
-    for (i = 0; i < things_todraw_count; i++) {
-	thingp t = things_todraw[i];
-        thing_animate(t);
-    }
 
     things_sort();
+
+    for (i = 0; i < things_todraw_count; i++) {
+	thingp t = things_todraw[i];
+
+        thing_animate(t);
+    }
 
     blit_init();
 
@@ -73,6 +75,11 @@ void game_display (void)
         br.y = y + th2;
 
         tpp tp = thing_tp(t);
+
+        if (!t->tile) {
+            ERR("no tile for %s", tp_name(tp));
+            continue;
+        }
 
         tile_blit_fat(tp, t->tile, 0, &tl, &br);
     }

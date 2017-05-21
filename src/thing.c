@@ -198,34 +198,48 @@ thing_get_bounds (thingp t)
     t->zmax = t->at.z + 1.0;
 }
 
+/*
+ * Determine if the given ranges are disjoint (i.e. do not overlap).
+ * For determining drawing order, this camera considers two
+ * ranges to be disjoint even if they share an endpoint.
+ * Thus, we use less-or-equal (<=) instead of strictly less (<).
+ */
 static int
-areRangesDisjoint (double amin, double amax, double bmin, double bmax)
+ranges_do_not_overlap (double amin, double amax, double bmin, double bmax)
 {
-    return ((amax <= bmin) || (bmax <= amin));
+    /*
+     * amin ...... amax
+     *                   bmin ...... bmax
+     */
+    if (amax <= bmin) {
+	return (true);
+    }
+
+    /*
+     *                  amin ...... amax
+     * bmin ...... bmax
+     */
+    if (bmax <= amin) {
+	return (true);
+    }
+
+    return (false);
 }
 
 /*
  * Try to find an axis in 2D isometric that separates the two given blocks.
  * This helps identify if the the two blocks are overlap on the screen.
  */
-static char
-thing_get_iso_sep_axis (thingp a, thingp b)
+static int
+things_overlap (thingp a, thingp b)
 {
-    char sepAxis = '\0';;
-
-    if (areRangesDisjoint(a->xmin, a->xmax, b->xmin, b->xmax)) {
-	sepAxis = 'x';
+    if (ranges_do_not_overlap(a->xmin, a->xmax, b->xmin, b->xmax) &&
+        ranges_do_not_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
+        ranges_do_not_overlap(a->hmin, a->hmax, b->hmin, b->hmax)) {
+	return (false);
     }
 
-    if (areRangesDisjoint(a->ymin, a->ymax, b->ymin, b->ymax)) {
-	sepAxis = 'y';
-    }
-
-    if (areRangesDisjoint(a->hmin, a->hmax, b->hmin, b->hmax)) {
-	sepAxis = 'h';
-    }
-
-    return (sepAxis);
+    return (true);
 }
 
 static char
@@ -233,22 +247,12 @@ thing_get_space_sep_axis (thingp a, thingp b)
 {
     char sepAxis = '\0';;
 
-    if (areRangesDisjoint(a->xmin, a->xmax, b->xmin, b->xmax)) {
-CON("disjoint x %s %s", tp_name(thing_tp(a)), tp_name(thing_tp(b)));
+    if (ranges_do_not_overlap(a->xmin, a->xmax, b->xmin, b->xmax)) {
 	sepAxis = 'x';
-    }
-
-    if (areRangesDisjoint(a->ymin, a->ymax, b->ymin, b->ymax)) {
+    } else if (ranges_do_not_overlap(a->ymin, a->ymax, b->ymin, b->ymax)) {
 	sepAxis = 'y';
-CON("overlap y %s %s", tp_name(thing_tp(a)), tp_name(thing_tp(b)));
-    }
-
-    if (areRangesDisjoint(a->zmin, a->zmax, b->zmin, b->zmax)) {
+    } else if (ranges_do_not_overlap(a->zmin, a->zmax, b->zmin, b->zmax)) {
 	sepAxis = 'z';
-CON("overlap z %s %s  %f %f %f %f", tp_name(thing_tp(a)), tp_name(thing_tp(b)),
-
-a->zmin, a->zmax,
-b->zmin, b->zmax);
     }
 
     return (sepAxis);
@@ -270,8 +274,7 @@ getFrontBlock (thingp a, thingp b)
      * blocks do not overlap on the screen. This means there 
      * is no "front" block to identify.
      */
-    if (thing_get_iso_sep_axis(a, b)) {
-CON("no intersect %s %s", tp_name(thing_tp(a)), tp_name(thing_tp(b)));
+    if (!things_overlap(a, b)) {
         return (0);
     }
 
@@ -279,10 +282,9 @@ CON("no intersect %s %s", tp_name(thing_tp(a)), tp_name(thing_tp(b)));
     thing_get_bounds(b);
 
     switch (thing_get_space_sep_axis(a, b)) {
-	case 'x': return (a->xmin < b->xmin) ? b : a;
-	case 'y': return (a->ymin < b->ymin) ? b : a;
+	case 'x': return (a->xmin < b->xmin) ? a : b;
+	case 'y': return (a->ymin < b->ymin) ? a : b;
 	case 'z': return (a->zmin < b->zmin) ? a : b;
-	default: ERR("blocks must be non-intersecting");
     }
 
     return (0);
@@ -353,14 +355,14 @@ things_make_behind_and_infront_list (void)
 
 	    thingp f = getFrontBlock(a, b);
 	    if (f) {
-		if (f == a) {
+		if (f == b) {
 		    things_push_behind(a, b);
 		    things_push_infront(b, a);
 		} else {
 		    things_push_behind(b, a);
 		    things_push_infront(a, b);
 		}
-	    }
+            }
 	}
     }
 }

@@ -84,13 +84,13 @@ typedef struct {
 } ipoint;
 
 #define MAX_THINGS_SCRATCH (MAP_WIDTH * MAP_HEIGHT * MAP_DEPTH * 4)
-#define MAX_THINGS_BEHIND (MAP_WIDTH * 4)
+#define MAX_THINGS_INFRONT MAX_THINGS_SCRATCH
 
 typedef struct thing_ {
 
     tree_key_string tree;
 
-    struct thing_ *infront[MAX_THINGS_BEHIND];
+    struct thing_ *infront[MAX_THINGS_INFRONT];
     size_t infront_count;
     size_t behind_count;
 
