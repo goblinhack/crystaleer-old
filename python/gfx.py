@@ -425,14 +425,13 @@ def init_tiles_iso():
         "",
         "",
         "",
-        "",
         "wall1",
         "wall2",
-        "",
-        "",
-        "",
-        "",
-        "",
+        "wall3",
+        "wall4",
+        "wall5",
+        "wall6",
+        "wall7",
         #
     ]
 
