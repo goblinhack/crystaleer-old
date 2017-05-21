@@ -426,7 +426,7 @@ def game_new():
 
     for z in range(4):
         for x in range(mm.MAP_WIDTH):
-            if x & 1:
+            if x & 2:
                 t = thing.Thing(level=g.level,
                                 tp_name="wall2",
                                 at=Point(x, 3, z))
@@ -440,11 +440,11 @@ def game_new():
         for x in range(mm.MAP_WIDTH):
             t = thing.Thing(level=g.level,
                             tp_name="wall2",
-                            at=Point(x, 3, 5))
+                            at=Point(x, 3, 3))
             t.push()
             t = thing.Thing(level=g.level,
                             tp_name="wall2",
-                            at=Point(3, x, 5))
+                            at=Point(3, x, 3))
             t.push()
 
     for x in range(mm.MAP_WIDTH):
@@ -454,8 +454,15 @@ def game_new():
                             at=Point(x, y, 0))
             t.push()
 
-    for z in range(mm.MAP_DEPTH):
-        t = thing.Thing(level=g.level,
-                        tp_name="wall1",
-                        at=Point(2, 4, z))
-        t.push()
+    for z in range(int(mm.MAP_DEPTH / 2)):
+        for x in range(mm.MAP_WIDTH):
+            t = thing.Thing(level=g.level,
+                            tp_name="wall1",
+                            at=Point(x, 0, z))
+            t.push()
+
+        for y in range(mm.MAP_HEIGHT):
+            t = thing.Thing(level=g.level,
+                            tp_name="wall1",
+                            at=Point(0, y, z))
+            t.push()
