@@ -6,6 +6,7 @@
 
 #include "stb_image.h"
 
+#include <SDL.h>
 #include "glapi.h"
 #include "tex.h"
 #include "ramdisk.h"

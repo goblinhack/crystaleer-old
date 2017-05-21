@@ -21,9 +21,9 @@ class Level:
         #
         self.all_things = {}
 
-        self.things_at = [[[[] for x in range(mm.MAP_WIDTH)]
+        self.things_at = [[[[] for z in range(mm.MAP_DEPTH)]
                           for y in range(mm.MAP_HEIGHT)]
-                          for z in range(mm.MAP_DEPTH)]
+                          for x in range(mm.MAP_WIDTH)]
 
     def log(self, msg):
         mm.log("Level {}: {}".format(str(self), msg))

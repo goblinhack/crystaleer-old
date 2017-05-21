@@ -427,7 +427,7 @@ def init_tiles_iso():
         "",
         "",
         "wall1",
-        "",
+        "wall2",
         "",
         "",
         "",

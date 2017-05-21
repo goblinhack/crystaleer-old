@@ -4,7 +4,10 @@
  * See the README file for license info for license.
  */
 
+#include <SDL.h>
+
 #include "main.h"
+#include "sdl.h"
 #include "game.h"
 #include "thing.h"
 #include "glapi.h"
@@ -29,25 +32,27 @@ void game_display (void)
     double tw = game.tile_width;
     double th = game.tile_height;
 
-    tw /= 4;
-    th /= 4;
-    tw *= 3;
-    th *= 3;
+    tw /= 8;
+    th /= 8;
+    tw *= 5;
+    th *= 5;
 
     double tw2 = tw / 2;
     double th2 = th / 2;
 
-    thingp t = things_display_sorted;
-    while (t) {
+    size_t i;
+    for (i = 0; i < things_todraw_count; i++) {
+	thingp t = things_todraw[i];
         thing_animate(t);
-
-        t = t->next;
     }
+
+    things_sort();
 
     blit_init();
 
-    t = things_display_sorted;
-    while (t) {
+    for (i = 0; i < things_todraw_count; i++) {
+	thingp t = things_todraw[i];
+
         double X = t->at.x;
         double Y = t->at.y;
         double Z = t->at.z;
@@ -70,8 +75,6 @@ void game_display (void)
         tpp tp = thing_tp(t);
 
         tile_blit_fat(tp, t->tile, 0, &tl, &br);
-
-        t = t->next;
     }
 
     blit_flush();

@@ -12,6 +12,7 @@
 #include "python.h"
 
 #include "glapi.h"
+#include "wid.h"
 #include "wid_console.h"
 #include "command.h"
 #include "ttf.h"

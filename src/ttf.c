@@ -6,6 +6,7 @@
 
 
 #include "glapi.h"
+#include "wid.h"
 #include "tex.h"
 #include "tile.h"
 #include "ttf.h"

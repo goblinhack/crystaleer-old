@@ -4,6 +4,9 @@
  * See the README file for license info for license.
  */
 
+#include <SDL.h>
+
+#include "sdl.h"
 #include "slre.h"
 
 #include "main.h"
@@ -12,6 +15,7 @@
 #include "ttf.h"
 #include "string_ext.h"
 #include "config.h"
+#include "wid.h"
 
 #define CONSOLE_MAGIC_KEY
 

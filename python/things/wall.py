@@ -24,10 +24,7 @@ def wall_init(name, short_name, tiles=[]):
 
 
 def init():
-    wall_init(name="wall1",
-              short_name="A boring wall",
-              tiles=[
-                     "wall1",
-                    ])
+    wall_init(name="wall1", short_name="A boring wall", tiles=["wall1"])
+    wall_init(name="wall2", short_name="A boring wall", tiles=["wall2"])
 
 init()

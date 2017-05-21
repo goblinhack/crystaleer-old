@@ -401,37 +401,38 @@ def game_new():
 
     t = thing.Thing(level=g.level,
                     tp_name="player1",
-                    at=Point(0, 0, 2))
+                    at=Point(8, 8, 0))
     t.push()
     g.player = t
 
     t = thing.Thing(level=g.level,
                     tp_name="wall1",
-                    at=Point(0, 0, 1))
-    t.push()
-
-    for x in range(mm.MAP_WIDTH):
-        t = thing.Thing(level=g.level,
-                        tp_name="wall1",
-                        at=Point(x, 0, 1))
-        t.push()
-        t = thing.Thing(level=g.level,
-                        tp_name="wall1",
-                        at=Point(0, x, 1))
-        t.push()
-
-    t = thing.Thing(level=g.level,
-                    tp_name="wall1",
-                    at=Point(1, 0, 0))
+                    at=Point(3, 3, 0))
     t.push()
     t = thing.Thing(level=g.level,
                     tp_name="wall1",
-                    at=Point(2, 0, 0))
+                    at=Point(4, 4, 0))
+    t.push()
+
+    t = thing.Thing(level=g.level,
+                    tp_name="wall1",
+                    at=Point(1, 1, 0))
     t.push()
     t = thing.Thing(level=g.level,
                     tp_name="wall1",
                     at=Point(0, 0, 0))
     t.push()
+
+    return
+    for x in range(mm.MAP_WIDTH):
+        t = thing.Thing(level=g.level,
+                        tp_name="wall1",
+                        at=Point(x, 3, 0))
+        t.push()
+        t = thing.Thing(level=g.level,
+                        tp_name="wall1",
+                        at=Point(3, x, 0))
+        t.push()
 
     for x in range(mm.MAP_WIDTH):
         for y in range(mm.MAP_HEIGHT):

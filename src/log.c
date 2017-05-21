@@ -5,13 +5,10 @@
  */
 
 #include "slre.h"
-
-#if SDL_MAJOR_VERSION >= 2
-#endif
-
 #include "main.h"
+#include "sdl.h"
 #include "backtrace.h"
-#include "wid_console.h"
+#include "wid.h"
 #include "time_util.h"
 #include "command.h"
 #include "term.h"
@@ -19,6 +16,7 @@
 #include "wid_notify.h"
 #include "wid.h"
 #include "sound.h"
+#include "wid_console.h"
 
 uint8_t debug_enabled = 0;
 uint8_t croaked;

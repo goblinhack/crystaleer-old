@@ -5,10 +5,14 @@
  */
 
 
+#include <SDL.h>
+#include <SDL_surface.h>
 #include "main.h"
+#include "sdl.h"
 #include "string_ext.h"
 #include "tex.h"
 #include "tile.h"
+#include "wid.h"
 
 /*
  * Split a string "like\nthis" into "like" and "this". e.g.:

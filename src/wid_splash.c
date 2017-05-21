@@ -5,11 +5,14 @@
  */
 
 
+#include <SDL.h>
+
 #include "main.h"
 #include "tex.h"
 #include "init_fn.h"
 #include "wid_splash.h"
 #include "glapi.h"
+#include "wid.h"
 
 void sdl_splashscreen_update (void)
 {

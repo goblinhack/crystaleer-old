@@ -8,6 +8,7 @@
 #include "main.h"
 #include "py_wid.h"
 #include "string_ext.h"
+#include "wid.h"
 #include "wid_tiles.h"
 
 PyObject *wid_new_ (PyObject *obj, PyObject *args, PyObject *keywds)

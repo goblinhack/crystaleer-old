@@ -7,7 +7,7 @@
 #pragma once
 
 #include "tree.h"
-#include "wid.h"
+#include "config.h"
 #include "thing_template.h"
 #include <stdlib.h>
 #include <math.h>
@@ -79,15 +79,20 @@ enum {
     THING_DIR_BR,
 };
 
+typedef struct {
+    double x, y, z, h, v;
+} ipoint;
+
+#define MAX_THINGS_SCRATCH (MAP_WIDTH * MAP_HEIGHT * MAP_DEPTH * 4)
+#define MAX_THINGS_BEHIND (MAP_WIDTH * 4)
+
 typedef struct thing_ {
 
     tree_key_string tree;
 
-    /*
-     * Display order sorted.
-     */
-    struct thing_ *next;
-    struct thing_ *prev;
+    struct thing_ *infront[MAX_THINGS_BEHIND];
+    size_t infront_count;
+    size_t behind_count;
 
     /*
      * Grid coordinates.
@@ -102,6 +107,15 @@ typedef struct thing_ {
     double zmax;
     double hmin;
     double hmax;
+
+    ipoint rightDown;
+    ipoint leftDown;
+    ipoint backDown;
+    ipoint frontDown;
+    ipoint rightUp;
+    ipoint leftUp;
+    ipoint backUp;
+    ipoint frontUp;
 
     /*
      * Allocated in python
@@ -240,6 +254,7 @@ extern void thing_move_all(void);
 
 extern tree_root *things;
 extern thingp things_display_sorted;
+extern void things_sort(void);
 
 /*
  * thing_dir.c
@@ -247,9 +262,12 @@ extern thingp things_display_sorted;
 void thing_dir(thingp t, double *dx, double *dy);
 int thing_angle_to_dir(double dx, double dy);
 
-#define FOR_ALL_THINGS(level, t) \
+#define FOR_ALL_THINGS(t) \
     { \
         TREE_WALK_UNSAFE(things, t) { \
         verify(t);
 
 #define FOR_ALL_THINGS_END } }
+
+extern thingp things_todraw[MAX_THINGS_SCRATCH];
+extern size_t things_todraw_count;

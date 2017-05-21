@@ -18,6 +18,7 @@
 #include "python.h"
 #include "config.h"
 #include "game.h"
+#include "wid.h"
 
 #if defined WIN32 || defined __CYGWIN__
 #endif

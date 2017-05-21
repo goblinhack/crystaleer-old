@@ -4,10 +4,14 @@
  * See the LICENSE file for license.
  */
 
+#include <SDL.h>
+
 #include "python.h"
+#include "sdl.h"
 #include "main.h"
 #include "py_game.h"
 #include "game.h"
+#include "wid.h"
 
 PyObject *game_set_sound_volume_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)

@@ -8,6 +8,7 @@
 #include "main.h"
 #include "thing_tile.h"
 #include "time_util.h"
+#include "wid.h"
 
 void wid_animate (widp w)
 {

@@ -13,7 +13,12 @@
 #include "time_util.h"
 
 tree_root *things;
-thingp things_display_sorted;
+
+static thingp thing_scratch[MAX_THINGS_SCRATCH];
+static size_t thing_scratch_count;
+
+thingp things_todraw[MAX_THINGS_SCRATCH];
+size_t things_todraw_count;
 
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
@@ -102,19 +107,6 @@ void thing_set_tp_ (thingp t, const char *tp_name)
     }
 }
 
-/*
- * Convert a 3D space position to a 2D isometric position.
- */
-static void 
-thing_3d_2d (fpoint3d p, double *x, double *y, double *z, double *h)
-{
-    /*
-     * New XY position simply adds Z to X and Y.
-     */
-    *x = p.x + p.z;
-    *y = p.y + p.z;
-    *z = p.y + p.z;
-
     /*
      * Compute horizontal distance from origin at 30 degrees
      *
@@ -133,58 +125,272 @@ thing_3d_2d (fpoint3d p, double *x, double *y, double *z, double *h)
     H >>= 1;
     *h = H;
 #endif
-    *h = (x - y) * cos(PI/6);
 
-    /*
-     * Compute vertical distance from origin.
-     *
-     * v: (isoX + isoY) / 2;
-     */
+
+static void
+spaceToIso (ipoint *p) 
+{
+    double z = p->z;
+    double x = p->x + z;
+    double y = p->y + z;
+
+    p->x = x;
+    p->y = y;
+    p->h = (x-y)*sqrt(3)/2; // Math.cos(Math.PI/6)
+    p->v = (x+y)/2;         // Math.sin(Math.PI/6)
 }
 
 static void 
-thing_set_min_max (thingp t)
+thing_get_iso_verts (thingp t)
 {
-    double x = t->at.x;
-    double y = t->at.y;
-    double z = t->at.z;
+    fpoint3d s = { 1.0, 1.0, 1.0 };
+    fpoint3d p = { t->at.x, t->at.y, t->at.z };
 
-    double x_top, y_top, z_top, h_top;
-    double x_bot, y_bot, z_bot, h_bot;
-    double x_ltop, y_ltop, z_ltop, h_ltop;
-    double x_rbot, y_rbot, z_rbot, h_rbot;
+    ipoint rightDown = { p.x+s.x, p.y,     p.z };
+    ipoint leftDown  = { p.x,     p.y+s.y, p.z };
+    ipoint backDown  = { p.x+s.x, p.y+s.y, p.z };
+    ipoint frontDown = { p.x,     p.y,     p.z };
+    ipoint rightUp   = { p.x+s.x, p.y,     p.z+s.z };
+    ipoint leftUp    = { p.x,     p.y+s.y, p.z+s.z };
+    ipoint backUp    = { p.x+s.x, p.y+s.y, p.z+s.z };
+    ipoint frontUp   = { p.x,     p.y,     p.z+s.z };
 
-    {
-	fpoint3d p = { x, y, z + 1 };
-	thing_3d_2d(p, &x_top, &y_top, &z_top, &h_top);
+    spaceToIso(&rightDown);
+    spaceToIso(&leftDown);
+    spaceToIso(&backDown);
+    spaceToIso(&frontDown);
+    spaceToIso(&rightUp);
+    spaceToIso(&leftUp);
+    spaceToIso(&backUp);
+    spaceToIso(&frontUp);
+
+    t->rightDown = rightDown;
+    t->leftDown  = leftDown;
+    t->backDown  = backDown;
+    t->frontDown = frontDown;
+    t->rightUp   = rightUp;
+    t->leftUp    = leftUp;
+    t->backUp    = backUp;
+    t->frontUp   = frontUp;
+}
+
+static void 
+thing_get_iso_bounds (thingp t)
+{
+    thing_get_iso_verts(t);
+
+    t->xmin = t->frontDown.x;
+    t->xmax = t->backUp.x;
+    t->ymin = t->frontDown.y;
+    t->ymax = t->backUp.y;
+    t->hmin = t->leftDown.h;
+    t->hmax = t->rightDown.h;
+}
+
+static void 
+thing_get_bounds (thingp t)
+{
+    t->xmin = t->at.x;
+    t->xmax = t->at.x + 1.0;
+    t->ymin = t->at.y;
+    t->ymax = t->at.y + 1.0;
+    t->zmin = t->at.z;
+    t->zmax = t->at.z + 1.0;
+}
+
+static int
+areRangesDisjoint (double amin, double amax, double bmin, double bmax)
+{
+    return ((amax <= bmin) || (bmax <= amin));
+}
+
+/*
+ * Try to find an axis in 2D isometric that separates the two given blocks.
+ * This helps identify if the the two blocks are overlap on the screen.
+ */
+static char
+thing_get_iso_sep_axis (thingp a, thingp b)
+{
+    char sepAxis = '\0';;
+
+    if (areRangesDisjoint(a->xmin, a->xmax, b->xmin, b->xmax)) {
+	sepAxis = 'x';
     }
 
-    {
-	fpoint3d p = { x + 1, y + 1, z };
-	thing_3d_2d(p, &x_bot, &y_bot, &z_bot, &h_bot);
+    if (areRangesDisjoint(a->ymin, a->ymax, b->ymin, b->ymax)) {
+	sepAxis = 'y';
     }
 
-    {
-	fpoint3d p = { x, y + 1, z + 1 };
-	thing_3d_2d(p, &x_ltop, &y_ltop, &z_ltop, &h_ltop);
+    if (areRangesDisjoint(a->hmin, a->hmax, b->hmin, b->hmax)) {
+	sepAxis = 'h';
     }
 
-    {
-	fpoint3d p = { x + 1, y, z };
-	thing_3d_2d(p, &x_rbot, &y_rbot, &z_rbot, &h_rbot);
+    return (sepAxis);
+}
+
+static char
+thing_get_space_sep_axis (thingp a, thingp b)
+{
+    char sepAxis = '\0';;
+
+    if (areRangesDisjoint(a->xmin, a->xmax, b->xmin, b->xmax)) {
+CON("disjoint x %s %s", tp_name(thing_tp(a)), tp_name(thing_tp(b)));
+	sepAxis = 'x';
     }
 
-    t->xmin = min(x_top, min(x_bot, min(x_ltop, x_rbot)));
-    t->xmax = max(x_top, max(x_bot, max(x_ltop, x_rbot)));
+    if (areRangesDisjoint(a->ymin, a->ymax, b->ymin, b->ymax)) {
+	sepAxis = 'y';
+CON("overlap y %s %s", tp_name(thing_tp(a)), tp_name(thing_tp(b)));
+    }
 
-    t->ymin = min(y_top, min(y_bot, min(y_ltop, y_rbot)));
-    t->ymax = max(y_top, max(y_bot, max(y_ltop, y_rbot)));
+    if (areRangesDisjoint(a->zmin, a->zmax, b->zmin, b->zmax)) {
+	sepAxis = 'z';
+CON("overlap z %s %s  %f %f %f %f", tp_name(thing_tp(a)), tp_name(thing_tp(b)),
 
-    t->zmin = min(z_top, min(z_bot, min(z_ltop, z_rbot)));
-    t->zmax = max(z_top, max(z_bot, max(z_ltop, z_rbot)));
+a->zmin, a->zmax,
+b->zmin, b->zmax);
+    }
 
-    t->hmin = min(h_top, min(h_bot, min(h_ltop, h_rbot)));
-    t->hmax = max(h_top, max(h_bot, max(h_ltop, h_rbot)));
+    return (sepAxis);
+}
+
+/*
+ * In an isometric perspective of the two given blocks, determine
+ * if they will overlap each other on the screen. If they do, then return
+ * the block that will appear in front.
+ */
+static thingp 
+getFrontBlock (thingp a, thingp b) 
+{
+    thing_get_iso_bounds(a);
+    thing_get_iso_bounds(b);
+
+    /*
+     * If no isometric separation axis is found, then the two 
+     * blocks do not overlap on the screen. This means there 
+     * is no "front" block to identify.
+     */
+    if (thing_get_iso_sep_axis(a, b)) {
+CON("no intersect %s %s", tp_name(thing_tp(a)), tp_name(thing_tp(b)));
+        return (0);
+    }
+
+    thing_get_bounds(a);
+    thing_get_bounds(b);
+
+    switch (thing_get_space_sep_axis(a, b)) {
+	case 'x': return (a->xmin < b->xmin) ? b : a;
+	case 'y': return (a->ymin < b->ymin) ? b : a;
+	case 'z': return (a->zmin < b->zmin) ? a : b;
+	default: ERR("blocks must be non-intersecting");
+    }
+
+    return (0);
+}
+
+static void
+things_init_sort (void)
+{
+    thingp t;
+
+    thing_scratch_count = 0;
+    things_todraw_count = 0;
+
+    FOR_ALL_THINGS(t) {
+        if (thing_scratch_count >= ARRAY_SIZE(thing_scratch)) {
+            ERR("scratch pad overflow");
+            return;
+        }
+
+	thing_scratch[thing_scratch_count++] = t;
+
+	t->infront_count = 0;
+	t->behind_count = 0;
+    } FOR_ALL_THINGS_END
+}
+
+static void
+things_push_infront (thingp t, thingp o)
+{
+    if (t->infront_count >= ARRAY_SIZE(t->infront)) {
+	ERR("overflow thing infront array");
+	return;
+    }
+
+    t->infront[t->infront_count++] = o;
+}
+
+static void
+things_push_behind (thingp t, thingp o)
+{
+    t->behind_count++;
+}
+
+static void
+things_push_todraw (thingp t)
+{
+    if (!t) {
+        DIE("bad push todraw");
+    }
+
+    if (things_todraw_count >= ARRAY_SIZE(things_todraw)) {
+	ERR("overflow todraw array");
+	return;
+    }
+
+    things_todraw[things_todraw_count++] = t;
+}
+
+static void
+things_make_behind_and_infront_list (void)
+{
+    size_t i, j;
+
+    for (i = 0; i < thing_scratch_count; i++) {
+	for (j = i + 1; j < thing_scratch_count; j++) {
+	    thingp a = thing_scratch[i];
+	    thingp b = thing_scratch[j];
+
+	    thingp f = getFrontBlock(a, b);
+	    if (f) {
+		if (f == a) {
+		    things_push_behind(a, b);
+		    things_push_infront(b, a);
+		} else {
+		    things_push_behind(b, a);
+		    things_push_infront(a, b);
+		}
+	    }
+	}
+    }
+}
+
+void
+things_sort (void)
+{
+    things_init_sort();
+    things_make_behind_and_infront_list();
+
+    size_t i, j;
+
+    for (i = 0; i < thing_scratch_count; i++) {
+	thingp a = thing_scratch[i];
+	if (a->behind_count == 0) {
+	    things_push_todraw(a);
+	}
+    }
+
+    for (i = 0; i < things_todraw_count; i++) {
+	thingp a = things_todraw[i];
+	for (j = 0; j < a->infront_count; j++) {
+	    thingp f = a->infront[j];
+
+	    f->behind_count--;
+	    if (!f->behind_count) {
+		things_push_todraw(f);
+	    }
+	}
+    }
 }
 
 #if 0
@@ -196,94 +402,6 @@ things_overlap (thingp t, thingp r)
 	    (t->hmin < r->hmax) && (r->hmin < t->hmax));
 }
 #endif
-
-static int 
-is_thing_in_front (thingp t, thingp r) 
-{
-    /*
-     * lower x value is in front
-     */
-    if (r->xmin >= r->xmax) { 
-	return (false);
-    } else if (r->xmin >= r->xmax) { 
-        return (true);
-    } else if (r->ymin >= r->ymax) {
-        return (false);
-    } else if (r->ymin >= r->ymax) {
-        return (true);
-    } else if (r->hmin >= r->hmax) {
-        return (true);
-    } else if (r->hmin >= r->hmax) {
-        return (false);
-    } else {
-	ERR("things intersect, cannot sort");
-        return (true);
-    }
-}
-
-static void 
-thing_insert (thingp t)
-{
-    thing_set_min_max(t);
-
-    if (!things_display_sorted) {
-        things_display_sorted = t;
-
-        t->next = 0;
-        t->prev = 0;
-    } else {
-        thingp n = things_display_sorted;
-        thingp l = 0;
-
-        while (n) {
-            if (is_thing_in_front(n, t)) {
-                t->prev = n->prev;
-                t->next = n;
-
-                if (n->prev) {
-                    n->prev->next = t;
-                }
-                n->prev = t;
-
-                if (n == things_display_sorted) {
-                    things_display_sorted = t;
-                }
-
-                break;
-            }
-
-            l = n;
-            n = n->next;
-        }
-
-        if (!n) {
-            l->next = t;
-            t->prev = l;
-        }
-    }
-}
-
-static void 
-thing_extract (thingp t)
-{
-    thingp p = t->prev;
-    thingp n = t->next;
-
-    if (p) {
-        p->next = n;
-    }
-
-    if (n) {
-        n->prev = p;
-    }
-
-    if (t == things_display_sorted) {
-        things_display_sorted = n;
-    }
-
-    t->prev = 0;
-    t->next = 0;
-}
 
 PyObject *thing_push_ (thingp t, fpoint3d p)
 {
@@ -302,13 +420,9 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
     }
 
 
-    thing_extract(t);
-
     t->at = p;
     t->is_on_map = true;
     t->moving_start = p;
-
-    thing_insert(t);
 
     Py_RETURN_NONE;
 }
@@ -321,7 +435,6 @@ void thing_pop_ (thingp t)
         return;
     }
 
-    thing_extract(t);
     t->is_on_map = false;
 }
 
@@ -329,8 +442,6 @@ static void
 thing_move_increment (thingp t, fpoint3d to)
 {
     verify(t);
-
-    thing_extract(t);
 
     if (!t->has_ever_moved) {
         t->last_at = to;
@@ -350,8 +461,6 @@ thing_move_increment (thingp t, fpoint3d to)
             }
         }
     }
-
-    thing_insert(t);
 }
 
 void thing_move_ (thingp t, fpoint3d p)
@@ -373,9 +482,9 @@ CON("move %f %f %f to %f %f %f in %f", t->at.x, t->at.y, t->at.z, p.x,p.y,p.z, m
 void thing_move_all (void)
 {
     uint32_t thing_time = time_get_time_ms();
-    thingp t = things_display_sorted;
 
-    for (t = things_display_sorted; t; t = t->next) {
+    thingp t;
+    FOR_ALL_THINGS(t) {
         if (!t->is_moving) {
             continue;
         }
@@ -402,7 +511,7 @@ void thing_move_all (void)
             t->moving_start.z;
 
         thing_move_increment(t, p);
-    }
+    } FOR_ALL_THINGS_END
 }
 
 void thing_set_tilename_ (thingp t, const char *name)

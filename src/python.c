@@ -4,6 +4,8 @@
  * See the LICENSE file for license.
  */
 
+#include <SDL.h>
+
 #include "python.h"
 #include "py_tp.h"
 #include "py_thing.h"
@@ -12,6 +14,7 @@
 #include "string_util.h"
 #include "frameobject.h"
 #include "config.h"
+#include "wid.h"
 
 static PyObject *mm_mod;
 PyMODINIT_FUNC python_m_y_module_create(void);

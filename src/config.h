@@ -54,15 +54,15 @@
 /*
  * Screen sizes.
  */
-#define DEFAULT_VIDEO_WIDTH                     1008
-#define DEFAULT_VIDEO_HEIGHT                    672
+#define DEFAULT_VIDEO_WIDTH         1008
+#define DEFAULT_VIDEO_HEIGHT        672
 
 /*
  * Dungeon size
  */
-#define MAP_WIDTH                               10
-#define MAP_HEIGHT                              10
-#define MAP_DEPTH                               10
+#define MAP_WIDTH                   12
+#define MAP_HEIGHT                  12
+#define MAP_DEPTH                   10
 
 /*
  * Console

@@ -18,4 +18,6 @@ extern widp wid_console_input_line;
 extern widp wid_console_window;
 extern widp wid_console_container;
 
+#include "sdl.h"
+
 uint8_t wid_console_receive_input(widp w, const SDL_KEYSYM *key);

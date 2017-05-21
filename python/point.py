@@ -12,7 +12,7 @@ class Point(object):
     def oob(self):
         if 0 <= self.x <= mm.MAP_WIDTH and \
            0 <= self.y <= mm.MAP_HEIGHT and \
-           0 <= self.y <= mm.MAP_DEPTH:
+           0 <= self.z <= mm.MAP_DEPTH:
             return False
         return True
 

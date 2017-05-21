@@ -4,7 +4,10 @@
  * See the LICENSE file for license.
  */
 
+#include <SDL.h>
+
 #include "python.h"
+#include "sdl.h"
 #include "main.h"
 #include "font.h"
 #include "ttf.h"

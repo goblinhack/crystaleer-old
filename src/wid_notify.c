@@ -10,6 +10,7 @@
 #include "wid_notify.h"
 #include "time_util.h"
 #include "string_ext.h"
+#include "wid.h"
 
 typedef struct {
     uint32_t created;

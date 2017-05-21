@@ -4,7 +4,10 @@
  * See the README file for license info for license.
  */
 
+#include <SDL.h>
+
 #include "main.h"
+#include "sdl.h"
 #include "ttf.h"
 #include "font.h"
 #include "config.h"

@@ -11,6 +11,7 @@
 #include "command.h"
 #include "string_util.h"
 #include "term.h"
+#include "wid.h"
 #include "python.h"
 
 /*
