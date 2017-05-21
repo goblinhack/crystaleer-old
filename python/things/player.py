@@ -13,7 +13,7 @@ def player_init(name, short_name, tiles=[]):
     x.set_is_player(True)
     x.set_is_solid_ground(True)
     x.set_blit_top_off(1)
-    x.set_speed(300)
+    x.set_ms_to_move_one_tile(200)
 
     if tiles is not None:
         for t in tiles:

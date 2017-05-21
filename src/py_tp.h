@@ -20,7 +20,7 @@ PyObject *tp_set_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds)
         "set a " #__field__ " in a thing template"},                            \
 
 TP_SET_PROTO(tile)
-TP_SET_PROTO(speed)
+TP_SET_PROTO(ms_to_move_one_tile)
 TP_SET_PROTO(blit_top_off)
 TP_SET_PROTO(blit_bot_off)
 TP_SET_PROTO(blit_left_off)

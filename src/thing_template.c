@@ -209,9 +209,9 @@ const char *tp_raw_name (tpp t)
     return (t->raw_name);
 }
 
-int tp_get_speed (tpp t)
+int tp_get_ms_to_move_one_tile (tpp t)
 {
-    return (t->speed);
+    return (t->ms_to_move_one_tile);
 }
 
 tree_rootp tp_get_tiles (tpp t)

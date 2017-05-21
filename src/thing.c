@@ -14,12 +14,6 @@
 
 tree_root *things;
 
-static thingp thing_scratch[MAX_THINGS_SCRATCH];
-static size_t thing_scratch_count;
-
-thingp things_todraw[MAX_THINGS_SCRATCH];
-size_t things_todraw_count;
-
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
 
@@ -107,328 +101,6 @@ void thing_set_tp_ (thingp t, const char *tp_name)
     }
 }
 
-    /*
-     * Compute horizontal distance from origin at 30 degrees
-     *
-     * h = (x - y) * Math.cos(Math.PI/6),
-     *
-     * √3/2 by 7/8 = 1/2 + 1/4 + 1/8 = 0.875:
-     */
-#if 0
-    int H, d;
-
-    H = d = *x - *y;
-    H >>= 1;
-    H += d;
-    H >>= 1;
-    H += d;
-    H >>= 1;
-    *h = H;
-#endif
-
-
-static void
-spaceToIso (ipoint *p) 
-{
-    double z = p->z;
-    double x = p->x + z;
-    double y = p->y + z;
-
-    p->x = x;
-    p->y = y;
-    p->h = (x-y)*sqrt(3)/2; // Math.cos(Math.PI/6)
-    p->v = (x+y)/2;         // Math.sin(Math.PI/6)
-}
-
-static void 
-thing_get_iso_verts (thingp t)
-{
-    fpoint3d s = { 1.0, 1.0, 1.0 };
-    fpoint3d p = { t->at.x, t->at.y, t->at.z };
-
-    ipoint rightDown = { p.x+s.x, p.y,     p.z };
-    ipoint leftDown  = { p.x,     p.y+s.y, p.z };
-    ipoint backDown  = { p.x+s.x, p.y+s.y, p.z };
-    ipoint frontDown = { p.x,     p.y,     p.z };
-    ipoint rightUp   = { p.x+s.x, p.y,     p.z+s.z };
-    ipoint leftUp    = { p.x,     p.y+s.y, p.z+s.z };
-    ipoint backUp    = { p.x+s.x, p.y+s.y, p.z+s.z };
-    ipoint frontUp   = { p.x,     p.y,     p.z+s.z };
-
-    spaceToIso(&rightDown);
-    spaceToIso(&leftDown);
-    spaceToIso(&backDown);
-    spaceToIso(&frontDown);
-    spaceToIso(&rightUp);
-    spaceToIso(&leftUp);
-    spaceToIso(&backUp);
-    spaceToIso(&frontUp);
-
-    t->rightDown = rightDown;
-    t->leftDown  = leftDown;
-    t->backDown  = backDown;
-    t->frontDown = frontDown;
-    t->rightUp   = rightUp;
-    t->leftUp    = leftUp;
-    t->backUp    = backUp;
-    t->frontUp   = frontUp;
-}
-
-static void 
-thing_get_iso_bounds (thingp t)
-{
-    thing_get_iso_verts(t);
-
-    t->xmin = t->frontDown.x;
-    t->xmax = t->backUp.x;
-    t->ymin = t->frontDown.y;
-    t->ymax = t->backUp.y;
-    t->hmin = t->leftDown.h;
-    t->hmax = t->rightDown.h;
-}
-
-static void 
-thing_get_bounds (thingp t)
-{
-    t->xmin = t->at.x;
-    t->xmax = t->at.x + 1.0;
-    t->ymin = t->at.y;
-    t->ymax = t->at.y + 1.0;
-    t->zmin = t->at.z;
-    t->zmax = t->at.z + 1.0;
-}
-
-/*
- * Determine if the given ranges are disjoint (i.e. do not overlap).
- * For determining drawing order, this camera considers two
- * ranges to be disjoint even if they share an endpoint.
- * Thus, we use less-or-equal (<=) instead of strictly less (<).
- */
-static int
-ranges_do_not_overlap (double amin, double amax, double bmin, double bmax)
-{
-    /*
-     * amin ...... amax
-     *                   bmin ...... bmax
-     */
-    if (amax <= bmin) {
-	return (true);
-    }
-
-    /*
-     *                  amin ...... amax
-     * bmin ...... bmax
-     */
-    if (bmax <= amin) {
-	return (true);
-    }
-
-    return (false);
-}
-
-static int
-ranges_overlap (double amin, double amax, double bmin, double bmax)
-{
-    /*
-     * amin ...... amax
-     *                   bmin ...... bmax
-     */
-    if (amax <= bmin) {
-	return (false);
-    }
-
-    /*
-     *                  amin ...... amax
-     * bmin ...... bmax
-     */
-    if (bmax <= amin) {
-	return (false);
-    }
-
-    return (true);
-}
-
-/*
- * Try to find an axis in 2D isometric that separates the two given blocks.
- * This helps identify if the the two blocks are overlap on the screen.
- */
-static int
-things_iso_overlap (thingp a, thingp b)
-{
-    if (ranges_overlap(a->xmin, a->xmax, b->xmin, b->xmax) &&
-        ranges_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
-        ranges_overlap(a->hmin, a->hmax, b->hmin, b->hmax)) {
-	return (true);
-    }
-
-    return (false);
-}
-
-static char
-thing_get_space_sep_axis (thingp a, thingp b)
-{
-    char sepAxis = '\0';;
-
-    if (ranges_do_not_overlap(a->xmin, a->xmax, b->xmin, b->xmax)) {
-	sepAxis = 'x';
-    } else if (ranges_do_not_overlap(a->ymin, a->ymax, b->ymin, b->ymax)) {
-	sepAxis = 'y';
-    } else if (ranges_do_not_overlap(a->zmin, a->zmax, b->zmin, b->zmax)) {
-	sepAxis = 'z';
-    }
-
-    return (sepAxis);
-}
-
-/*
- * In an isometric perspective of the two given blocks, determine
- * if they will overlap each other on the screen. If they do, then return
- * the block that will appear in front.
- */
-static thingp 
-getFrontBlock (thingp a, thingp b) 
-{
-    thing_get_iso_bounds(a);
-    thing_get_iso_bounds(b);
-
-    /*
-     * If no isometric separation axis is found, then the two 
-     * blocks do not overlap on the screen. This means there 
-     * is no "front" block to identify.
-     */
-    if (!things_iso_overlap(a, b)) {
-        return (0);
-    }
-
-    thing_get_bounds(a);
-    thing_get_bounds(b);
-
-    switch (thing_get_space_sep_axis(a, b)) {
-	case 'x': return (a->xmin < b->xmin) ? a : b;
-	case 'y': return (a->ymin < b->ymin) ? a : b;
-	case 'z': return (a->zmin < b->zmin) ? a : b;
-    }
-
-    return (0);
-}
-
-static void
-things_init_sort (void)
-{
-    thingp t;
-
-    thing_scratch_count = 0;
-    things_todraw_count = 0;
-
-    FOR_ALL_THINGS(t) {
-        if (thing_scratch_count >= ARRAY_SIZE(thing_scratch)) {
-            ERR("scratch pad overflow");
-            return;
-        }
-
-	thing_scratch[thing_scratch_count++] = t;
-
-	t->infront_count = 0;
-	t->behind_count = 0;
-    } FOR_ALL_THINGS_END
-}
-
-static void
-things_push_infront (thingp t, thingp o)
-{
-    if (t->infront_count >= ARRAY_SIZE(t->infront)) {
-	ERR("overflow thing infront array");
-	return;
-    }
-
-    t->infront[t->infront_count++] = o;
-
-    // LOG("%f %f is in front of %f %f [%u]\n", o->at.x, o->at.y, t->at.x, t->at.y, (int)t->infront_count);
-}
-
-static void
-things_push_behind (thingp t, thingp o)
-{
-    t->behind_count++;
-}
-
-static void
-things_push_todraw (thingp t)
-{
-    if (!t) {
-        DIE("bad push todraw");
-    }
-
-    if (things_todraw_count >= ARRAY_SIZE(things_todraw)) {
-	ERR("overflow todraw array");
-	return;
-    }
-
-    things_todraw[things_todraw_count++] = t;
-}
-
-static void
-things_make_behind_and_infront_list (void)
-{
-    size_t i, j;
-
-    for (i = 0; i < thing_scratch_count; i++) {
-	for (j = i + 1; j < thing_scratch_count; j++) {
-	    thingp a = thing_scratch[i];
-	    thingp b = thing_scratch[j];
-
-	    thingp f = getFrontBlock(a, b);
-	    if (f) {
-		if (f == b) {
-		    things_push_behind(a, b);
-		    things_push_infront(b, a);
-		} else {
-		    things_push_behind(b, a);
-		    things_push_infront(a, b);
-		}
-            }
-	}
-    }
-}
-
-void
-things_sort (void)
-{
-    things_init_sort();
-    things_make_behind_and_infront_list();
-
-    size_t i, j;
-
-    for (i = 0; i < thing_scratch_count; i++) {
-	thingp a = thing_scratch[i];
-	if (a->behind_count == 0) {
-	    things_push_todraw(a);
-	}
-    }
-
-    for (i = 0; i < things_todraw_count; i++) {
-	thingp a = things_todraw[i];
-	for (j = 0; j < a->infront_count; j++) {
-	    thingp f = a->infront[j];
-
-	    f->behind_count--;
-	    if (!f->behind_count) {
-		things_push_todraw(f);
-	    }
-	}
-    }
-}
-
-#if 0
-static int 
-things_overlap (thingp t, thingp r)
-{
-    return ((t->xmin < r->xmax) && (r->xmin < t->xmax) &&
-	    (t->ymin < r->ymax) && (r->ymin < t->ymax) &&
-	    (t->hmin < r->hmax) && (r->hmin < t->hmax));
-}
-#endif
-
 PyObject *thing_push_ (thingp t, fpoint3d p)
 {
     verify(t);
@@ -493,20 +165,26 @@ void thing_move_ (thingp t, fpoint3d p)
 {
     verify(t);
 
-    double ms = tp_get_speed(thing_tp(t));
+    double ms = tp_get_ms_to_move_one_tile(thing_tp(t));
 
     ms *= fdist3d(t->at, p);
-CON("move %f %f %f to %f %f %f in %f", t->at.x, t->at.y, t->at.z, p.x,p.y,p.z, ms); 
+
     uint32_t thing_time = time_get_time_ms();
     t->moving_end = p;
     t->moving_start = t->at;
     t->timestamp_moving_begin = thing_time;
     t->timestamp_moving_end = thing_time + ms;
     t->is_moving = true;
+
+    if (thing_is_player(t)) {
+        py_call_void_module_void("hooks", "hook_player_move_start");
+    }
 }
 
 void thing_move_all (void)
 {
+    int call_hook_player_move_end = false;
+
     uint32_t thing_time = time_get_time_ms();
 
     thingp t;
@@ -517,6 +195,10 @@ void thing_move_all (void)
 
         if (thing_time >= t->timestamp_moving_end) {
             t->is_moving = false;
+
+            if (thing_is_player(t)) {
+                call_hook_player_move_end = true;
+            }
 
             thing_move_increment(t, t->moving_end);
 
@@ -538,6 +220,10 @@ void thing_move_all (void)
 
         thing_move_increment(t, p);
     } FOR_ALL_THINGS_END
+
+    if (call_hook_player_move_end) {
+        py_call_void_module_void("hooks", "hook_player_move_end");
+    }
 }
 
 void thing_set_tilename_ (thingp t, const char *name)

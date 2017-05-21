@@ -143,9 +143,9 @@ class Tp:
         self.short_name = value
         mm.tp_set_short_name(self, value)
 
-    def set_speed(self, value):
+    def set_ms_to_move_one_tile(self, value):
         self.speed = value
-        mm.tp_set_speed(self, value)
+        mm.tp_set_ms_to_move_one_tile(self, value)
 
     def set_blit_top_off(self, value):
         self.blit_top_off = value

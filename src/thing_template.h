@@ -32,7 +32,7 @@ typedef struct tp_ {
     /*
      * Speed in milliseconds it takes to move one tile.
      */
-    int speed;
+    int ms_to_move_one_tile;
 
     int blit_top_off;
     int blit_bot_off;
@@ -115,7 +115,7 @@ const char *tp_name(tpp);
 const char *tp_short_name(tpp);
 const char *tp_raw_name(tpp);
 
-int tp_get_speed(tpp);
+int tp_get_ms_to_move_one_tile(tpp);
 
 static inline int32_t tp_get_blit_top_off (tpp t)
 {

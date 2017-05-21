@@ -44,16 +44,16 @@ void game_display (void)
 
     things_sort();
 
-    for (i = 0; i < things_todraw_count; i++) {
-	thingp t = things_todraw[i];
+    for (i = 0; i < things_draw_list_count; i++) {
+	thingp t = things_draw_list[i];
 
         thing_animate(t);
     }
 
     blit_init();
 
-    for (i = 0; i < things_todraw_count; i++) {
-	thingp t = things_todraw[i];
+    for (i = 0; i < things_draw_list_count; i++) {
+	thingp t = things_draw_list[i];
 
         double X = t->at.x;
         double Y = t->at.y;

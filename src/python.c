@@ -1730,7 +1730,7 @@ static PyMethodDef python_c_METHODS[] =
     WID_DECL(wid_animate)
 
     TP_SET_DECL(tile)
-    TP_SET_DECL(speed)
+    TP_SET_DECL(ms_to_move_one_tile)
     TP_SET_DECL(blit_top_off)
     TP_SET_DECL(blit_bot_off)
     TP_SET_DECL(blit_left_off)

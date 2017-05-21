@@ -647,7 +647,7 @@ done:
     Py_RETURN_NONE;	
 }	
 
-TP_BODY_SET_INT(speed)
+TP_BODY_SET_INT(ms_to_move_one_tile)
 TP_BODY_SET_INT(blit_top_off)
 TP_BODY_SET_INT(blit_bot_off)
 TP_BODY_SET_INT(blit_left_off)

@@ -16,6 +16,8 @@ class Thing:
 
         self.level = level
         self.tp_name = tp_name
+        self.is_moving = False
+        self.next_move = False
 
         level.max_thing_id += 1
         self.thing_id = level.max_thing_id
@@ -160,6 +162,11 @@ class Thing:
     # Move a thing and see it move smoothly on the map
     #
     def move(self, to):
+
+        if self == game.g.player:
+            if self.is_moving:
+                self.next_move = to
+                return
 
         if to.oob():
             return

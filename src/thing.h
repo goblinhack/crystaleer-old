@@ -269,5 +269,5 @@ int thing_angle_to_dir(double dx, double dy);
 
 #define FOR_ALL_THINGS_END } }
 
-extern thingp things_todraw[MAX_THINGS_SCRATCH];
-extern size_t things_todraw_count;
+extern thingp things_draw_list[MAX_THINGS_SCRATCH];
+extern size_t things_draw_list_count;

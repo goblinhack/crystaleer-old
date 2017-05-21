@@ -289,22 +289,22 @@ class Game:
 
             to = copy.deepcopy(player.at)
             if sym == mm.SDLK_LEFT:
-                to.x += 1
+                to.y -= 1
                 player.move(to)
                 return True
 
             if sym == mm.SDLK_RIGHT:
-                to.x -= 1
-                player.move(to)
-                return True
-
-            if sym == mm.SDLK_DOWN:
                 to.y += 1
                 player.move(to)
                 return True
 
+            if sym == mm.SDLK_DOWN:
+                to.x += 1
+                player.move(to)
+                return True
+
             if sym == mm.SDLK_UP:
-                to.y -= 1
+                to.x -= 1
                 player.move(to)
                 return True
 

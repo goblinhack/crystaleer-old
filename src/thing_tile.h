@@ -16,11 +16,6 @@ typedef struct thing_tile_ {
      */
     uint32_t delay_ms;
 
-    /*
-     * Move now at x speed
-     */
-    uint32_t move;
-
     uint8_t is_moving:1;
     uint8_t dir:4;
     uint8_t is_yyy5:1;
