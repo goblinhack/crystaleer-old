@@ -10,9 +10,9 @@ class Point(object):
         return "({},{},{})".format(self.x, self.y, self.z)
 
     def oob(self):
-        if 0 <= self.x <= mm.MAP_WIDTH and \
-           0 <= self.y <= mm.MAP_HEIGHT and \
-           0 <= self.z <= mm.MAP_DEPTH:
+        if 0 <= self.x < mm.MAP_WIDTH and \
+           0 <= self.y < mm.MAP_HEIGHT and \
+           0 <= self.z < mm.MAP_DEPTH:
             return False
         return True
 

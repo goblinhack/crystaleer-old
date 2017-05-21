@@ -9,6 +9,7 @@ import wid_help_editor
 import wid_tp_editor
 import wid_quit
 import console
+import copy
 from point import Point
 
 global g
@@ -286,7 +287,7 @@ class Game:
                 wid_quit.visible()
                 return True
 
-            to = player.at
+            to = copy.deepcopy(player.at)
             if sym == mm.SDLK_LEFT:
                 to.x += 1
                 player.move(to)

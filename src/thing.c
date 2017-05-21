@@ -226,20 +226,42 @@ ranges_do_not_overlap (double amin, double amax, double bmin, double bmax)
     return (false);
 }
 
+static int
+ranges_overlap (double amin, double amax, double bmin, double bmax)
+{
+    /*
+     * amin ...... amax
+     *                   bmin ...... bmax
+     */
+    if (amax <= bmin) {
+	return (false);
+    }
+
+    /*
+     *                  amin ...... amax
+     * bmin ...... bmax
+     */
+    if (bmax <= amin) {
+	return (false);
+    }
+
+    return (true);
+}
+
 /*
  * Try to find an axis in 2D isometric that separates the two given blocks.
  * This helps identify if the the two blocks are overlap on the screen.
  */
 static int
-things_overlap (thingp a, thingp b)
+things_iso_overlap (thingp a, thingp b)
 {
-    if (ranges_do_not_overlap(a->xmin, a->xmax, b->xmin, b->xmax) &&
-        ranges_do_not_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
-        ranges_do_not_overlap(a->hmin, a->hmax, b->hmin, b->hmax)) {
-	return (false);
+    if (ranges_overlap(a->xmin, a->xmax, b->xmin, b->xmax) &&
+        ranges_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
+        ranges_overlap(a->hmin, a->hmax, b->hmin, b->hmax)) {
+	return (true);
     }
 
-    return (true);
+    return (false);
 }
 
 static char
@@ -274,7 +296,7 @@ getFrontBlock (thingp a, thingp b)
      * blocks do not overlap on the screen. This means there 
      * is no "front" block to identify.
      */
-    if (!things_overlap(a, b)) {
+    if (!things_iso_overlap(a, b)) {
         return (0);
     }
 
@@ -320,6 +342,8 @@ things_push_infront (thingp t, thingp o)
     }
 
     t->infront[t->infront_count++] = o;
+
+    // LOG("%f %f is in front of %f %f [%u]\n", o->at.x, o->at.y, t->at.x, t->at.y, (int)t->infront_count);
 }
 
 static void

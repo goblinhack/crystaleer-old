@@ -162,7 +162,6 @@ class Thing:
     def move(self, to):
 
         if to.oob():
-            mm.con("player OOB")
             return
 
         self.update_pos(to)
