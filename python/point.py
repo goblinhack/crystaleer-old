@@ -9,6 +9,12 @@ class Point(object):
     def __str__(self):
         return "({},{},{})".format(self.x, self.y, self.z)
 
+    def sub(self, p):
+        return Point(self.x - p.x, self.y - p.y, self.z - p.z)
+
+    def add(self, p):
+        return Point(self.x + p.x, self.y + p.y, self.z + p.z)
+
     def oob(self):
         if 0 <= self.x < mm.MAP_WIDTH and \
            0 <= self.y < mm.MAP_HEIGHT and \

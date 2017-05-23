@@ -1054,9 +1054,6 @@ int py_obj_to_int (PyObject *py_obj)
     }
 
     val = PyLong_AsLong(py_obj);
-    if (!val) {
-        goto err_out;
-    }
 
 err_out:
 
@@ -1080,9 +1077,6 @@ uint64_t py_obj_to_uint64 (PyObject *py_obj)
     }
 
     val = PyLong_AsUnsignedLongLong(py_obj);
-    if (!val) {
-        goto err_out;
-    }
 
 err_out:
 
@@ -1099,14 +1093,13 @@ double py_obj_to_double (PyObject *py_obj)
 
     val = 0;
 
-    if (!PyLong_Check((PyObject *)py_obj)) {
-        ERR("Object is a %s, not a uint64 object.",
+    if (PyLong_Check((PyObject *)py_obj)) {
+        val = PyLong_AsDouble(py_obj);
+    } else if (PyFloat_Check((PyObject *)py_obj)) {
+        val = PyFloat_AsDouble(py_obj);
+    } else {
+        ERR("Object is a %s, not a double object.",
             Py_TYPE((PyObject *)py_obj)->tp_name);
-        goto err_out;
-    }
-
-    val = PyLong_AsDouble(py_obj);
-    if (!val) {
         goto err_out;
     }
 

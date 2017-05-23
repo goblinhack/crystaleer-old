@@ -17,7 +17,7 @@ class Thing:
         self.level = level
         self.tp_name = tp_name
         self.is_moving = False
-        self.next_move = False
+        self.nexthops = []
 
         level.max_thing_id += 1
         self.thing_id = level.max_thing_id
@@ -163,14 +163,20 @@ class Thing:
     #
     def move(self, to):
 
-        if self == game.g.player:
-            if self.is_moving:
-                self.next_move = to
-                return
-
         if to.oob():
+            self.nexthops = []
             return
 
+        if self == game.g.player:
+            if self.is_moving:
+                if len(self.nexthops) > 1:
+                    return
+
+                delta = to.sub(self.at)
+                self.nexthops.append(delta)
+                return
+
+        mm.con("move {}".format(str(to)))
         self.update_pos(to)
 
         mm.thing_move(self, to)

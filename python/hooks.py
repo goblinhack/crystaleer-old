@@ -39,7 +39,9 @@ def hook_player_move_end():
 
     player.is_moving = False
 
-    if player.next_move:
-        to = player.next_move
-        player.next_move = None
+    if len(player.nexthops) > 0:
+        delta = player.nexthops[0]
+        to = player.at.add(delta)
+        mm.con("delta {}".format(str(delta)))
+        player.nexthops.pop()
         player.move(to)

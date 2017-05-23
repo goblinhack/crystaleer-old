@@ -287,24 +287,25 @@ class Game:
                 wid_quit.visible()
                 return True
 
+            delta = 0.25
             to = copy.deepcopy(player.at)
             if sym == mm.SDLK_LEFT:
-                to.y -= 1
+                to.y -= delta
                 player.move(to)
                 return True
 
             if sym == mm.SDLK_RIGHT:
-                to.y += 1
+                to.y += delta
                 player.move(to)
                 return True
 
             if sym == mm.SDLK_DOWN:
-                to.x += 1
+                to.x += delta
                 player.move(to)
                 return True
 
             if sym == mm.SDLK_UP:
-                to.x -= 1
+                to.x -= delta
                 player.move(to)
                 return True
 
