@@ -42,7 +42,7 @@ void game_display (void)
 
     size_t i;
 
-    things_sort();
+    things_iso_sort();
 
     for (i = 0; i < things_draw_list_count; i++) {
 	thingp t = things_draw_list[i];

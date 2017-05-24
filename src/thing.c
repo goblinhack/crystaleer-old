@@ -117,10 +117,26 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
         thing_pop_(t);
     }
 
-
     t->at = p;
     t->is_on_map = true;
     t->moving_start = p;
+
+    thingp o;
+    FOR_ALL_THINGS(o) {
+        if (t == o) {
+            continue;
+        }
+
+        if (!t->is_on_map) {
+            continue;
+        }
+
+        if (things_iso_intersect(t, o)) {
+            thing_pop_(t);
+
+            break;
+        }
+    } FOR_ALL_THINGS_END
 
     Py_RETURN_NONE;
 }
@@ -134,6 +150,10 @@ void thing_pop_ (thingp t)
     }
 
     t->is_on_map = false;
+
+    fpoint3d oob = { -1, -1, -1 };
+    t->at = oob;
+    t->moving_start = oob;
 }
 
 static void 

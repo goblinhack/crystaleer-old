@@ -225,6 +225,36 @@ thing_get_space_sep_axis (thingp a, thingp b)
 }
 
 /*
+ * Try to find an axis in 2D isometric that separates the two given blocks.
+ * This helps identify if the the two blocks are overlap on the screen.
+ *
+ * Only if we have a collision in all three bounds is there an overlap;
+ * this allows us to trim the number of blocks that we need to put in the
+ * 'in front of list'
+ */
+int
+things_iso_intersect (thingp a, thingp b)
+{
+    thing_get_xyz_bounds(a);
+    thing_get_xyz_bounds(b);
+
+    if (ranges_overlap(a->xmin, a->xmax, b->xmin, b->xmax) &&
+        ranges_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
+        ranges_overlap(a->zmin, a->zmax, b->zmin, b->zmax)) {
+
+        ERR("Intersecting things, %s %s",
+            thing_logname(a),
+            thing_logname(b));
+
+        CON("  x %f<->%f y %f<->%f z %f<->%f ", a->xmin, a->xmax, a->ymin, a->ymax, a->zmin, a->zmax);
+        CON("  x %f<->%f y %f<->%f z %f<->%f ", b->xmin, b->xmax, b->ymin, b->ymax, b->zmin, b->zmax);
+	return (true);
+    }
+
+    return (false);
+}
+
+/*
  * In an isometric perspective of the two given blocks, determine
  * if they will overlap each other on the screen. If they do, then return
  * the block that will appear in front.
@@ -244,8 +274,8 @@ getFrontBlock (thingp a, thingp b)
         return (0);
     }
 
-    thing_get_xyz_bounds(a);
-    thing_get_xyz_bounds(b);
+    if (things_iso_intersect(a, b)) {
+    }
 
     switch (thing_get_space_sep_axis(a, b)) {
 	case 'x': return (a->xmin < b->xmin) ? a : b;
@@ -265,6 +295,10 @@ things_init_sort (void)
     things_draw_list_count = 0;
 
     FOR_ALL_THINGS(t) {
+        if (!t->is_on_map) {
+            continue;
+        }
+
         if (things_all_blocks_count >= ARRAY_SIZE(things_all_blocks)) {
             ERR("scratch pad overflow");
             return;
@@ -285,6 +319,15 @@ things_push_infront (thingp t, thingp o)
 	return;
     }
 
+    size_t j;
+
+    for (j = 0; j < o->infront_count; j++) {
+        if (o->infront[j] == t) {
+            ERR("cycle");
+            return;
+        }
+    }
+
     t->infront[t->infront_count++] = o;
 
     // LOG("%f %f is in front of %f %f [%u]\n", o->at.x, o->at.y, t->at.x, t->at.y, (int)t->infront_count);
@@ -299,11 +342,8 @@ things_push_behind (thingp t, thingp o)
 static void
 things_push_todraw (thingp t)
 {
-    if (!t) {
-        DIE("bad push todraw");
-    }
-
-    if (things_draw_list_count >= ARRAY_SIZE(things_draw_list)) {
+    if (unlikely(things_draw_list_count >= 
+                 ARRAY_SIZE(things_draw_list))) {
 	ERR("overflow todraw array");
 	return;
     }
@@ -336,7 +376,7 @@ things_make_behind_and_infront_list (void)
 }
 
 void
-things_sort (void)
+things_iso_sort (void)
 {
     things_init_sort();
     things_make_behind_and_infront_list();
@@ -361,4 +401,25 @@ things_sort (void)
 	    }
 	}
     }
+#if 0
+    for (i = 0; i < things_all_blocks_count; i++) {
+	thingp a = things_all_blocks[i];
+	if (a->behind_count != 0) {
+            printf("%lu %lu  ",a->behind_count, a->infront_count);
+
+            for (j = 0; j < things_all_blocks_count; j++) {
+                thingp b = things_all_blocks[j];
+                size_t k;
+                for (k = 0; k < b->infront_count; k++) {
+                    thingp c = b->infront[k];
+                    if (c == a) {
+                        printf("[%lu] ", c->behind_count);
+                    }
+                }
+            }
+        }
+    }
+    CON(" ");
+    CON(" ");
+#endif
 }

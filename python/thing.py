@@ -176,9 +176,7 @@ class Thing:
                 self.nexthops.append(delta)
                 return
 
-        mm.con("move {}".format(str(to)))
         self.update_pos(to)
-
         mm.thing_move(self, to)
 
     def update_pos(self, at):

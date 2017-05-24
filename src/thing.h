@@ -253,8 +253,6 @@ extern void thing_move_to(thingp t, fpoint3d at);
 extern void thing_move_all(void);
 
 extern tree_root *things;
-extern thingp things_display_sorted;
-extern void things_sort(void);
 
 /*
  * thing_dir.c
@@ -269,5 +267,11 @@ int thing_angle_to_dir(double dx, double dy);
 
 #define FOR_ALL_THINGS_END } }
 
+/*
+ * thing_iso.h
+ */
 extern thingp things_draw_list[MAX_THINGS_SCRATCH];
 extern size_t things_draw_list_count;
+
+extern int things_iso_intersect(thingp a, thingp b);
+extern void things_iso_sort(void);
