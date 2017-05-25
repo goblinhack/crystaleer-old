@@ -162,8 +162,11 @@ class Thing:
     # Move a thing and see it move smoothly on the map
     #
     def move(self, to):
-
         if to.oob():
+            self.nexthops = []
+            return
+
+        if self.collision_check(to):
             self.nexthops = []
             return
 
@@ -202,11 +205,35 @@ class Thing:
 
         self.level.thing_push(self.at, self)
 
-        mm.thing_push(self)
+        collision_thing_id = mm.thing_push(self)
+        if collision_thing_id:
+            self.die("Thing collision at {}".format(self.at))
+            return
 
         if hasattr(self.tp, "thing_pushed"):
             if self.tp.thing_pushed is not None:
                 self.tp.thing_pushed(self)
+
+    #
+    # Check if the new position would collide and return what with
+    #
+    def collision_check(self, at=None):
+
+        if at is None:
+            at = self.at
+
+        if at.oob():
+            return False
+
+        old = self.at
+        self.at = at
+        collision_thing_id = mm.thing_collision_check(self)
+        self.at = old
+
+        if collision_thing_id:
+            return self.level.all_things[collision_thing_id]
+
+        return None
 
     #
     # De_associate the thing with its level

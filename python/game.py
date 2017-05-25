@@ -369,6 +369,20 @@ class Game:
         else:
             mm.tip2("Press h for help. Click to move.")
 
+    def push_block(self, tp_name, at):
+
+        l = g.level
+
+        t = thing.Thing(level=l, tp_name=tp_name, at=at)
+
+        if t.collision_check():
+            t.destroy(reason="collision")
+            return None
+
+        t.push()
+
+        return t
+
 
 def game_mouse_over(w, relx, rely, wheelx, wheely, button):
     g.mouse_over(w, relx, rely, wheelx, wheely, button)
@@ -401,69 +415,33 @@ def game_new():
     g.load_level_finalize()
     console.hello()
 
-    t = thing.Thing(level=g.level,
-                    tp_name="player1",
-                    at=Point(8, 8, 1))
-    t.push()
+    t = g.push_block(tp_name="player1", at=Point(8, 8, 1))
     g.player = t
 
-    t = thing.Thing(level=g.level,
-                    tp_name="wall1",
-                    at=Point(3, 3, 0))
-    t.push()
-    t = thing.Thing(level=g.level,
-                    tp_name="wall1",
-                    at=Point(4, 4, 0))
-    t.push()
+    g.push_block(tp_name="wall1", at=Point(3, 3, 0))
+    g.push_block(tp_name="wall1", at=Point(4, 4, 0))
 
-    t = thing.Thing(level=g.level,
-                    tp_name="wall1",
-                    at=Point(1, 1, 0))
-    t.push()
-    t = thing.Thing(level=g.level,
-                    tp_name="wall1",
-                    at=Point(0, 0, 0))
-    t.push()
+    g.push_block(tp_name="wall1", at=Point(1, 1, 0))
+    g.push_block(tp_name="wall1", at=Point(0, 0, 0))
 
     for z in range(4):
         for x in range(mm.MAP_WIDTH):
             if x & 2:
-                t = thing.Thing(level=g.level,
-                                tp_name="wall1",
-                                at=Point(x, 3, z))
-                t.push()
-                t = thing.Thing(level=g.level,
-                                tp_name="wall2",
-                                at=Point(3, x, z))
-                t.push()
+                g.push_block(tp_name="wall1", at=Point(x, 3, z))
+                g.push_block(tp_name="wall2", at=Point(3, x, z))
 
     for z in range(1):
         for x in range(mm.MAP_WIDTH):
-            t = thing.Thing(level=g.level,
-                            tp_name="wall2",
-                            at=Point(x, 3, 3))
-            t.push()
-            t = thing.Thing(level=g.level,
-                            tp_name="wall2",
-                            at=Point(3, x, 3))
-            t.push()
+            g.push_block(tp_name="wall2", at=Point(x, 3, 3))
+            g.push_block(tp_name="wall2", at=Point(3, x, 3))
 
     for x in range(mm.MAP_WIDTH):
         for y in range(mm.MAP_HEIGHT):
-            t = thing.Thing(level=g.level,
-                            tp_name="wall3",
-                            at=Point(x, y, 0))
-            t.push()
+            g.push_block(tp_name="wall3", at=Point(x, y, 0))
 
     for z in range(int(mm.MAP_DEPTH / 2)):
         for x in range(mm.MAP_WIDTH):
-            t = thing.Thing(level=g.level,
-                            tp_name="wall2",
-                            at=Point(x, 0, z))
-            t.push()
+            g.push_block(tp_name="wall2", at=Point(x, 0, z))
 
         for y in range(mm.MAP_HEIGHT):
-            t = thing.Thing(level=g.level,
-                            tp_name="wall2",
-                            at=Point(0, y, z))
-            t.push()
+            g.push_block(tp_name="wall2", at=Point(0, y, z))

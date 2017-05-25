@@ -25,6 +25,7 @@ void thing_set_tilename_(thingp t, const char *tilename);
 void thing_set_tp_(thingp t, const char *tp);
 void thing_move_(thingp t, fpoint3d);
 PyObject *thing_push_(thingp t, fpoint3d);
+PyObject *thing_collision_check_(thingp t, fpoint3d);
 void thing_pop_(thingp t);
 
 /*
@@ -274,4 +275,5 @@ extern thingp things_draw_list[MAX_THINGS_SCRATCH];
 extern size_t things_draw_list_count;
 
 extern int things_iso_intersect(thingp a, thingp b);
+extern int things_iso_collision_check(thingp a, thingp b, fpoint3d at);
 extern void things_iso_sort(void);

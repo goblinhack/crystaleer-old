@@ -615,6 +615,58 @@ done:
     return (o);	
 }	
 
+PyObject *thing_collision_check (PyObject *obj, PyObject *args, PyObject *keywds)
+{	
+    PyObject *py_class = 0;	
+    char *thing_name = 0;	
+    PyObject *o = 0;
+    fpoint3d p;
+    thingp tp;
+	
+    static char *kwlist[] = {(char*) "class", 0};
+	
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O",
+                                     kwlist, &py_class)) {
+        return (0);	
+    }	
+	
+    if (!py_class) {	
+        ERR("%s, missing class", __FUNCTION__);	
+        return (0);	
+    }	
+	
+    thing_name = py_obj_attr_str(py_class, "name");	
+    if (!thing_name) {	
+        ERR("%s, missing tp name", __FUNCTION__);	
+        goto done;	
+    }	
+	
+    PyObject *P = py_obj_attr(py_class, "at");	
+    p.x = py_obj_attr_double(P, "x");	
+    p.y = py_obj_attr_double(P, "y");	
+    p.z = py_obj_attr_double(P, "z");	
+	
+    /*
+    LOG("python-to-c: %s(%s -> %f, %f, %f)", __FUNCTION__,
+        thing_name, p.x, p.y, p.z);	
+     */
+	
+    tp = thing_find(thing_name);	
+    if (!tp) {	
+        ERR("%s, cannot find thing %s", __FUNCTION__, thing_name);	
+        goto done;	
+    }	
+	
+    o = thing_collision_check_(tp, p);
+	
+done:	
+    if (thing_name) {	
+        myfree(thing_name);	
+    }	
+	
+    return (o);	
+}	
+
 THING_BODY_STRING_FN(destroyed, thing_destroyed_)
 THING_BODY_STRING_FN(set_tilename, thing_set_tilename_)
 THING_BODY_STRING_FN(set_tp, thing_set_tp_)

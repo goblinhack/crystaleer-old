@@ -1491,6 +1491,7 @@ static PyMethodDef python_c_METHODS[] =
     THING_DECL(destroyed)
     THING_DECL(move)
     THING_DECL(push)
+    THING_DECL(collision_check)
     THING_DECL(pop)
 
     {"wid_new",

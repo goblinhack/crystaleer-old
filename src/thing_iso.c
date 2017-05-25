@@ -242,16 +242,53 @@ things_iso_intersect (thingp a, thingp b)
         ranges_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
         ranges_overlap(a->zmin, a->zmax, b->zmin, b->zmax)) {
 
+#if 0
         ERR("Intersecting things, %s %s",
             thing_logname(a),
             thing_logname(b));
 
         CON("  x %f<->%f y %f<->%f z %f<->%f ", a->xmin, a->xmax, a->ymin, a->ymax, a->zmin, a->zmax);
         CON("  x %f<->%f y %f<->%f z %f<->%f ", b->xmin, b->xmax, b->ymin, b->ymax, b->zmin, b->zmax);
+#endif
+
 	return (true);
     }
 
     return (false);
+}
+
+int
+things_iso_collision_check (thingp a, thingp b, fpoint3d at)
+{
+    int rc = false;
+
+    fpoint3d old = a->at;
+    a->at = at;
+
+    thing_get_xyz_bounds(a);
+    thing_get_xyz_bounds(b);
+
+    a->at = old;
+
+    if (ranges_overlap(a->xmin, a->xmax, b->xmin, b->xmax) &&
+        ranges_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
+        ranges_overlap(a->zmin, a->zmax, b->zmin, b->zmax)) {
+
+#if 0
+        ERR("Intersecting things, %s %s",
+            thing_logname(a),
+            thing_logname(b));
+
+        CON("  x %f<->%f y %f<->%f z %f<->%f ", a->xmin, a->xmax, a->ymin, a->ymax, a->zmin, a->zmax);
+        CON("  x %f<->%f y %f<->%f z %f<->%f ", b->xmin, b->xmax, b->ymin, b->ymax, b->zmin, b->zmax);
+#endif
+
+        rc = true;
+    }
+
+    thing_get_xyz_bounds(a);
+
+    return (rc);
 }
 
 /*

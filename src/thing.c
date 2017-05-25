@@ -115,11 +115,29 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
 
     if (unlikely(t->is_on_map)) {
         thing_pop_(t);
+        Py_RETURN_NONE;
     }
 
     t->at = p;
     t->is_on_map = true;
     t->moving_start = p;
+
+    PyObject *o = thing_collision_check_(t, p);
+
+    return (o);
+}
+
+PyObject *thing_collision_check_ (thingp t, fpoint3d at)
+{
+    verify(t);
+
+    if (unlikely(!game.tile_width)) {
+        game.tile_width = get_game_tile_width();
+        game.tile_height = get_game_tile_height();
+        if (!game.tile_width) {
+            DIE("python did not set tile size prior to thing collision");
+        }
+    }
 
     thingp o;
     FOR_ALL_THINGS(o) {
@@ -127,14 +145,12 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
             continue;
         }
 
-        if (!t->is_on_map) {
+        if (!o->is_on_map) {
             continue;
         }
 
-        if (things_iso_intersect(t, o)) {
-            thing_pop_(t);
-
-            break;
+        if (things_iso_collision_check(t, o, at)) {
+            return (Py_BuildValue("i", o->thing_id));
         }
     } FOR_ALL_THINGS_END
 
