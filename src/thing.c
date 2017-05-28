@@ -64,6 +64,8 @@ thingp thing_new (const char *name,
         THING_ERR(t, "thing [%s] not found", tp_name);
     }
 
+    t->current_tile = -1;
+
     verify(t);
 
     THING_LOG(t, "created");
@@ -124,6 +126,11 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
 
     PyObject *o = thing_collision_check_(t, p);
 
+    /*
+     * Choose initial tile.
+     */
+    thing_animate(t);
+
     return (o);
 }
 
@@ -177,6 +184,8 @@ thing_move_increment (thingp t, fpoint3d to)
 {
     verify(t);
 
+    thing_animate(t);
+
     if (!t->has_ever_moved) {
         t->last_at = to;
     } else {
@@ -204,6 +213,23 @@ void thing_move_ (thingp t, fpoint3d p)
     double ms = tp_get_ms_to_move_one_tile(thing_tp(t));
 
     ms *= fdist3d(t->at, p);
+
+    fpoint3d delta = fsub3d(t->at, p);
+
+    if (delta.x < 0) {
+        thing_set_dir_left(t);
+    }
+    if (delta.x > 0) {
+        thing_set_dir_right(t);
+    }
+    if (delta.y < 0) {
+        thing_set_dir_up(t);
+    }
+    if (delta.y > 0) {
+        thing_set_dir_down(t);
+    }
+
+    thing_animate(t);
 
     uint32_t thing_time = time_get_time_ms();
     t->moving_end = p;
@@ -344,77 +370,11 @@ thing_tilep thing_current_tile (thingp t)
 {
     verify(t);
 
-    if (!t->current_tile) {
+    if (t->current_tile == -1) {
         return (0);
     }
 
     return (&thing_tile_arr[t->current_tile]);
-}
-
-void thing_move_set_dir (thingp t,
-                         double *x,
-                         double *y,
-                         uint8_t up,
-                         uint8_t down,
-                         uint8_t left,
-                         uint8_t right)
-{
-    double ox = t->at.x;
-    double oy = t->at.y;
-
-    if (*x < 0) {
-        *x = 0;
-    }
-
-    if (*y < 0) {
-        *y = 0;
-    }
-
-    if (*x > MAP_WIDTH - 1) {
-        *x = MAP_WIDTH - 1;
-    }
-
-    if (*y > MAP_HEIGHT - 1) {
-        *y = MAP_HEIGHT - 1;
-    }
-
-    if (*x > ox) {
-        right = true;
-    }
-
-    if (*x < ox) {
-        left = true;
-    }
-
-    if (*y > oy) {
-        down = true;
-    }
-
-    if (*y < oy) {
-        up = true;
-    }
-
-    if (up) {
-        if (left) {
-            thing_set_dir_tl(t);
-        } else if (right) {
-            thing_set_dir_tr(t);
-        } else {
-            thing_set_dir_up(t);
-        }
-    } else if (down) {
-        if (left) {
-            thing_set_dir_bl(t);
-        } else if (right) {
-            thing_set_dir_br(t);
-        } else {
-            thing_set_dir_down(t);
-        }
-    } else if (left) {
-        thing_set_dir_left(t);
-    } else if (right) {
-        thing_set_dir_right(t);
-    }
 }
 
 void thing_dead (thingp t,

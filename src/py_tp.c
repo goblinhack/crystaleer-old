@@ -10,6 +10,7 @@
 #include "py_tp.h"
 #include "config.h"
 #include "thing_tile.h"
+#include "thing_template.h"
 
 PyObject *tp_load_ (PyObject *obj, PyObject *args, PyObject *keywds)
 {
@@ -577,10 +578,6 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
         ERR("insert thing tiles node fail");
     }
 
-    if (t->has_dir_anim) {
-        tp->has_dir_anim = true;
-    }
-
     t->tile = tile_find(tile);
     if (!t->tile) {
         ERR("%s, cannot find tile %s for tp %s", __FUNCTION__, tile, tp_name);
@@ -629,14 +626,20 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
             t->has_dir_anim = true;
         }
     } else if (left) {
+CON("%s left", t->tilename);
         t->dir = THING_DIR_LEFT;
         t->has_dir_anim = true;
     } else if (right) {
+CON("%s right", t->tilename);
         t->dir = THING_DIR_RIGHT;
         t->has_dir_anim = true;
     } else if (none) {
         t->dir = THING_DIR_NONE;
         t->has_dir_anim = true;
+    }
+
+    if (t->has_dir_anim) {
+        tp->has_dir_anim = true;
     }
 	
 done:	

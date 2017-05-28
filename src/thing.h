@@ -159,7 +159,7 @@ typedef struct thing_ {
     /*
      * For animation.
      */
-    uint16_t current_tile;
+    int16_t current_tile;
 
     uint8_t dir;
 
@@ -242,13 +242,6 @@ static inline uint8_t thing_is_player (thingp t)
 /*
  * thing.c
  */
-extern void thing_move_set_dir(thingp t,
-                               double *x,
-                               double *y,
-                               uint8_t up,
-                               uint8_t down,
-                               uint8_t left,
-                               uint8_t right);
 extern void thing_incremental_sort(thingp t);
 extern void thing_move_to(thingp t, fpoint3d at);
 extern void thing_move_all(void);

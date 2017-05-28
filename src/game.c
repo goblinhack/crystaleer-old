@@ -47,7 +47,9 @@ void game_display (void)
     for (i = 0; i < things_draw_list_count; i++) {
 	thingp t = things_draw_list[i];
 
-        thing_animate(t);
+        if (tp_is_animated(thing_tp(t))) {
+            thing_animate(t);
+        }
     }
 
     blit_init();
@@ -77,7 +79,7 @@ void game_display (void)
         tpp tp = thing_tp(t);
 
         if (!t->tile) {
-            ERR("no tile for %s", tp_name(tp));
+            LOG("no tile for %s", tp_name(tp));
             continue;
         }
 
