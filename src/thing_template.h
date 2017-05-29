@@ -95,10 +95,10 @@ typedef struct tp_ {
     uint8_t is_rrr40:1;
     uint8_t is_rrr41:1;
     uint8_t is_rrr42:1;
-    uint8_t is_rrr43:1;
+    uint8_t is_ladder:1;
     uint8_t is_rrr44:1;
     uint8_t is_rrr45:1;
-    uint8_t is_rrr46:1;
+    uint8_t is_movable:1;
 
 } thing_template;
 
@@ -408,9 +408,9 @@ static inline uint8_t tp_is_rrr42 (tpp t)
     return (t->is_rrr42);
 }
 
-static inline uint8_t tp_is_rrr43 (tpp t)
+static inline uint8_t tp_is_ladder (tpp t)
 {
-    return (t->is_rrr43);
+    return (t->is_ladder);
 }
 
 static inline uint8_t tp_is_rrr44 (tpp t)
@@ -423,9 +423,9 @@ static inline uint8_t tp_is_rrr45 (tpp t)
     return (t->is_rrr45);
 }
 
-static inline uint8_t tp_is_rrr46 (tpp t)
+static inline uint8_t tp_is_movable (tpp t)
 {
-    return (t->is_rrr46);
+    return (t->is_movable);
 }
 
 static inline uint8_t tp_is_solid_ground (tpp t)

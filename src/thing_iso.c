@@ -40,6 +40,7 @@ size_t things_draw_list_count;
     *h = H;
 #endif
 
+#if 0
 /*
  * Convert xyz 3d space to flattened 2d iso space with h and v
  * planes to describe horizontal and vertical planes for calculating
@@ -94,7 +95,9 @@ thing_get_iso_verts (thingp t)
     t->backUp    = backUp;
     t->frontUp   = frontUp;
 }
+#endif
 
+#if 0
 /*
  * Get just the bounds we care about for checking for on screen overlap.
  */
@@ -120,6 +123,7 @@ thing_get_iso_bounds (thingp t)
     t->hmin = t->leftDown.h;
     t->hmax = t->rightDown.h;
 }
+#endif
 
 /*
  * Get the bounds in xyz form.
@@ -196,7 +200,7 @@ ranges_overlap (double amin, double amax, double bmin, double bmax)
  * this allows us to trim the number of blocks that we need to put in the
  * 'in front of list'
  */
-static int
+int
 things_iso_overlap (thingp a, thingp b)
 {
     if (ranges_overlap(a->xmin, a->xmax, b->xmin, b->xmax) &&
@@ -299,6 +303,11 @@ things_iso_collision_check (thingp a, thingp b, fpoint3d at)
 static thingp 
 getFrontBlock (thingp a, thingp b) 
 {
+#if 0
+    /*
+     * There's some problem here where sometimes a character at the front
+     * will wind up at the back. Gave up for now.
+     */
     thing_get_iso_bounds(a);
     thing_get_iso_bounds(b);
 
@@ -310,6 +319,7 @@ getFrontBlock (thingp a, thingp b)
     if (!things_iso_overlap(a, b)) {
         return (0);
     }
+#endif
 
     if (things_iso_intersect(a, b)) {
     }

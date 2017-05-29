@@ -159,40 +159,13 @@ class Thing:
             self.set_depth(self.depth)
 
     #
-    # Move a thing and see it move smoothly on the map
+    # Add a move delta to a thing
     #
-    def move(self, to):
-        if to.oob():
-            self.nexthops = []
-            return
+    def move_delta(self, to):
 
-        if self.collision_check(to):
-            self.log("cannot move to {}".format(to))
-            self.nexthops = []
+        self.log("move delta {}".format(to))
 
-            #
-            # Check if blocked at our current position too.
-            # If so allow the move so the player is not stuck.
-            #
-            if self.collision_check(self.at):
-                self.err("got stuck moving to {} and " +
-                         "at current pos {}".format(to, self.at))
-            else:
-                return
-
-        self.log("move to {}".format(to))
-
-        if self == game.g.player:
-            if self.is_moving:
-                if len(self.nexthops) > 1:
-                    return
-
-                delta = to.sub(self.at)
-                self.nexthops.append(delta)
-                return
-
-        self.update_pos(to)
-        mm.thing_move(self, to)
+        mm.thing_move_delta(self, to)
 
     def update_pos(self, at):
 

@@ -9,7 +9,6 @@ import wid_help_editor
 import wid_tp_editor
 import wid_quit
 import console
-import copy
 from point import Point
 
 global g
@@ -287,26 +286,21 @@ class Game:
                 wid_quit.visible()
                 return True
 
-            delta = 0.25
-            to = copy.deepcopy(player.at)
+            delta = 0.10
             if sym == mm.SDLK_LEFT:
-                to.y -= delta
-                player.move(to)
+                player.move_delta(Point(0, -delta, 0))
                 return True
 
             if sym == mm.SDLK_RIGHT:
-                to.y += delta
-                player.move(to)
+                player.move_delta(Point(0, delta, 0))
                 return True
 
             if sym == mm.SDLK_DOWN:
-                to.x += delta
-                player.move(to)
+                player.move_delta(Point(delta, 0, 0))
                 return True
 
             if sym == mm.SDLK_UP:
-                to.x -= delta
-                player.move(to)
+                player.move_delta(Point(-delta, 0, 0))
                 return True
 
         if mod == mm.KMOD_LCTRL or mod == mm.KMOD_RCTRL:
@@ -415,8 +409,13 @@ def game_new():
     g.load_level_finalize()
     console.hello()
 
-    t = g.push_block(tp_name="player1", at=Point(8, 8, 1))
+    t = g.push_block(tp_name="player1", at=Point(8, 8, 8))
     g.player = t
+
+    g.push_block(tp_name="wall1", at=Point(8, 8, 3))
+    g.push_block(tp_name="wall1", at=Point(8, 8, 2))
+    g.push_block(tp_name="wall1", at=Point(8, 8, 1))
+    g.push_block(tp_name="wall1", at=Point(8, 8, 2))
 
     g.push_block(tp_name="wall1", at=Point(3, 3, 0))
     g.push_block(tp_name="wall1", at=Point(4, 4, 0))

@@ -23,7 +23,7 @@ thingp thing_new(const char *name, long int thing_id, const char *tp_name);
 void thing_destroyed_(thingp t, const char *reason);
 void thing_set_tilename_(thingp t, const char *tilename);
 void thing_set_tp_(thingp t, const char *tp);
-void thing_move_(thingp t, fpoint3d);
+void thing_move_delta_(thingp t, fpoint3d);
 PyObject *thing_push_(thingp t, fpoint3d);
 PyObject *thing_collision_check_(thingp t, fpoint3d);
 void thing_pop_(thingp t);
@@ -119,6 +119,14 @@ typedef struct thing_ {
     ipoint frontUp;
 
     /*
+     * Fake gravity
+     */
+    double fall_speed;
+    double jump_speed;
+    fpoint3d momentum;
+    uint32_t last_move;
+
+    /*
      * Allocated in python
      */
     long int thing_id;
@@ -138,14 +146,6 @@ typedef struct thing_ {
      * position when moving.
      */
     fpoint3d last_at;
-
-    /*
-     * For moving
-     */
-    fpoint3d moving_start;
-    fpoint3d moving_end;
-    uint32_t timestamp_moving_begin;
-    uint32_t timestamp_moving_end;
 
     tilep tile;
 
@@ -180,6 +180,12 @@ typedef struct thing_ {
     uint32_t is_moving:1;
     uint32_t has_ever_moved:1;
     uint32_t is_open:1;
+
+    /*
+     * Collisions
+     */
+    uint32_t is_over_ladder:1;
+    uint32_t is_over_solid_ground:1;
 } thing;
 
 #include "thing_template.h"
@@ -239,6 +245,27 @@ static inline uint8_t thing_is_player (thingp t)
     return (tp_is_player(thing_tp(t)));
 }
 
+static inline uint8_t thing_is_ladder (thingp t)
+{
+    verify(t);
+
+    return (tp_is_ladder(thing_tp(t)));
+}
+
+static inline uint8_t thing_is_solid_ground (thingp t)
+{
+    verify(t);
+
+    return (tp_is_solid_ground(thing_tp(t)));
+}
+
+static inline uint8_t thing_is_movable (thingp t)
+{
+    verify(t);
+
+    return (tp_is_movable(thing_tp(t)));
+}
+
 /*
  * thing.c
  */
@@ -270,3 +297,11 @@ extern size_t things_draw_list_count;
 extern int things_iso_intersect(thingp a, thingp b);
 extern int things_iso_collision_check(thingp a, thingp b, fpoint3d at);
 extern void things_iso_sort(void);
+extern int things_iso_overlap(thingp a, thingp b);
+
+/*
+ * thing_move.c
+ */
+extern int thing_fall(thingp);
+extern int thing_slide(thingp);
+extern int thing_jump(thingp);

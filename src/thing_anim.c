@@ -54,24 +54,13 @@ void thing_animate (thingp t)
      * Get the next tile.
      */
     if (tile) {
-        if (t->has_ever_moved) {
-            if ((t->last_anim_at.x != t->at.x) || 
-                (t->last_anim_at.y != t->at.y) ||
-                (t->last_anim_at.z != t->at.z)) {
-                t->last_anim_at = t->at;
-                t->is_moving = true;
-            } else {
-                t->is_moving = false;
-            }
-        }
-
         /*
          * If walking and now we've stopped, choose the idle no dir tile.
          */
         if (thing_is_player(t) &&
             !thing_is_dead(t) && 
             !t->is_moving &&
-            (time_get_time_ms() >= t->timestamp_moving_end + 5000)) {
+            (time_get_time_ms() >= t->last_move + 5000)) {
 
             thing_tilep new_tile;
 
@@ -129,6 +118,7 @@ void thing_animate (thingp t)
                     continue;
                 }
             }
+
             if (!thing_is_moving(t)) {
                 if (thing_tile_is_moving(tile)) {
                     tile = thing_tile_next(tiles, tile);
@@ -243,6 +233,7 @@ void thing_animate (thingp t)
         }
     }
 #endif
+//CON("%s", thing_tile_name(tile));
 
     thing_set_tilename_(t, thing_tile_name(tile));
 

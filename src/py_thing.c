@@ -670,5 +670,5 @@ done:
 THING_BODY_STRING_FN(destroyed, thing_destroyed_)
 THING_BODY_STRING_FN(set_tilename, thing_set_tilename_)
 THING_BODY_STRING_FN(set_tp, thing_set_tp_)
-THING_BODY_FPOINT3D_VOID_FN(move, thing_move_)
+THING_BODY_FPOINT3D_VOID_FN(move_delta, thing_move_delta_)
 THING_BODY_VOID_FN(pop, thing_pop_)

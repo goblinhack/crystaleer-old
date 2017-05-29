@@ -17,6 +17,12 @@ tree_root *things;
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
 
+static double thing_fall_speed = 0.05;
+static double thing_fall_speed_max = 0.1;
+
+static void 
+thing_move_abs_to(thingp t, fpoint3d to);
+
 uint8_t thing_init (void)
 {
     thing_init_done = true;
@@ -65,6 +71,9 @@ thingp thing_new (const char *name,
     }
 
     t->current_tile = -1;
+
+    t->is_over_ladder = false;
+    t->is_over_solid_ground = true;
 
     verify(t);
 
@@ -120,16 +129,9 @@ PyObject *thing_push_ (thingp t, fpoint3d p)
         Py_RETURN_NONE;
     }
 
-    t->at = p;
-    t->is_on_map = true;
-    t->moving_start = p;
+    thing_move_abs_to(t, p);
 
     PyObject *o = thing_collision_check_(t, p);
-
-    /*
-     * Choose initial tile.
-     */
-    thing_animate(t);
 
     return (o);
 }
@@ -176,11 +178,10 @@ void thing_pop_ (thingp t)
 
     fpoint3d oob = { -1, -1, -1 };
     t->at = oob;
-    t->moving_start = oob;
 }
 
 static void 
-thing_move_increment (thingp t, fpoint3d to)
+thing_move_abs_to (thingp t, fpoint3d to)
 {
     verify(t);
 
@@ -193,18 +194,29 @@ thing_move_increment (thingp t, fpoint3d to)
     }
 
     t->has_ever_moved = true;
+    t->is_on_map = true;
     t->at = to;
+
+    t->last_move = time_get_time_ms();
 }
 
-void thing_move_ (thingp t, fpoint3d p)
+static void 
+thing_move_delta (thingp t, fpoint3d delta)
 {
     verify(t);
 
-    double ms = tp_get_ms_to_move_one_tile(thing_tp(t));
+    thing_animate(t);
 
-    ms *= fdist3d(t->at, p);
+    t->has_ever_moved = true;
+    t->is_on_map = true;
+    t->at = fadd3d(t->at, delta);
 
-    fpoint3d delta = fsub3d(t->at, p);
+    t->last_move = time_get_time_ms();
+}
+
+void thing_move_delta_ (thingp t, fpoint3d delta)
+{
+    verify(t);
 
     /*
      * If not moving and this is the first move then break out of the
@@ -214,27 +226,29 @@ void thing_move_ (thingp t, fpoint3d p)
         t->timestamp_change_to_next_frame = time_get_time_ms_cached();
     }
 
-    if (delta.x < 0) {
-        thing_set_dir_left(t);
-    }
     if (delta.x > 0) {
+        thing_set_dir_left(t);
+        t->is_moving = true;
+    }
+
+    if (delta.x < 0) {
         thing_set_dir_right(t);
+        t->is_moving = true;
     }
-    if (delta.y < 0) {
-        thing_set_dir_up(t);
-    }
+
     if (delta.y > 0) {
+        thing_set_dir_up(t);
+        t->is_moving = true;
+    }
+
+    if (delta.y < 0) {
         thing_set_dir_down(t);
+        t->is_moving = true;
     }
 
     thing_animate(t);
 
-    uint32_t thing_time = time_get_time_ms();
-    t->moving_end = p;
-    t->moving_start = t->at;
-    t->timestamp_moving_begin = thing_time;
-    t->timestamp_moving_end = thing_time + ms;
-    t->is_moving = true;
+    t->momentum = fadd3d(t->momentum, delta);
 
     if (thing_is_player(t)) {
         py_call_void_module_void("hooks", "hook_player_move_start");
@@ -245,40 +259,81 @@ void thing_move_all (void)
 {
     int call_hook_player_move_end = false;
 
-    uint32_t thing_time = time_get_time_ms();
-
     thingp t;
     FOR_ALL_THINGS(t) {
-        if (!t->is_moving) {
+        fpoint3d delta = {0};
+
+        delta = t->momentum;
+
+        if (!t->is_over_solid_ground) {
+            delta.z -= t->fall_speed;
+
+            t->fall_speed += thing_fall_speed;
+
+            if (t->fall_speed > thing_fall_speed_max) {
+                t->fall_speed = thing_fall_speed_max;
+            }
+        }
+
+        if (!thing_is_movable(t)) {
             continue;
         }
 
-        if (thing_time >= t->timestamp_moving_end) {
-            t->is_moving = false;
+        fpoint3d to;
 
-            if (thing_is_player(t)) {
-                call_hook_player_move_end = true;
+        to = fadd3d(t->at, delta);
+
+        /*
+         * Check for collisions
+         */
+        t->is_over_ladder = false;
+        t->is_over_solid_ground = false;
+
+        thingp o;
+        FOR_ALL_THINGS(o) {
+
+            if (o == t) {
+                continue;
             }
 
-            thing_move_increment(t, t->moving_end);
+            if (things_iso_collision_check(t, o, to)) {
+                delta.x = 0;
+                delta.y = 0;
+                delta.z = 0;
+            }
 
-            continue;
+            if (thing_is_player(t)) {
+                if (thing_is_ladder(o)) {
+                    if (things_iso_overlap(t, o)) {
+                        t->is_over_ladder = true;
+                        t->fall_speed = 0;
+                    }
+                }
+            }
+
+            if (thing_is_solid_ground(o)) {
+                if (!t->is_over_solid_ground) {
+                    if (things_iso_collision_check(t, o, to)) {
+                        t->is_over_solid_ground = true;
+                    }
+                }
+            }
+
+        } FOR_ALL_THINGS_END
+
+        thing_move_delta(t, delta);
+
+        t->momentum.x *= 0.8;
+        t->momentum.y *= 0.8;
+
+        t->momentum.x = min(0.3, t->momentum.x);
+        t->momentum.y = min(0.3, t->momentum.y);
+
+        if ((fabs(t->momentum.x) < 0.10) &&
+            (fabs(t->momentum.y) < 0.10)) {
+            t->is_moving = false;
         }
 
-        double time_step =
-            (double)(thing_time - t->timestamp_moving_begin) /
-            (double)(t->timestamp_moving_end - t->timestamp_moving_begin);
-
-        fpoint3d p;
-
-        p.x = (time_step * (double)(t->moving_end.x - t->moving_start.x)) +
-            t->moving_start.x;
-        p.y = (time_step * (double)(t->moving_end.y - t->moving_start.y)) +
-            t->moving_start.y;
-        p.z = (time_step * (double)(t->moving_end.z - t->moving_start.z)) +
-            t->moving_start.z;
-
-        thing_move_increment(t, p);
     } FOR_ALL_THINGS_END
 
     if (call_hook_player_move_end) {

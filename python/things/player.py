@@ -11,8 +11,8 @@ def player_init(name, short_name, tiles=[]):
     x.set_short_name(short_name)
     x.set_is_movement_blocking(True)
     x.set_is_animated(True)
+    x.set_is_movable(True)
     x.set_is_player(True)
-    x.set_is_solid_ground(True)
     x.set_blit_top_off(1)
     x.set_ms_to_move_one_tile(150)
 

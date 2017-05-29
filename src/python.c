@@ -1486,13 +1486,13 @@ static PyMethodDef python_c_METHODS[] =
         METH_VARARGS | METH_KEYWORDS,
         "create a thing template"},
 
-    THING_DECL(set_tilename)
-    THING_DECL(set_tp)
-    THING_DECL(destroyed)
-    THING_DECL(move)
-    THING_DECL(push)
-    THING_DECL(collision_check)
-    THING_DECL(pop)
+    THING_DECL(thing_set_tilename)
+    THING_DECL(thing_set_tp)
+    THING_DECL(thing_destroyed)
+    THING_DECL(thing_move_delta)
+    THING_DECL(thing_push)
+    THING_DECL(thing_collision_check)
+    THING_DECL(thing_pop)
 
     {"wid_new",
         (PyCFunction)wid_new_,
@@ -1778,10 +1778,10 @@ static PyMethodDef python_c_METHODS[] =
     TP_SET_DECL(is_rrr40)
     TP_SET_DECL(is_rrr41)
     TP_SET_DECL(is_rrr42)
-    TP_SET_DECL(is_rrr43)
+    TP_SET_DECL(is_ladder)
     TP_SET_DECL(is_rrr44)
     TP_SET_DECL(is_rrr45)
-    TP_SET_DECL(is_rrr46)
+    TP_SET_DECL(is_movable)
     TP_SET_DECL(is_solid_ground)
     TP_SET_DECL(is_movement_blocking)
     TP_SET_DECL(is_key)

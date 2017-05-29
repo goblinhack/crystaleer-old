@@ -38,9 +38,3 @@ def hook_player_move_end():
         return
 
     player.is_moving = False
-
-    if len(player.nexthops) > 0:
-        delta = player.nexthops[0]
-        to = player.at.add(delta)
-        player.nexthops.pop()
-        player.move(to)

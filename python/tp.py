@@ -106,10 +106,10 @@ class Tp:
         self.is_rrr40 = False
         self.is_rrr41 = False
         self.is_rrr42 = False
-        self.is_rrr43 = False
+        self.is_ladder = False
         self.is_rrr44 = False
         self.is_rrr45 = False
-        self.is_rrr46 = False
+        self.is_movable = False
         self.is_animated_lr_flip = False
         self.is_solid_ground = False
         self.is_movement_blocking = False
@@ -351,9 +351,9 @@ class Tp:
         self.is_rrr42 = value
         mm.tp_set_is_rrr42(self, value)
 
-    def set_is_rrr43(self, value):
-        self.is_rrr43 = value
-        mm.tp_set_is_rrr43(self, value)
+    def set_is_ladder(self, value):
+        self.is_ladder = value
+        mm.tp_set_is_ladder(self, value)
 
     def set_is_rrr44(self, value):
         self.is_rrr44 = value
@@ -363,9 +363,9 @@ class Tp:
         self.is_rrr45 = value
         mm.tp_set_is_rrr45(self, value)
 
-    def set_is_rrr46(self, value):
-        self.is_rrr46 = value
-        mm.tp_set_is_rrr46(self, value)
+    def set_is_movable(self, value):
+        self.is_movable = value
+        mm.tp_set_is_movable(self, value)
 
     def set_is_animated_lr_flip(self, value):
         self.is_animated_lr_flip = value

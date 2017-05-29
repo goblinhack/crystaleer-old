@@ -14,7 +14,7 @@ PyObject *thing_new_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *thing_set_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds);
 
 #define THING_PROTO(__field__)                                                  \
-PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds);
+PyObject *__field__ (PyObject *obj, PyObject *args, PyObject *keywds);
 
 #define THING_SET_DECL(__field__)                                               \
     {"thing_set_" #__field__,                                                   \
@@ -23,15 +23,15 @@ PyObject *thing_ ## __field__ (PyObject *obj, PyObject *args, PyObject *keywds);
         "set a " #__field__ " in a thing"},                                     \
 
 #define THING_DECL(__field__)                                                   \
-    {"thing_" #__field__,                                                       \
-        (PyCFunction)thing_ ## __field__,                                       \
+    {#__field__,                                                                \
+        (PyCFunction)__field__,                                                 \
         METH_VARARGS | METH_KEYWORDS,                                           \
         "call " #__field__ " in a thing"},                                      \
 
-THING_PROTO(set_tilename)
-THING_PROTO(set_tp)
-THING_PROTO(destroyed)
-THING_PROTO(move)
-THING_PROTO(push)
-THING_PROTO(collision_check)
-THING_PROTO(pop)
+THING_PROTO(thing_set_tilename)
+THING_PROTO(thing_set_tp)
+THING_PROTO(thing_destroyed)
+THING_PROTO(thing_move_delta)
+THING_PROTO(thing_push)
+THING_PROTO(thing_collision_check)
+THING_PROTO(thing_pop)
