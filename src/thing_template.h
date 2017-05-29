@@ -41,7 +41,6 @@ typedef struct tp_ {
 
     uint8_t has_dir_anim:1;
     uint8_t is_animated:1;
-    uint8_t is_animated_lr_flip:1;
     uint8_t is_animated_no_dir:1;
     uint8_t is_animation:1;
     uint8_t is_door:1;
@@ -427,11 +426,6 @@ static inline uint8_t tp_is_rrr45 (tpp t)
 static inline uint8_t tp_is_rrr46 (tpp t)
 {
     return (t->is_rrr46);
-}
-
-static inline uint8_t tp_is_animated_lr_flip (tpp t)
-{
-    return (t->is_animated_lr_flip);
 }
 
 static inline uint8_t tp_is_solid_ground (tpp t)

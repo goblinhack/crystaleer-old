@@ -194,16 +194,6 @@ thing_move_increment (thingp t, fpoint3d to)
 
     t->has_ever_moved = true;
     t->at = to;
-
-    if (tp_is_animated_lr_flip(thing_tp(t))) {
-        if (fabs(t->at.x - t->last_at.x) <= 1) {
-            if (t->at.x > t->last_at.x) {
-                LOG("TBD flip");
-            } else if (t->at.x < t->last_at.x) {
-                LOG("TBD flip");
-            }
-        }
-    }
 }
 
 void thing_move_ (thingp t, fpoint3d p)
@@ -215,6 +205,14 @@ void thing_move_ (thingp t, fpoint3d p)
     ms *= fdist3d(t->at, p);
 
     fpoint3d delta = fsub3d(t->at, p);
+
+    /*
+     * If not moving and this is the first move then break out of the
+     * idle animation.
+     */
+    if (thing_is_dir_none(t)) {
+        t->timestamp_change_to_next_frame = time_get_time_ms_cached();
+    }
 
     if (delta.x < 0) {
         thing_set_dir_left(t);

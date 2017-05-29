@@ -93,7 +93,7 @@ def player_init(name, short_name, tiles=[]):
         x.set_tile(tile=name + "-none-2",
                    is_dir_none=True, delay_ms=2000)
         x.set_tile(tile=name + "-none-1",
-                   is_dir_none=True, delay_ms=50)
+                   is_dir_none=True, delay_ms=100)
     x.set_tile(tile=name + "-none-3",
                is_dir_none=True, delay_ms=200)
     x.set_tile(tile=name + "-none-4",

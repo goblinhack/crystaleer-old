@@ -622,11 +622,9 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
             t->has_dir_anim = true;
         }
     } else if (left) {
-CON("%s left", t->tilename);
         t->dir = THING_DIR_LEFT;
         t->has_dir_anim = true;
     } else if (right) {
-CON("%s right", t->tilename);
         t->dir = THING_DIR_RIGHT;
         t->has_dir_anim = true;
     } else if (none) {
@@ -709,7 +707,6 @@ TP_BODY_SET_INT(is_rrr43)
 TP_BODY_SET_INT(is_rrr44)
 TP_BODY_SET_INT(is_rrr45)
 TP_BODY_SET_INT(is_rrr46)
-TP_BODY_SET_INT(is_animated_lr_flip)
 TP_BODY_SET_INT(is_key)
 TP_BODY_SET_INT(is_wall)
 TP_BODY_SET_INT(is_floor)

@@ -140,8 +140,6 @@ static void log_ (const char *fmt, va_list args)
     len = (uint32_t)strlen(buf);
     vsnprintf(buf + len, sizeof(buf) - len, fmt, args);
 
-    wid_console_log(buf);
-
     putf(MY_STDOUT, buf);
     fflush(MY_STDOUT);
 }

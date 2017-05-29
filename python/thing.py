@@ -167,8 +167,20 @@ class Thing:
             return
 
         if self.collision_check(to):
+            self.log("cannot move to {}".format(to))
             self.nexthops = []
-            return
+
+            #
+            # Check if blocked at our current position too.
+            # If so allow the move so the player is not stuck.
+            #
+            if self.collision_check(self.at):
+                self.err("got stuck moving to {} and " +
+                         "at current pos {}".format(to, self.at))
+            else:
+                return
+
+        self.log("move to {}".format(to))
 
         if self == game.g.player:
             if self.is_moving:
