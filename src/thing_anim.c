@@ -116,8 +116,21 @@ void thing_animate (thingp t)
             }
             verify(tile);
 
-            if (thing_tile_is_dead(tile)) {
-                if (!thing_is_dead(t)) {
+            if (!thing_is_dead(t)) {
+                if (thing_tile_is_dead(tile)) {
+                    tile = thing_tile_next(tiles, tile);
+                    continue;
+                }
+            }
+
+            if (thing_is_moving(t)) {
+                if (!thing_tile_is_moving(tile)) {
+                    tile = thing_tile_next(tiles, tile);
+                    continue;
+                }
+            }
+            if (!thing_is_moving(t)) {
+                if (thing_tile_is_moving(tile)) {
                     tile = thing_tile_next(tiles, tile);
                     continue;
                 }

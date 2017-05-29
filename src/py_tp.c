@@ -361,7 +361,6 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
     int is_yyy12 = 0;
     int is_yyy13 = 0;
     int is_yyy14 = 0;
-    int is_yyy15 = 0;
     int is_submerged = 0;
     int is_sleeping = 0;
     int is_open = 0;
@@ -441,7 +440,6 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
         (char*) "is_yyy12",
         (char*) "is_yyy13",
         (char*) "is_yyy14",
-        (char*) "is_yyy15",
         (char*) "is_submerged",
         (char*) "is_sleeping",
         (char*) "is_open",
@@ -524,7 +522,6 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
                                      &is_yyy12,
                                      &is_yyy13,
                                      &is_yyy14,
-                                     &is_yyy15,
                                      &is_submerged,
                                      &is_sleeping,
                                      &is_open,
@@ -596,7 +593,6 @@ PyObject *tp_set_tile (PyObject *obj, PyObject *args, PyObject *keywds)
     t->is_yyy12 = is_yyy12;
     t->is_yyy13 = is_yyy13;
     t->is_yyy14 = is_yyy14;
-    t->is_yyy15 = is_yyy15;
     t->is_sleeping = is_sleeping;
     t->is_open = is_open;
     t->is_dead = is_dead;

@@ -130,11 +130,6 @@ uint8_t thing_tile_is_yyy14 (thing_tilep t)
     return (t->is_yyy14);
 }
 
-uint8_t thing_tile_is_yyy15 (thing_tilep t)
-{
-    return (t->is_yyy15);
-}
-
 uint8_t thing_tile_is_sleeping (thing_tilep t)
 {
     return (t->is_sleeping);
