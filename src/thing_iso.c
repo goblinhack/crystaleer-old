@@ -21,26 +21,6 @@ static size_t things_all_blocks_count;
 thingp things_draw_list[MAX_THINGS_SCRATCH];
 size_t things_draw_list_count;
 
-    /*
-     * Compute horizontal distance from origin at 30 degrees
-     *
-     * h = (x - y) * Math.cos(Math.PI/6),
-     *
-     * √3/2 by 7/8 = 1/2 + 1/4 + 1/8 = 0.875:
-     */
-#if 0
-    int H, d;
-
-    H = d = *x - *y;
-    H >>= 1;
-    H += d;
-    H >>= 1;
-    H += d;
-    H >>= 1;
-    *h = H;
-#endif
-
-#if 0
 /*
  * Convert xyz 3d space to flattened 2d iso space with h and v
  * planes to describe horizontal and vertical planes for calculating
@@ -95,9 +75,7 @@ thing_get_iso_verts (thingp t)
     t->backUp    = backUp;
     t->frontUp   = frontUp;
 }
-#endif
 
-#if 0
 /*
  * Get just the bounds we care about for checking for on screen overlap.
  */
@@ -123,7 +101,6 @@ thing_get_iso_bounds (thingp t)
     t->hmin = t->leftDown.h;
     t->hmax = t->rightDown.h;
 }
-#endif
 
 /*
  * Get the bounds in xyz form.
@@ -303,7 +280,6 @@ things_iso_collision_check (thingp a, thingp b, fpoint3d at)
 static thingp 
 getFrontBlock (thingp a, thingp b) 
 {
-#if 0
     /*
      * There's some problem here where sometimes a character at the front
      * will wind up at the back. Gave up for now.
@@ -319,7 +295,6 @@ getFrontBlock (thingp a, thingp b)
     if (!things_iso_overlap(a, b)) {
         return (0);
     }
-#endif
 
     if (things_iso_intersect(a, b)) {
     }

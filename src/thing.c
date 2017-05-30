@@ -20,6 +20,9 @@ static int thing_init_done;
 static double thing_fall_speed = 0.05;
 static double thing_fall_speed_max = 0.1;
 
+static double thing_momentum_speed_max = 0.2;
+static double thing_momentum_decay = 0.8;
+
 static void 
 thing_move_abs_to(thingp t, fpoint3d to);
 
@@ -323,11 +326,11 @@ void thing_move_all (void)
 
         thing_move_delta(t, delta);
 
-        t->momentum.x *= 0.8;
-        t->momentum.y *= 0.8;
+        t->momentum.x *= thing_momentum_decay;
+        t->momentum.y *= thing_momentum_decay;
 
-        t->momentum.x = min(0.3, t->momentum.x);
-        t->momentum.y = min(0.3, t->momentum.y);
+        t->momentum.x = min(thing_momentum_speed_max, t->momentum.x);
+        t->momentum.y = min(thing_momentum_speed_max, t->momentum.y);
 
         if ((fabs(t->momentum.x) < 0.10) &&
             (fabs(t->momentum.y) < 0.10)) {

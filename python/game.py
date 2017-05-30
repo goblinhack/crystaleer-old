@@ -409,7 +409,7 @@ def game_new():
     g.load_level_finalize()
     console.hello()
 
-    t = g.push_block(tp_name="player1", at=Point(8, 8, 8))
+    t = g.push_block(tp_name="player1", at=Point(8, 8, 1))
     g.player = t
 
     g.push_block(tp_name="wall1", at=Point(8, 8, 3))
