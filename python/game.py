@@ -409,15 +409,15 @@ def game_new():
     g.load_level_finalize()
     console.hello()
 
-    t = g.push_block(tp_name="player1", at=Point(8, 8, 1))
+    t = g.push_block(tp_name="player1", at=Point(3, 3, 8))
     g.player = t
 
-    g.push_block(tp_name="wall1", at=Point(8, 8, 3))
-    g.push_block(tp_name="wall1", at=Point(8, 8, 2))
-    g.push_block(tp_name="wall1", at=Point(8, 8, 1))
-    g.push_block(tp_name="wall1", at=Point(8, 8, 2))
+    g.push_block(tp_name="wall3", at=Point(8, 8, 1))
+    g.push_block(tp_name="wall3", at=Point(8, 8, 2))
+    g.push_block(tp_name="wall3", at=Point(8, 8, 3))
+    g.push_block(tp_name="wall3", at=Point(8, 8, 4))
 
-    g.push_block(tp_name="wall1", at=Point(3, 3, 0))
+    g.push_block(tp_name="wall2", at=Point(7, 7, 0))
     g.push_block(tp_name="wall1", at=Point(4, 4, 0))
 
     g.push_block(tp_name="wall1", at=Point(1, 1, 0))
@@ -438,7 +438,7 @@ def game_new():
         for y in range(mm.MAP_HEIGHT):
             g.push_block(tp_name="wall3", at=Point(x, y, 0))
 
-    for z in range(int(mm.MAP_DEPTH / 2)):
+    for z in range(int(mm.MAP_DEPTH)):
         for x in range(mm.MAP_WIDTH):
             g.push_block(tp_name="wall2", at=Point(x, 0, z))
 

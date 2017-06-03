@@ -17,7 +17,7 @@ tree_root *things;
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
 
-static double thing_fall_speed = 0.05;
+static double thing_fall_speed = 0.10;
 static double thing_fall_speed_max = 0.1;
 
 static double thing_momentum_speed_max = 0.2;
@@ -79,6 +79,11 @@ thingp thing_new (const char *name,
     t->is_over_solid_ground = true;
 
     verify(t);
+
+    t->height = 1.0;
+    if (thing_is_player(t)) {
+        t->height = 2.0;
+    }
 
     THING_LOG(t, "created");
 

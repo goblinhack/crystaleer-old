@@ -30,8 +30,8 @@ static void
 thing_xyz_to_iso (ipoint *p) 
 {
     double z = p->z;
-    double x = p->x + z;
-    double y = p->y + z;
+    double x = p->x - z;
+    double y = p->y - z;
 
     p->x = x;
     p->y = y;
@@ -45,17 +45,20 @@ thing_xyz_to_iso (ipoint *p)
 static void 
 thing_get_iso_verts (thingp t)
 {
-    fpoint3d s = { 1.0, 1.0, 1.0 };
+    fpoint3d s = { 1.0, 1.0, t->height };
     fpoint3d p = { t->at.x, t->at.y, t->at.z };
+
+    ipoint backDown  = { p.x,     p.y,     p.z };
+    ipoint frontDown = { p.x+s.x, p.y+s.y, p.z };
+
+    ipoint frontUp   = { p.x+s.x, p.y+s.y, p.z+s.z };
+    ipoint backUp    = { p.x,     p.y,     p.z+s.z };
 
     ipoint rightDown = { p.x+s.x, p.y,     p.z };
     ipoint leftDown  = { p.x,     p.y+s.y, p.z };
-    ipoint backDown  = { p.x+s.x, p.y+s.y, p.z };
-    ipoint frontDown = { p.x,     p.y,     p.z };
+
     ipoint rightUp   = { p.x+s.x, p.y,     p.z+s.z };
     ipoint leftUp    = { p.x,     p.y+s.y, p.z+s.z };
-    ipoint backUp    = { p.x+s.x, p.y+s.y, p.z+s.z };
-    ipoint frontUp   = { p.x,     p.y,     p.z+s.z };
 
     thing_xyz_to_iso(&rightDown);
     thing_xyz_to_iso(&leftDown);
@@ -94,10 +97,12 @@ thing_get_iso_bounds (thingp t)
      *
      */
 
-    t->xmin = t->frontDown.x;
-    t->xmax = t->backUp.x;
-    t->ymin = t->frontDown.y;
-    t->ymax = t->backUp.y;
+    t->xmin = t->backUp.x;
+    t->xmax = t->frontDown.x;
+
+    t->ymin = t->backUp.y;
+    t->ymax = t->frontDown.y;
+
     t->hmin = t->leftDown.h;
     t->hmax = t->rightDown.h;
 }
@@ -113,7 +118,7 @@ thing_get_xyz_bounds (thingp t)
     t->ymin = t->at.y;
     t->ymax = t->at.y + 1.0;
     t->zmin = t->at.z;
-    t->zmax = t->at.z + 1.0;
+    t->zmax = t->at.z + t->height;
 }
 
 /*
@@ -125,6 +130,10 @@ thing_get_xyz_bounds (thingp t)
 static int
 ranges_do_not_overlap (double amin, double amax, double bmin, double bmax)
 {
+    if ((amin == bmin) && (amax == bmax)) {
+	return (false);
+    }
+
     /*
      * amin ...... amax
      *                   bmin ...... bmax
@@ -150,6 +159,10 @@ ranges_do_not_overlap (double amin, double amax, double bmin, double bmax)
 static int
 ranges_overlap (double amin, double amax, double bmin, double bmax)
 {
+    if ((amin == bmin) && (amax == bmax)) {
+	return (true);
+    }
+
     /*
      * amin ...... amax
      *                   bmin ...... bmax
@@ -293,6 +306,11 @@ getFrontBlock (thingp a, thingp b)
      * is no "front" block to identify.
      */
     if (!things_iso_overlap(a, b)) {
+#if 0
+CON("%s and %s do not overlap", thing_logname(a), thing_logname(b));
+CON("  %15s x %5.2f %5.2f y %5.2f %5.2f h %5.2f %5.2f", thing_logname(a), a->xmin, a->xmax, a->ymin, a->ymax, a->hmin, a->hmax);
+CON("  %15s x %5.2f %5.2f y %5.2f %5.2f h %5.2f %5.2f", thing_logname(b), b->xmin, b->xmax, b->ymin, b->ymax, b->hmin, b->hmax);
+#endif
         return (0);
     }
 
@@ -364,6 +382,7 @@ things_push_behind (thingp t, thingp o)
 static void
 things_push_todraw (thingp t)
 {
+//CON("render %s ", thing_logname(t));
     if (unlikely(things_draw_list_count >= 
                  ARRAY_SIZE(things_draw_list))) {
 	ERR("overflow todraw array");

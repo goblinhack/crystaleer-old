@@ -66,7 +66,7 @@ void game_display (void)
 
         x += Y * (tw / 2);
         y += Y * (th / 4);
-        y -= Z * (th / 4) * 3;
+        y -= Z * (th / 2);
 
         fpoint tl;
         fpoint br;

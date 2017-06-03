@@ -108,6 +108,7 @@ typedef struct thing_ {
     double zmax;
     double hmin;
     double hmax;
+    double height;
 
     ipoint rightDown;
     ipoint leftDown;

@@ -16,7 +16,7 @@ def player_init(name, short_name, tiles=[]):
     x.set_blit_top_off(1)
     x.set_ms_to_move_one_tile(150)
 
-    delay = 150
+    delay = 125
     x.set_tile(tile=name + "-bl-3",
                is_dir_left=True,
                is_moving=True,

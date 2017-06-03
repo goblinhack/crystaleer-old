@@ -12,7 +12,6 @@ def wall_init(name, short_name, tiles=[]):
     x.set_is_movement_blocking(True)
     x.set_is_wall(True)
     x.set_is_solid_ground(True)
-    x.set_blit_top_off(1)
 
     if tiles is not None:
         for t in tiles:
