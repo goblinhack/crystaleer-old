@@ -18,7 +18,7 @@ static void thing_destroy_internal(thingp t);
 static int thing_init_done;
 
 static double thing_fall_speed = 0.10;
-static double thing_fall_speed_max = 0.1;
+static double thing_fall_speed_max = 0.2;
 
 static double thing_momentum_speed_max = 0.2;
 static double thing_momentum_decay = 0.8;
