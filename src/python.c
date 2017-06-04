@@ -2250,28 +2250,28 @@ static PyMethodDef python_c_METHODS[] =
         METH_VARARGS | METH_KEYWORDS,
         ""},
 
-    {"game_set_zzz89",
-        (PyCFunction)game_set_zzz89_,
+    {"game_set_thing_momentum_move",
+        (PyCFunction)game_set_thing_momentum_move_,
         METH_VARARGS | METH_KEYWORDS,
         ""},
 
-    {"game_set_zzz90",
-        (PyCFunction)game_set_zzz90_,
+    {"game_set_thing_momentum_decay",
+        (PyCFunction)game_set_thing_momentum_decay_,
         METH_VARARGS | METH_KEYWORDS,
         ""},
 
-    {"game_set_zzz91",
-        (PyCFunction)game_set_zzz91_,
+    {"game_set_thing_momentum_max",
+        (PyCFunction)game_set_thing_momentum_max_,
         METH_VARARGS | METH_KEYWORDS,
         ""},
 
-    {"game_set_zzz92",
-        (PyCFunction)game_set_zzz92_,
+    {"game_set_thing_fall_speed_max",
+        (PyCFunction)game_set_thing_fall_speed_max_,
         METH_VARARGS | METH_KEYWORDS,
         ""},
 
-    {"game_set_zzz93",
-        (PyCFunction)game_set_zzz93_,
+    {"game_set_thing_fall_speed",
+        (PyCFunction)game_set_thing_fall_speed_,
         METH_VARARGS | METH_KEYWORDS,
         ""},
 

@@ -17,12 +17,6 @@ tree_root *things;
 static void thing_destroy_internal(thingp t);
 static int thing_init_done;
 
-static double thing_fall_speed = 0.10;
-static double thing_fall_speed_max = 0.2;
-
-static double thing_momentum_speed_max = 0.2;
-static double thing_momentum_decay = 0.8;
-
 static void 
 thing_move_abs_to(thingp t, fpoint3d to);
 
@@ -276,10 +270,10 @@ void thing_move_all (void)
         if (!t->is_over_solid_ground) {
             delta.z -= t->fall_speed;
 
-            t->fall_speed += thing_fall_speed;
+            t->fall_speed += game.thing_fall_speed;
 
-            if (t->fall_speed > thing_fall_speed_max) {
-                t->fall_speed = thing_fall_speed_max;
+            if (t->fall_speed > game.thing_fall_speed_max) {
+                t->fall_speed = game.thing_fall_speed_max;
             }
         }
 
@@ -331,14 +325,16 @@ void thing_move_all (void)
 
         thing_move_delta(t, delta);
 
-        t->momentum.x *= thing_momentum_decay;
-        t->momentum.y *= thing_momentum_decay;
+        t->momentum.x *= game.thing_momentum_decay;
+        t->momentum.y *= game.thing_momentum_decay;
 
-        t->momentum.x = min(thing_momentum_speed_max, t->momentum.x);
-        t->momentum.y = min(thing_momentum_speed_max, t->momentum.y);
+        t->momentum.x = min(game.thing_momentum_max, t->momentum.x);
+        t->momentum.y = min(game.thing_momentum_max, t->momentum.y);
 
-        if ((fabs(t->momentum.x) < 0.10) &&
-            (fabs(t->momentum.y) < 0.10)) {
+        if ((fabs(t->momentum.x) < 0.01) &&
+            (fabs(t->momentum.y) < 0.01)) {
+            t->momentum.x = 0.0;
+            t->momentum.y = 0.0;
             t->is_moving = false;
         }
 
@@ -401,7 +397,9 @@ const char *thing_logname (thingp t)
         loop = 0;
     }
 
-    snprintf(tmp[loop], sizeof(tmp[loop]) - 1, "%s", t->tree.key);
+    snprintf(tmp[loop], sizeof(tmp[loop]) - 1, "%s at (%f,%f,%f)", 
+             t->tree.key,
+             t->at.x, t->at.y, t->at.z);
 
     return (tmp[loop++]);
 }

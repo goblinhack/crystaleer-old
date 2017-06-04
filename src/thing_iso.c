@@ -236,14 +236,9 @@ things_iso_intersect (thingp a, thingp b)
         ranges_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
         ranges_overlap(a->zmin, a->zmax, b->zmin, b->zmax)) {
 
-#if 0
         ERR("Intersecting things, %s %s",
             thing_logname(a),
             thing_logname(b));
-
-        CON("  x %f<->%f y %f<->%f z %f<->%f ", a->xmin, a->xmax, a->ymin, a->ymax, a->zmin, a->zmax);
-        CON("  x %f<->%f y %f<->%f z %f<->%f ", b->xmin, b->xmax, b->ymin, b->ymax, b->zmin, b->zmax);
-#endif
 
 	return (true);
     }
@@ -262,24 +257,28 @@ things_iso_collision_check (thingp a, thingp b, fpoint3d at)
     thing_get_xyz_bounds(a);
     thing_get_xyz_bounds(b);
 
-    a->at = old;
-
     if (ranges_overlap(a->xmin, a->xmax, b->xmin, b->xmax) &&
         ranges_overlap(a->ymin, a->ymax, b->ymin, b->ymax) &&
         ranges_overlap(a->zmin, a->zmax, b->zmin, b->zmax)) {
 
 #if 0
-        ERR("Intersecting things, %s %s",
+        CON("Intersecting things, %s %s",
             thing_logname(a),
             thing_logname(b));
 
         CON("  x %f<->%f y %f<->%f z %f<->%f ", a->xmin, a->xmax, a->ymin, a->ymax, a->zmin, a->zmax);
         CON("  x %f<->%f y %f<->%f z %f<->%f ", b->xmin, b->xmax, b->ymin, b->ymax, b->zmin, b->zmax);
+
+    a->at = old;
+    thing_get_xyz_bounds(a);
+        CON("  x %f<->%f y %f<->%f z %f<->%f ", a->xmin, a->xmax, a->ymin, a->ymax, a->zmin, a->zmax);
+        CON(" ");
 #endif
 
         rc = true;
     }
 
+    a->at = old;
     thing_get_xyz_bounds(a);
 
     return (rc);
@@ -382,7 +381,6 @@ things_push_behind (thingp t, thingp o)
 static void
 things_push_todraw (thingp t)
 {
-//CON("render %s ", thing_logname(t));
     if (unlikely(things_draw_list_count >= 
                  ARRAY_SIZE(things_draw_list))) {
 	ERR("overflow todraw array");
@@ -442,25 +440,4 @@ things_iso_sort (void)
 	    }
 	}
     }
-#if 0
-    for (i = 0; i < things_all_blocks_count; i++) {
-	thingp a = things_all_blocks[i];
-	if (a->behind_count != 0) {
-            printf("%lu %lu  ",a->behind_count, a->infront_count);
-
-            for (j = 0; j < things_all_blocks_count; j++) {
-                thingp b = things_all_blocks[j];
-                size_t k;
-                for (k = 0; k < b->infront_count; k++) {
-                    thingp c = b->infront[k];
-                    if (c == a) {
-                        printf("[%lu] ", c->behind_count);
-                    }
-                }
-            }
-        }
-    }
-    CON(" ");
-    CON(" ");
-#endif
 }

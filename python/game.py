@@ -41,6 +41,7 @@ class Game:
     def new_game(self):
 
         self.sdl_delay = 1
+
         self.seed = 10
         self.where = Point(0, 0, 0)
         self.load_level(self.seed)
@@ -52,6 +53,12 @@ class Game:
 
     def load_level_finalize(self):
         mm.game_set_sdl_delay(self.sdl_delay)
+
+        mm.game_set_thing_fall_speed(0.00)
+        mm.game_set_thing_fall_speed_max(0.2)
+        mm.game_set_thing_momentum_max(0.3)
+        mm.game_set_thing_momentum_decay(0.8)
+        mm.game_set_thing_momentum_move(0.05)
 
     def save(self):
         l = self.level
@@ -286,7 +293,7 @@ class Game:
                 wid_quit.visible()
                 return True
 
-            delta = 0.10
+            delta = 0.05
             if sym == mm.SDLK_LEFT:
                 player.move_delta(Point(0, -delta, 0))
                 return True
@@ -409,7 +416,7 @@ def game_new():
     g.load_level_finalize()
     console.hello()
 
-    t = g.push_block(tp_name="player1", at=Point(3, 3, 8))
+    t = g.push_block(tp_name="player1", at=Point(3, 3, 1))
     g.player = t
 
     g.push_block(tp_name="wall3", at=Point(8, 8, 1))

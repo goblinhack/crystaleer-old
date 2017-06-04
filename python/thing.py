@@ -77,7 +77,7 @@ class Thing:
         self.__dict__ = dict
 
     def __str__(self):
-        return "{}:{} at {}".format(self.thing_id, self.tp_name, str(self.at))
+        return "{}:{}".format(self.thing_id, self.tp_name)
 
     def log(self, msg):
         mm.log("Thing {}: {}".format(str(self), msg))

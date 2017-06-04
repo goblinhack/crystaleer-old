@@ -180,11 +180,11 @@ PyObject *game_set_zzz85_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_zzz86_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_zzz87_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_zzz88_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_zzz89_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_zzz90_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_zzz91_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_zzz92_(PyObject *obj, PyObject *args, PyObject *keywds);
-PyObject *game_set_zzz93_(PyObject *obj, PyObject *args, PyObject *keywds);
+PyObject *game_set_thing_momentum_move_(PyObject *obj, PyObject *args, PyObject *keywds);
+PyObject *game_set_thing_momentum_decay_(PyObject *obj, PyObject *args, PyObject *keywds);
+PyObject *game_set_thing_momentum_max_(PyObject *obj, PyObject *args, PyObject *keywds);
+PyObject *game_set_thing_fall_speed_max_(PyObject *obj, PyObject *args, PyObject *keywds);
+PyObject *game_set_thing_fall_speed_(PyObject *obj, PyObject *args, PyObject *keywds);
 PyObject *game_set_sdl_delay_(PyObject *obj, PyObject *args, PyObject *keywds);
 
 #define PY_PROTO(__fn__)                                                    \
