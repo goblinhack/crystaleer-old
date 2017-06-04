@@ -122,9 +122,9 @@ typedef struct thing_ {
     /*
      * Fake gravity
      */
-    double fall_speed;
-    double jump_speed;
-    fpoint3d momentum;
+    fpoint3d velocity;
+    fpoint3d accel;
+    uint32_t last_jump;
     uint32_t last_move;
 
     /*

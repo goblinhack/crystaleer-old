@@ -92,40 +92,40 @@ int thing_jump (levelp level, thingp t)
 }
 
 /*
- * Try to keep moving with momentum
+ * Try to keep moving with velocity
  */
 int thing_slide (levelp level, thingp t)
 {
     double x;
     double y = t->y;
 
-    if (fabs(t->momentum) < 0.008) {
-        t->momentum = 0;
+    if (fabs(t->velocity) < 0.008) {
+        t->velocity = 0;
         return (false);
     }
 
-    x = t->x + t->momentum;
+    x = t->x + t->velocity;
     if (thing_hit_solid_obstacle(level, t, x, y)) {
-        t->momentum /= 2;
+        t->velocity /= 2;
 
-        x = t->x + t->momentum;
+        x = t->x + t->velocity;
         if (thing_hit_solid_obstacle(level, t, x, y)) {
-            t->momentum /= 2;
+            t->velocity /= 2;
 
-            x = t->x + t->momentum;
+            x = t->x + t->velocity;
             if (thing_hit_solid_obstacle(level, t, x, y)) {
-                t->momentum /= 2;
+                t->velocity /= 2;
 
-                x = t->x + t->momentum;
+                x = t->x + t->velocity;
                 if (thing_hit_solid_obstacle(level, t, x, y)) {
-                    t->momentum = 0;
+                    t->velocity = 0;
                     return (false);
                 }
             }
         }
     }
 
-    t->momentum *= 0.90;
+    t->velocity *= 0.90;
 
     thing_wid_update(level, t, x, y, true, false /* is new */);
 

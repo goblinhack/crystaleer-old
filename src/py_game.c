@@ -1118,78 +1118,78 @@ PyObject *game_set_zzz81_ (PyObject *obj, PyObject *args,
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_zzz82_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_velocity_air_decay_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.zzz82)) {
+                                     &game.thing_velocity_air_decay)) {
         Py_RETURN_NONE;
     }
 
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_zzz83_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_jump_speed_max_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.zzz83)) {
+                                     &game.thing_jump_speed_max)) {
         Py_RETURN_NONE;
     }
 
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_zzz84_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_jump_duration_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.zzz84)) {
+                                     &game.thing_jump_duration)) {
         Py_RETURN_NONE;
     }
 
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_zzz85_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_accel_max_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.zzz85)) {
+                                     &game.thing_accel_max)) {
         Py_RETURN_NONE;
     }
 
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_zzz86_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_accel_decay_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.zzz86)) {
+                                     &game.thing_accel_decay)) {
         Py_RETURN_NONE;
     }
 
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_zzz87_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_jump_step_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.zzz87)) {
+                                     &game.thing_jump_step)) {
         Py_RETURN_NONE;
     }
 
@@ -1209,39 +1209,39 @@ PyObject *game_set_zzz88_ (PyObject *obj, PyObject *args,
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_thing_momentum_move_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_accel_step_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.thing_momentum_move)) {
+                                     &game.thing_accel_step)) {
         Py_RETURN_NONE;
     }
 
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_thing_momentum_decay_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_velocity_decay_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.thing_momentum_decay)) {
+                                     &game.thing_velocity_decay)) {
         Py_RETURN_NONE;
     }
 
     Py_RETURN_NONE;
 }
 
-PyObject *game_set_thing_momentum_max_ (PyObject *obj, PyObject *args,
+PyObject *game_set_thing_velocity_max_ (PyObject *obj, PyObject *args,
                                  PyObject *keywds)
 {
     static char *kwlist[] = {(char*) "value", 0};
 
     if (!PyArg_ParseTupleAndKeywords(args, keywds, "d", kwlist,
-                                     &game.thing_momentum_max)) {
+                                     &game.thing_velocity_max)) {
         Py_RETURN_NONE;
     }
 

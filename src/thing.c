@@ -216,7 +216,7 @@ thing_move_delta (thingp t, fpoint3d delta)
     t->last_move = time_get_time_ms();
 }
 
-void thing_move_delta_ (thingp t, fpoint3d delta)
+void thing_move_delta_ (thingp t, fpoint3d accel_delta)
 {
     verify(t);
 
@@ -228,29 +228,45 @@ void thing_move_delta_ (thingp t, fpoint3d delta)
         t->timestamp_change_to_next_frame = time_get_time_ms_cached();
     }
 
-    if (delta.x > 0) {
+    if (accel_delta.x > 0) {
         thing_set_dir_left(t);
         t->is_moving = true;
     }
 
-    if (delta.x < 0) {
+    if (accel_delta.x < 0) {
         thing_set_dir_right(t);
         t->is_moving = true;
     }
 
-    if (delta.y > 0) {
+    if (accel_delta.y > 0) {
         thing_set_dir_up(t);
         t->is_moving = true;
     }
 
-    if (delta.y < 0) {
+    if (accel_delta.y < 0) {
         thing_set_dir_down(t);
+        t->is_moving = true;
+    }
+
+    if (t->velocity.z == 0) {
+        t->last_jump = time_get_time_ms();
+    }
+
+    if (t->velocity.z != 0) {
+        if (time_have_x_thousandths_passed_since(
+                (game.thing_jump_duration / (1.0 / 1000.0)),
+                t->last_jump)) {
+            accel_delta.z = 0;
+        }
+    }
+
+    if (accel_delta.z != 0) {
         t->is_moving = true;
     }
 
     thing_animate(t);
 
-    t->momentum = fadd3d(t->momentum, delta);
+    t->accel = fadd3d(t->accel, accel_delta);
 
     if (thing_is_player(t)) {
         py_call_void_module_void("hooks", "hook_player_move_start");
@@ -263,33 +279,15 @@ void thing_move_all (void)
 
     thingp t;
     FOR_ALL_THINGS(t) {
-        fpoint3d delta = {0};
-
-        delta = t->momentum;
-
-        if (!t->is_over_solid_ground) {
-            delta.z -= t->fall_speed;
-
-            t->fall_speed += game.thing_fall_speed;
-
-            if (t->fall_speed > game.thing_fall_speed_max) {
-                t->fall_speed = game.thing_fall_speed_max;
-            }
-        }
-
-        if (!thing_is_movable(t)) {
-            continue;
-        }
-
-        fpoint3d to;
-
-        to = fadd3d(t->at, delta);
-
         /*
          * Check for collisions
          */
         t->is_over_ladder = false;
         t->is_over_solid_ground = false;
+
+        if (!thing_is_movable(t)) {
+            continue;
+        }
 
         thingp o;
         FOR_ALL_THINGS(o) {
@@ -298,43 +296,105 @@ void thing_move_all (void)
                 continue;
             }
 
+            fpoint3d delta;
+            fpoint3d to;
+
+            delta.x = t->velocity.x;
+            delta.y = 0;
+            delta.z = 0;
+            to = fadd3d(t->at, delta);
             if (things_iso_collision_check(t, o, to)) {
-                delta.x = 0;
-                delta.y = 0;
-                delta.z = 0;
+                t->accel.x = 0;
+                t->velocity.x = 0;
             }
 
-            if (thing_is_player(t)) {
-                if (thing_is_ladder(o)) {
-                    if (things_iso_overlap(t, o)) {
-                        t->is_over_ladder = true;
-                        t->fall_speed = 0;
-                    }
-                }
+            delta.x = 0;
+            delta.y = t->velocity.y;
+            delta.z = 0;
+            to = fadd3d(t->at, delta);
+            if (things_iso_collision_check(t, o, to)) {
+                t->accel.y = 0;
+                t->velocity.y = 0;
             }
 
             if (thing_is_solid_ground(o)) {
-                if (!t->is_over_solid_ground) {
+                if (t->velocity.z == 0.0) {
+                    delta.x = 0;
+                    delta.y = 0;
+                    delta.z = -0.1;
+                    to = fadd3d(t->at, delta);
                     if (things_iso_collision_check(t, o, to)) {
+                        t->is_over_solid_ground = true;
+                    }
+                } else if (t->velocity.z < 0) {
+                    delta.x = 0;
+                    delta.y = 0;
+                    delta.z = t->velocity.z;
+                    to = fadd3d(t->at, delta);
+                    if (things_iso_collision_check(t, o, to)) {
+                        t->accel.z = 0;
+                        t->velocity.z = 0;
                         t->is_over_solid_ground = true;
                     }
                 }
             }
-
         } FOR_ALL_THINGS_END
 
-        thing_move_delta(t, delta);
+        fpoint3d to;
+        to = fadd3d(t->at, t->velocity);
 
-        t->momentum.x *= game.thing_momentum_decay;
-        t->momentum.y *= game.thing_momentum_decay;
+        thing_move_delta(t, t->velocity);
 
-        t->momentum.x = min(game.thing_momentum_max, t->momentum.x);
-        t->momentum.y = min(game.thing_momentum_max, t->momentum.y);
+        if (!t->is_over_solid_ground) {
+            t->accel.z -= game.thing_fall_speed;
+        }
 
-        if ((fabs(t->momentum.x) < 0.01) &&
-            (fabs(t->momentum.y) < 0.01)) {
-            t->momentum.x = 0.0;
-            t->momentum.y = 0.0;
+        if (t->is_over_solid_ground) {
+            t->accel.x *= game.thing_accel_decay;
+            t->accel.y *= game.thing_accel_decay;
+        }
+
+        t->accel.z *= game.thing_accel_decay;
+
+        t->accel.x = min(game.thing_accel_max, t->accel.x);
+        t->accel.y = min(game.thing_accel_max, t->accel.y);
+
+        if (t->accel.z == 0) {
+            t->velocity.x *= game.thing_velocity_decay;
+            t->velocity.y *= game.thing_velocity_decay;
+        } else {
+            t->velocity.x *= game.thing_velocity_air_decay;
+            t->velocity.y *= game.thing_velocity_air_decay;
+        }
+
+        t->velocity = fadd3d(t->velocity, t->accel);
+
+        if (t->velocity.z < -game.thing_fall_speed_max) {
+            t->velocity.z = -game.thing_fall_speed_max;
+        }
+
+        if (t->velocity.z > game.thing_jump_speed_max) {
+            t->velocity.z = game.thing_jump_speed_max;
+        }
+
+        if (t->velocity.x > game.thing_velocity_max) {
+            t->velocity.x = game.thing_velocity_max;
+        }
+        if (t->velocity.x < -game.thing_velocity_max) {
+            t->velocity.x = -game.thing_velocity_max;
+        }
+
+        if (t->velocity.y > game.thing_velocity_max) {
+            t->velocity.y = game.thing_velocity_max;
+        }
+        if (t->velocity.y < -game.thing_velocity_max) {
+            t->velocity.y = -game.thing_velocity_max;
+        }
+
+        if ((fabs(t->velocity.x) < 0.01) &&
+            (fabs(t->velocity.y) < 0.01)) {
+            t->velocity.x = 0.0;
+            t->velocity.y = 0.0;
             t->is_moving = false;
         }
 
