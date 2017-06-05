@@ -187,6 +187,7 @@ typedef struct thing_ {
      */
     uint32_t is_over_ladder:1;
     uint32_t is_over_solid_ground:1;
+    uint32_t is_near_solid_ground:1;
 } thing;
 
 #include "thing_template.h"
@@ -299,10 +300,3 @@ extern int things_iso_intersect(thingp a, thingp b);
 extern int things_iso_collision_check(thingp a, thingp b, fpoint3d at);
 extern void things_iso_sort(void);
 extern int things_iso_overlap(thingp a, thingp b);
-
-/*
- * thing_move.c
- */
-extern int thing_fall(thingp);
-extern int thing_slide(thingp);
-extern int thing_jump(thingp);

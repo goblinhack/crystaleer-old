@@ -252,11 +252,25 @@ void thing_move_delta_ (thingp t, fpoint3d accel_delta)
         t->last_jump = time_get_time_ms();
     }
 
-    if (t->velocity.z != 0) {
+    if (t->velocity.z > 0) {
         if (time_have_x_thousandths_passed_since(
                 (game.thing_jump_duration / (1.0 / 1000.0)),
                 t->last_jump)) {
             accel_delta.z = 0;
+        }
+    } else {
+        if (!t->is_over_solid_ground && !t->is_near_solid_ground) {
+            accel_delta.z = 0;
+        }
+        if (t->is_near_solid_ground) {
+            if (accel_delta.z > 0.0) {
+                CON("jump at %f", t->at.z);
+                if (time_have_x_thousandths_passed_since(
+                        (game.thing_jump_duration / (1.0 / 1000.0)),
+                        t->last_jump)) {
+                    t->last_jump = time_get_time_ms();
+                }
+            }
         }
     }
 
@@ -284,6 +298,7 @@ void thing_move_all (void)
          */
         t->is_over_ladder = false;
         t->is_over_solid_ground = false;
+        t->is_near_solid_ground = false;
 
         if (!thing_is_movable(t)) {
             continue;
@@ -335,6 +350,46 @@ void thing_move_all (void)
                         t->accel.z = 0;
                         t->velocity.z = 0;
                         t->is_over_solid_ground = true;
+                    }
+
+                    if (!t->is_over_solid_ground && !t->is_near_solid_ground) {
+                        delta.x = 0.1;
+                        delta.y = 0;
+                        delta.z = t->velocity.z;
+                        to = fadd3d(t->at, delta);
+                        if (things_iso_collision_check(t, o, to)) {
+                            t->is_near_solid_ground = true;
+                        }
+                    }
+
+                    if (!t->is_over_solid_ground && !t->is_near_solid_ground) {
+                        delta.x = -0.1;
+                        delta.y = 0;
+                        delta.z = t->velocity.z;
+                        to = fadd3d(t->at, delta);
+                        if (things_iso_collision_check(t, o, to)) {
+                            t->is_near_solid_ground = true;
+                        }
+                    }
+
+                    if (!t->is_over_solid_ground && !t->is_near_solid_ground) {
+                        delta.x = 0;
+                        delta.y = 0.1;
+                        delta.z = t->velocity.z;
+                        to = fadd3d(t->at, delta);
+                        if (things_iso_collision_check(t, o, to)) {
+                            t->is_near_solid_ground = true;
+                        }
+                    }
+
+                    if (!t->is_over_solid_ground && !t->is_near_solid_ground) {
+                        delta.z = 0;
+                        delta.y = -0.1;
+                        delta.z = t->velocity.z;
+                        to = fadd3d(t->at, delta);
+                        if (things_iso_collision_check(t, o, to)) {
+                            t->is_near_solid_ground = true;
+                        }
                     }
                 }
             }
