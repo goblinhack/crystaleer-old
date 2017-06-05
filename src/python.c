@@ -11,6 +11,7 @@
 #include "py_thing.h"
 #include "py_wid.h"
 #include "py_game.h"
+#include "py_sdl.h"
 #include "string_util.h"
 #include "frameobject.h"
 #include "config.h"
@@ -2280,6 +2281,8 @@ static PyMethodDef python_c_METHODS[] =
         METH_VARARGS | METH_KEYWORDS,
         ""},
 
+    PYFUNC_REF(SDLGetKeyState),
+
     {0, 0, 0, 0}   /* sentinel */
 };
 
@@ -2620,6 +2623,651 @@ static void python_add_consts (void)
     PyModule_AddIntConstant(mm_mod, "SDLK_MENU", SDLK_MENU);
     PyModule_AddIntConstant(mm_mod, "SDLK_POWER", SDLK_POWER);
     PyModule_AddIntConstant(mm_mod, "SDLK_UNDO", SDLK_UNDO);
+
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_0", SDLK_0);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_0", SDL_SCANCODE_0);
+#endif
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_1", SDLK_1);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_1", SDL_SCANCODE_1);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_2", SDLK_2);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_2", SDL_SCANCODE_2);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_3", SDLK_3);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_3", SDL_SCANCODE_3);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_4", SDLK_4);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_4", SDL_SCANCODE_4);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_5", SDLK_5);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_5", SDL_SCANCODE_5);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_6", SDLK_6);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_6", SDL_SCANCODE_6);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_7", SDLK_7);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_7", SDL_SCANCODE_7);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_8", SDLK_8);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_8", SDL_SCANCODE_8);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_9", SDLK_9);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_9", SDL_SCANCODE_9);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_AMPERSAND", SDLK_AMPERSAND);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_AMPERSAND", SDL_SCANCODE_KP_AMPERSAND);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_AT", SDLK_AT);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_AT", SDL_SCANCODE_KP_AT);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_BACKSLASH", SDLK_BACKSLASH);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_BACKSLASH", SDL_SCANCODE_BACKSLASH);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_BACKSPACE", SDLK_BACKSPACE);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_BACKSPACE", SDL_SCANCODE_BACKSPACE);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_COMMA", SDLK_COMMA);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_COMMA", SDL_SCANCODE_COMMA);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_DELETE", SDLK_DELETE);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_DELETE", SDL_SCANCODE_DELETE);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_EQUALS", SDLK_EQUALS);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_EQUALS", SDL_SCANCODE_EQUALS);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_ESCAPE", SDLK_ESCAPE);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_ESCAPE", SDL_SCANCODE_ESCAPE);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_GREATER", SDLK_GREATER);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_GREATER", SDL_SCANCODE_KP_GREATER);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_HASH", SDLK_HASH);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_HASH", SDL_SCANCODE_KP_HASH);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LEFTBRACKET", SDLK_LEFTBRACKET);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LEFTBRACKET", SDL_SCANCODE_LEFTBRACKET);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LEFTPAREN", SDLK_LEFTPAREN);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LEFTPAREN", SDL_SCANCODE_KP_LEFTPAREN);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LESS", SDLK_LESS);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LESS", SDL_SCANCODE_KP_LESS);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_MINUS", SDLK_MINUS);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_MINUS", SDL_SCANCODE_MINUS);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_PERIOD", SDLK_PERIOD);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_PERIOD", SDL_SCANCODE_PERIOD);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_PLUS", SDLK_PLUS);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_PLUS", SDL_SCANCODE_KP_PLUS);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RETURN", SDLK_RETURN);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RETURN", SDL_SCANCODE_RETURN);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RIGHTBRACKET", SDLK_RIGHTBRACKET);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RIGHTBRACKET", SDL_SCANCODE_RIGHTBRACKET);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RIGHTPAREN", SDLK_RIGHTPAREN);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RIGHTPAREN", SDL_SCANCODE_KP_RIGHTPAREN);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_SEMICOLON", SDLK_SEMICOLON);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_SEMICOLON", SDL_SCANCODE_SEMICOLON);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_SLASH", SDLK_SLASH);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_SLASH", SDL_SCANCODE_SLASH);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_SPACE", SDLK_SPACE);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_SPACE", SDL_SCANCODE_SPACE);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_TAB", SDLK_TAB);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_TAB", SDL_SCANCODE_TAB);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_A", SDLK_a);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_A", SDL_SCANCODE_A);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_B", SDLK_b);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_B", SDL_SCANCODE_B);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_C", SDLK_c);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_C", SDL_SCANCODE_C);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_D", SDLK_d);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_D", SDL_SCANCODE_D);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_E", SDLK_e);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_E", SDL_SCANCODE_E);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F", SDLK_f);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F", SDL_SCANCODE_F);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_G", SDLK_g);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_G", SDL_SCANCODE_G);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_H", SDLK_h);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_H", SDL_SCANCODE_H);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_I", SDLK_i);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_I", SDL_SCANCODE_I);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_J", SDLK_j);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_J", SDL_SCANCODE_J);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_K", SDLK_k);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_K", SDL_SCANCODE_K);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_L", SDLK_l);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_L", SDL_SCANCODE_L);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_M", SDLK_m);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_M", SDL_SCANCODE_M);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_N", SDLK_n);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_N", SDL_SCANCODE_N);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_O", SDLK_o);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_O", SDL_SCANCODE_O);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_P", SDLK_p);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_P", SDL_SCANCODE_P);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_Q", SDLK_q);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_Q", SDL_SCANCODE_Q);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_R", SDLK_r);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_R", SDL_SCANCODE_R);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_S", SDLK_s);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_S", SDL_SCANCODE_S);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_T", SDLK_t);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_T", SDL_SCANCODE_T);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_U", SDLK_u);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_U", SDL_SCANCODE_U);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_V", SDLK_v);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_V", SDL_SCANCODE_V);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_W", SDLK_w);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_W", SDL_SCANCODE_W);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_X", SDLK_x);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_X", SDL_SCANCODE_X);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_Y", SDLK_y);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_Y", SDL_SCANCODE_Y);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_Z", SDLK_z);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_Z", SDL_SCANCODE_Z);
+#endif /* } */
+
+
+#if SDL_MAJOR_VERSION == 1 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP0", SDLk_KP0);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP1", SDLK_KP1);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP2", SDLk_KP2);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP3", SDLK_KP3);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP4", SDLK_KP4);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP5", SDLK_KP5);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP6", SDLK_KP6);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP7", SDLK_KP7);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP8", SDLK_KP8);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP9", SDLK_KP9);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP0", SDLK_KP_0);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP1", SDLK_KP_1);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP2", SDLK_KP_2);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP3", SDLK_KP_3);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP4", SDLK_KP_4);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP5", SDLK_KP_5);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP6", SDLK_KP_6);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP7", SDLK_KP_7);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP8", SDLK_KP_8);
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP9", SDLK_KP_9);
+#endif
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_PERIOD", SDLK_KP_PERIOD);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_PERIOD", SDL_SCANCODE_KP_PERIOD);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_DIVIDE", SDLK_KP_DIVIDE);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_DIVIDE", SDL_SCANCODE_KP_DIVIDE);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_MULTIPLY", SDLK_KP_MULTIPLY);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_MULTIPLY", SDL_SCANCODE_KP_MULTIPLY);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_MINUS", SDLK_KP_MINUS);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_MINUS", SDL_SCANCODE_KP_MINUS);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_PLUS", SDLK_KP_PLUS);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_PLUS", SDL_SCANCODE_KP_PLUS);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_ENTER", SDLK_KP_ENTER);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_ENTER", SDL_SCANCODE_KP_ENTER);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_EQUALS", SDLK_KP_EQUALS);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_KP_EQUALS", SDL_SCANCODE_KP_EQUALS);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_UP", SDLK_UP);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_UP", SDL_SCANCODE_UP);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_DOWN", SDLK_DOWN);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_DOWN", SDL_SCANCODE_DOWN);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RIGHT", SDLK_RIGHT);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RIGHT", SDL_SCANCODE_RIGHT);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LEFT", SDLK_LEFT);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LEFT", SDL_SCANCODE_LEFT);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_INSERT", SDLK_INSERT);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_INSERT", SDL_SCANCODE_INSERT);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_HOME", SDLK_HOME);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_HOME", SDL_SCANCODE_HOME);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_END", SDLK_END);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_END", SDL_SCANCODE_END);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_PAGEUP", SDLK_PAGEUP);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_PAGEUP", SDL_SCANCODE_PAGEUP);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_PAGEDOWN", SDLK_PAGEDOWN);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_PAGEDOWN", SDL_SCANCODE_PAGEDOWN);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F1", SDLK_F1);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F1", SDL_SCANCODE_F1);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F2", SDLK_F2);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F2", SDL_SCANCODE_F2);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F3", SDLK_F3);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F3", SDL_SCANCODE_F3);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F4", SDLK_F4);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F4", SDL_SCANCODE_F4);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F5", SDLK_F5);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F5", SDL_SCANCODE_F5);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F6", SDLK_F6);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F6", SDL_SCANCODE_F6);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F7", SDLK_F7);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F7", SDL_SCANCODE_F7);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F8", SDLK_F8);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F8", SDL_SCANCODE_F8);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F9", SDLK_F9);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F9", SDL_SCANCODE_F9);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F10", SDLK_F10);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F10", SDL_SCANCODE_F10);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F11", SDLK_F11);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F11", SDL_SCANCODE_F11);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F12", SDLK_F12);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F12", SDL_SCANCODE_F12);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F13", SDLK_F13);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F13", SDL_SCANCODE_F13);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F14", SDLK_F14);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F14", SDL_SCANCODE_F14);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F15", SDLK_F15);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_F15", SDL_SCANCODE_F15);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_CAPSLOCK", SDLK_CAPSLOCK);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_CAPSLOCK", SDL_SCANCODE_CAPSLOCK);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RSHIFT", SDLK_RSHIFT);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RSHIFT", SDL_SCANCODE_RSHIFT);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LSHIFT", SDLK_LSHIFT);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LSHIFT", SDL_SCANCODE_LSHIFT);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RCTRL", SDLK_RCTRL);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RCTRL", SDL_SCANCODE_RCTRL);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LCTRL", SDLK_LCTRL);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LCTRL", SDL_SCANCODE_LCTRL);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RALT", SDLK_RALT);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_RALT", SDL_SCANCODE_RALT);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LALT", SDLK_LALT);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_LALT", SDL_SCANCODE_LALT);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_MODE", SDLK_MODE);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_MODE", SDL_SCANCODE_MODE);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_HELP", SDLK_HELP);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_HELP", SDL_SCANCODE_HELP);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_SYSREQ", SDLK_SYSREQ);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_SYSREQ", SDL_SCANCODE_SYSREQ);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_MENU", SDLK_MENU);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_MENU", SDL_SCANCODE_MENU);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_POWER", SDLK_POWER);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_POWER", SDL_SCANCODE_POWER);
+#endif /* } */
+
+#if SDL_MAJOR_VERSION == 1 && SDL_MINOR_VERSION == 2 /* { */
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_UNDO", SDLK_UNDO);
+#else
+    PyModule_AddIntConstant(mm_mod, "SDL_SCANCODE_UNDO", SDL_SCANCODE_UNDO);
+#endif /* } */
+
 }
 
 void python_init (char *argv[])

@@ -40,8 +40,6 @@ class Game:
 
     def new_game(self):
 
-        self.sdl_delay = 1
-
         self.seed = 10
         self.where = Point(0, 0, 0)
         self.load_level(self.seed)
@@ -52,8 +50,6 @@ class Game:
         self.level = level.Level(at=self.where, seed=seed)
 
     def load_level_finalize(self):
-        mm.game_set_sdl_delay(self.sdl_delay)
-
         self.zzz1 = 0.0
         mm.game_set_zzz1(self.zzz1)
         self.zzz2 = 0.0
@@ -220,7 +216,7 @@ class Game:
         self.thing_jump_duration = 0.2
         mm.game_set_thing_jump_duration(self.thing_jump_duration)
 
-        self.thing_jump_step = 0.15
+        self.thing_jump_step = 0.02
         mm.game_set_thing_jump_step(self.thing_jump_step)
 
         self.thing_jump_speed_max = 0.20
@@ -228,9 +224,6 @@ class Game:
 
         self.thing_accel_max = 0.2
         mm.game_set_thing_accel_max(self.thing_accel_max)
-
-        self.thing_velocity_air_decay = 0.8
-        mm.game_set_thing_velocity_air_decay(self.thing_velocity_air_decay)
 
         self.thing_accel_decay = 0.5
         mm.game_set_thing_accel_decay(self.thing_accel_decay)
@@ -244,7 +237,10 @@ class Game:
         self.thing_fall_speed_max = 0.3
         mm.game_set_thing_fall_speed_max(self.thing_fall_speed_max)
 
-        self.thing_velocity_max = 0.20
+        self.thing_velocity_air_decay = 0.8
+        mm.game_set_thing_velocity_air_decay(self.thing_velocity_air_decay)
+
+        self.thing_velocity_max = 0.10
         mm.game_set_thing_velocity_max(self.thing_velocity_max)
 
         self.thing_velocity_decay = 0.70
@@ -257,7 +253,6 @@ class Game:
 
         with open(s, 'wb') as f:
             pickle.dump(self.seed, f, pickle.HIGHEST_PROTOCOL)
-            pickle.dump(self.sdl_delay, f, pickle.HIGHEST_PROTOCOL)
             pickle.dump(self.where, f, pickle.HIGHEST_PROTOCOL)
 
             self.last_level_seed = l.seed
@@ -284,7 +279,6 @@ class Game:
             mm.log("Game loading from {}".format(s))
 
             self.seed = pickle.load(f)
-            self.sdl_delay = pickle.load(f)
             self.where = pickle.load(f)
             self.last_level_seed = pickle.load(f)
 
@@ -534,6 +528,28 @@ class Game:
 
         return True
 
+    def tick(self):
+        keys = mm.SDLGetKeyState()
+
+        player = self.player
+
+        delta = self.thing_accel_step
+
+        if keys[mm.SDL_SCANCODE_LEFT]:
+            player.move_delta(Point(0, -delta, 0))
+
+        if keys[mm.SDL_SCANCODE_RIGHT]:
+            player.move_delta(Point(0, delta, 0))
+
+        if keys[mm.SDL_SCANCODE_DOWN]:
+            player.move_delta(Point(delta, 0, 0))
+
+        if keys[mm.SDL_SCANCODE_UP]:
+            player.move_delta(Point(-delta, 0, 0))
+
+        if keys[mm.SDL_SCANCODE_SPACE]:
+            player.move_delta(Point(0, 0, self.thing_jump_step))
+
     def map_help(self):
 
         mm.tip("")
@@ -589,6 +605,10 @@ def game_mouse_down(w, x, y, button):
 
 def game_key_down(w, sym, mod):
     return g.key_down(w, sym, mod)
+
+
+def game_tick(w, sym, mod):
+    return g.tick()
 
 g = None
 

@@ -1378,7 +1378,7 @@ void sdl_loop (void)
          */
         int32_t timestamp_now = time_update_time_milli();
 
-        if ((timestamp_now - timestamp_then > 20)) {
+//        if ((timestamp_now - timestamp_then > 20)) {
             if (sdl_do_screenshot) {
                 sdl_do_screenshot = 0;
                 sdl_screenshot_();
@@ -1447,13 +1447,9 @@ void sdl_loop (void)
             if (!sdl_main_loop_running) {
                 break;
             }
-        }
+//        }
 
-#if 0
-        {
-            py_call_void_module_void("hooks", "hook_game_tick");
-        }
-#endif
+        py_call_void_module_void("hooks", "hook_game_tick");
 
         thing_move_all();
 

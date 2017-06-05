@@ -149,6 +149,8 @@ def init1():
     mm.game_display_sync = 1
     mm.game_full_screen = 0
     mm.game_fps_counter = 1
+    mm.game_set_sdl_delay(0)
+    mm.game_set_display_sync(1)
 
     load_plugin('config.py')
     load_plugin('crystaleer-config.py')
