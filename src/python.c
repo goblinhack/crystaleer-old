@@ -11,6 +11,7 @@
 #include "py_thing.h"
 #include "py_wid.h"
 #include "py_game.h"
+#include "python.h"
 #include "py_sdl.h"
 #include "string_util.h"
 #include "frameobject.h"

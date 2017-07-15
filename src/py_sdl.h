@@ -1,0 +1,2 @@
+
+PYDECL(SDLGetKeyState);
